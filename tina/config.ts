@@ -101,3 +101,4 @@ export default defineConfig({
     ],
   },
 });
+// trigger Tina schema refresh
