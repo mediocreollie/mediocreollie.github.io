@@ -17,4 +17,14 @@ const blog = defineCollection({
 		}),
 });
 
-export const collections = { blog };
+const pages = defineCollection({
+	// Load Markdown files in the `src/content/pages/` directory.
+	loader: glob({ base: './src/content/pages', pattern: '**/*.md' }),
+	// Type-check frontmatter using a schema
+	schema: z.object({
+		title: z.string(),
+		intro: z.string().optional(),
+	}),
+});
+
+export const collections = { blog, pages };
