@@ -1,5 +1,16 @@
-fragment PostParts on Post {
+fragment BlogParts on Blog {
   __typename
   title
+  description
+  pubDate
+  updatedDate
+  heroImage
+  body
+}
+
+fragment PagesParts on Pages {
+  __typename
+  title
+  intro
   body
 }

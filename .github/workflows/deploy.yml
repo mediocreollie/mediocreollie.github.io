@@ -1,4 +1,4 @@
-name: Deploy Astro
+name: Deploy Astro+Tina
 
 on:
   push:
@@ -23,7 +23,55 @@ jobs:
           cache: npm
 
       - run: npm ci
+      
+      # Build TinaCMS admin UI
+      - name: Build TinaCMS Admin
+        run: |
+          if [ -n "${{ secrets.NEXT_PUBLIC_TINA_CLIENT_ID }}" ] && [ -n "${{ secrets.TINA_TOKEN }}" ]; then
+            npx tinacms build
+          else
+            echo "Warning: TinaCMS credentials not configured. Admin UI will not be fully functional."
+            echo "To enable TinaCMS, add NEXT_PUBLIC_TINA_CLIENT_ID and TINA_TOKEN as GitHub secrets."
+            # Create minimal admin page for development/fallback
+            mkdir -p public/admin
+            cat > public/admin/index.html << 'EOF'
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TinaCMS Admin</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; color: #333; }
+    .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 4px; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="warning">
+    <h2>⚠️ TinaCMS Not Configured</h2>
+    <p>To enable TinaCMS, configure GitHub secrets:</p>
+    <ul>
+      <li><code>NEXT_PUBLIC_TINA_CLIENT_ID</code> - from your TinaCloud account</li>
+      <li><code>TINA_TOKEN</code> - from your TinaCloud account</li>
+    </ul>
+    <p>See the repo documentation for setup instructions.</p>
+  </div>
+</body>
+</html>
+EOF
+          fi
+      
+      # Build Astro site
       - run: npm run build
+      
+      # Copy public/admin to dist if it was generated
+      - name: Copy admin assets to dist
+        run: |
+          if [ -d "public/admin" ]; then
+            mkdir -p dist/admin
+            cp -r public/admin/* dist/admin/ 2>/dev/null || true
+          fi
 
       - uses: actions/upload-pages-artifact@v3
         with:

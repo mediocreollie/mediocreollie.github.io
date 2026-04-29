@@ -54,12 +54,15 @@ type Query {
   collections: [Collection!]!
   node(id: String): Node!
   document(collection: String, relativePath: String): DocumentNode!
-  post(relativePath: String): Post!
-  postConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PostFilter): PostConnection!
+  blog(relativePath: String): Blog!
+  blogConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: BlogFilter): BlogConnection!
+  pages(relativePath: String): Pages!
+  pagesConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PagesFilter): PagesConnection!
 }
 
 input DocumentFilter {
-  post: PostFilter
+  blog: BlogFilter
+  pages: PagesFilter
 }
 
 type DocumentConnectionEdges {
@@ -85,10 +88,14 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = Post | Folder
+union DocumentNode = Blog | Pages | Folder
 
-type Post implements Node & Document {
+type Blog implements Node & Document {
   title: String!
+  description: String!
+  pubDate: String!
+  updatedDate: String
+  heroImage: String
   body: JSON
   id: ID!
   _sys: SystemInfo!
@@ -102,26 +109,71 @@ input StringFilter {
   in: [String]
 }
 
+input DatetimeFilter {
+  after: String
+  before: String
+  eq: String
+  exists: Boolean
+  in: [String]
+}
+
+input ImageFilter {
+  startsWith: String
+  eq: String
+  exists: Boolean
+  in: [String]
+}
+
 input RichTextFilter {
   startsWith: String
   eq: String
   exists: Boolean
 }
 
-input PostFilter {
+input BlogFilter {
   title: StringFilter
+  description: StringFilter
+  pubDate: DatetimeFilter
+  updatedDate: DatetimeFilter
+  heroImage: ImageFilter
   body: RichTextFilter
 }
 
-type PostConnectionEdges {
+type BlogConnectionEdges {
   cursor: String!
-  node: Post
+  node: Blog
 }
 
-type PostConnection implements Connection {
+type BlogConnection implements Connection {
   pageInfo: PageInfo!
   totalCount: Float!
-  edges: [PostConnectionEdges]
+  edges: [BlogConnectionEdges]
+}
+
+type Pages implements Node & Document {
+  title: String!
+  intro: String
+  body: JSON
+  id: ID!
+  _sys: SystemInfo!
+  _values: JSON!
+}
+
+input PagesFilter {
+  title: StringFilter
+  intro: StringFilter
+  body: RichTextFilter
+}
+
+type PagesConnectionEdges {
+  cursor: String!
+  node: Pages
+}
+
+type PagesConnection implements Connection {
+  pageInfo: PageInfo!
+  totalCount: Float!
+  edges: [PagesConnectionEdges]
 }
 
 type Mutation {
@@ -130,21 +182,35 @@ type Mutation {
   deleteDocument(collection: String, relativePath: String!): DocumentNode!
   createDocument(collection: String, relativePath: String!, params: DocumentMutation!): DocumentNode!
   createFolder(collection: String, relativePath: String!): DocumentNode!
-  updatePost(relativePath: String!, params: PostMutation!): Post!
-  createPost(relativePath: String!, params: PostMutation!): Post!
+  updateBlog(relativePath: String!, params: BlogMutation!): Blog!
+  createBlog(relativePath: String!, params: BlogMutation!): Blog!
+  updatePages(relativePath: String!, params: PagesMutation!): Pages!
+  createPages(relativePath: String!, params: PagesMutation!): Pages!
 }
 
 input DocumentUpdateMutation {
-  post: PostMutation
+  blog: BlogMutation
+  pages: PagesMutation
   relativePath: String
 }
 
 input DocumentMutation {
-  post: PostMutation
+  blog: BlogMutation
+  pages: PagesMutation
 }
 
-input PostMutation {
+input BlogMutation {
   title: String
+  description: String
+  pubDate: String
+  updatedDate: String
+  heroImage: String
+  body: JSON
+}
+
+input PagesMutation {
+  title: String
+  intro: String
   body: JSON
 }
 
