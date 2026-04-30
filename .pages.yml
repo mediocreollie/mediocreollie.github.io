@@ -1,0 +1,47 @@
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: blog
+    label: Blog Posts
+    type: collection
+    path: src/content/blog
+    filename: "{fields.slug}.md"
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: text
+      - name: pubDate
+        label: Publish Date
+        type: date
+      - name: updatedDate
+        label: Updated Date
+        type: date
+      - name: heroImage
+        label: Hero Image
+        type: image
+      - name: body
+        label: Body
+        type: rich-text
+
+  - name: pages
+    label: Pages
+    type: collection
+    path: src/content/pages
+    filename: "{fields.slug}.md"
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: intro
+        label: Intro
+        type: text
+      - name: body
+        label: Body
+        type: rich-text
