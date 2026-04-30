@@ -42,6 +42,33 @@ content:
       - name: intro
         label: Intro
         type: text
+      - name: heroEyebrow
+        label: Hero Eyebrow
+        type: string
+      - name: heroTitle
+        label: Hero Title
+        type: string
+      - name: heroSubtitle
+        label: Hero Subtitle
+        type: text
+      - name: primaryButtonText
+        label: Primary Button Text
+        type: string
+      - name: primaryButtonUrl
+        label: Primary Button URL
+        type: string
+      - name: secondaryButtonText
+        label: Secondary Button Text
+        type: string
+      - name: secondaryButtonUrl
+        label: Secondary Button URL
+        type: string
+      - name: heroImage
+        label: Hero Image
+        type: image
+      - name: latestPostsTitle
+        label: Latest Posts Section Title
+        type: string
       - name: body
         label: Body
         type: rich-text
