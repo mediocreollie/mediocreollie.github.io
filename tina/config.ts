@@ -92,6 +92,67 @@ export default defineConfig({
           },
         ],
       },
+      {
+        name: "settings",
+        label: "Site Settings",
+        path: "src/content/settings",
+        format: "md",
+        fields: [
+          {
+            type: "string",
+            name: "siteTitle",
+            label: "Site Title",
+            isTitle: true,
+            required: true,
+          },
+          {
+            type: "object",
+            list: true,
+            name: "navLinks",
+            label: "Navigation Links",
+            fields: [
+              {
+                type: "string",
+                name: "label",
+                label: "Link Label",
+                required: true,
+              },
+              {
+                type: "string",
+                name: "url",
+                label: "Link URL",
+                required: true,
+              },
+            ],
+          },
+          {
+            type: "object",
+            list: true,
+            name: "socialLinks",
+            label: "Social Links",
+            fields: [
+              {
+                type: "string",
+                name: "label",
+                label: "Social Label",
+                required: true,
+              },
+              {
+                type: "string",
+                name: "url",
+                label: "Social URL",
+                required: true,
+              },
+              {
+                type: "string",
+                name: "icon",
+                label: "Icon",
+                description: "Icon name: mastodon, twitter, github",
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 });

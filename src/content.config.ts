@@ -37,4 +37,26 @@ const pages = defineCollection({
 	}),
 });
 
-export const collections = { blog, pages };
+const settings = defineCollection({
+	// Load Markdown files in the `src/content/settings/` directory.
+	loader: glob({ base: './src/content/settings', pattern: '**/*.md' }),
+	// Type-check frontmatter using a schema
+	schema: z.object({
+		siteTitle: z.string(),
+		navLinks: z.array(
+			z.object({
+				label: z.string(),
+				url: z.string(),
+			})
+		).optional(),
+		socialLinks: z.array(
+			z.object({
+				label: z.string(),
+				url: z.string(),
+				icon: z.string().optional(),
+			})
+		).optional(),
+	}),
+});
+
+export const collections = { blog, pages, settings };

@@ -72,3 +72,44 @@ content:
       - name: body
         label: Body
         type: rich-text
+
+  - name: settings
+    label: Site Settings
+    type: collection
+    path: src/content/settings
+    filename: "{fields.slug}.md"
+    fields:
+      - name: siteTitle
+        label: Site Title
+        type: string
+        required: true
+      - name: navLinks
+        label: Navigation Links
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Link Label
+            type: string
+            required: true
+          - name: url
+            label: Link URL
+            type: string
+            required: true
+      - name: socialLinks
+        label: Social Links
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Social Label
+            type: string
+            required: true
+          - name: url
+            label: Social URL
+            type: string
+            required: true
+          - name: icon
+            label: Icon
+            type: string
+            description: "Icon name: mastodon, twitter, github"
