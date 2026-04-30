@@ -8,5 +8,6 @@ primaryButtonText: Explore Blog
 primaryButtonUrl: /blog
 secondaryButtonText: Learn More
 secondaryButtonUrl: "#about"
+heroImage: /images/me.jpeg
 latestPostsTitle: Latest Posts
 ---
