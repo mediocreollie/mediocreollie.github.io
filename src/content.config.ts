@@ -33,6 +33,10 @@ const pages = defineCollection({
 		secondaryButtonText: z.string().optional(),
 		secondaryButtonUrl: z.string().optional(),
 		heroImage: z.string().optional(),
+		heroImageMaxWidth: z.string().optional(),
+		heroImageHeight: z.string().optional(),
+		heroImageObjectFit: z.string().optional(),
+		heroImageColumnWidth: z.string().optional(),
 		latestPostsTitle: z.string().optional(),
 	}),
 });

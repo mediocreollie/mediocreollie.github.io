@@ -66,6 +66,22 @@ content:
       - name: heroImage
         label: Hero Image
         type: image
+      - name: heroImageMaxWidth
+        label: Hero Image Max Width
+        type: string
+        description: "Max width example: 500px, 600px, 40rem"
+      - name: heroImageHeight
+        label: Hero Image Height
+        type: string
+        description: "Height example: 350px, 450px, auto"
+      - name: heroImageObjectFit
+        label: Hero Image Object Fit
+        type: string
+        description: "Object fit example: cover, contain"
+      - name: heroImageColumnWidth
+        label: Hero Image Column Width
+        type: string
+        description: "Column width example: 40%, 45%, 50%"
       - name: latestPostsTitle
         label: Latest Posts Section Title
         type: string

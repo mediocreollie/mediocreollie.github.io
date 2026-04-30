@@ -20,6 +20,10 @@ const primaryButtonUrl = homePage?.data.primaryButtonUrl || '/blog';
 const secondaryButtonText = homePage?.data.secondaryButtonText || 'Learn More';
 const secondaryButtonUrl = homePage?.data.secondaryButtonUrl || '#';
 const heroImage = homePage?.data.heroImage || '';
+const heroImageMaxWidth = homePage?.data.heroImageMaxWidth || '500px';
+const heroImageHeight = homePage?.data.heroImageHeight || '350px';
+const heroImageObjectFit = homePage?.data.heroImageObjectFit || 'cover';
+const heroImageColumnWidth = homePage?.data.heroImageColumnWidth || '45%';
 const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 ---
 
@@ -53,7 +57,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 
 			.hero {
 				display: grid;
-				grid-template-columns: 55% 45%;
+				grid-template-columns: calc(100% - var(--hero-image-column-width)) var(--hero-image-column-width);
 				gap: 2rem;
 				align-items: center;
 				min-height: 75vh;
@@ -160,7 +164,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 
 			.hero-image {
 				position: relative;
-				height: 700px;
+				height: var(--hero-image-height);
 			}
 
 			.image-container {
@@ -193,11 +197,11 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 			}
 
 			.portrait-wrapper img {
-				height: 100%;
+				height: var(--hero-image-height);
 				width: auto;
-				max-width: 100%;
+				max-width: var(--hero-image-max-width);
 				filter: grayscale(100%);
-				object-fit: contain;
+				object-fit: var(--hero-image-object-fit);
 				mix-blend-mode: multiply;
 			}
 
@@ -258,7 +262,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 		<Header />
 		<div class="container">
 			<main>
-				<section class="hero">
+				<section class="hero" style={`--hero-image-max-width: ${heroImageMaxWidth}; --hero-image-height: ${heroImageHeight}; --hero-image-object-fit: ${heroImageObjectFit}; --hero-image-column-width: ${heroImageColumnWidth};`}>
 					<div class="hero-content">
 						{heroEyebrow && <span class="badge">{heroEyebrow}</span>}
 						<h1 set:html={heroTitle} />
