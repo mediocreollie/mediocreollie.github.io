@@ -1,0 +1,18 @@
+---
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  posts: any[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul>
+  {posts.map((post) => (
+    <li>
+      <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+      <p class="date"><FormattedDate date={post.data.pubDate} /></p>
+    </li>
+  ))}
+</ul>
