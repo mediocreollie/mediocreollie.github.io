@@ -2,7 +2,7 @@
 title: Homepage
 intro: I made a website
 heroEyebrow: Powered by unemploymet
-heroTitle: Welcome to My <span>Creative Space</span>
+heroTitle: I made a website
 heroSubtitle: A place for me to store digital creations and track my learnings
 primaryButtonText: Explore Blog
 primaryButtonUrl: /blog
