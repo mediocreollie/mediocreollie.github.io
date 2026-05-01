@@ -7,289 +7,170 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getEntry, getCollection } from 'astro:content';
 
 const homePage = await getEntry('pages', 'home');
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-).slice(0, 5);
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
 
-// Extract frontmatter data with defaults
+// CMS fields
 const heroEyebrow = homePage?.data.heroEyebrow || '';
 const heroTitle = homePage?.data.heroTitle || SITE_TITLE;
-const heroSubtitle = homePage?.data.heroSubtitle || homePage?.data.intro || SITE_DESCRIPTION;
-const primaryButtonText = homePage?.data.primaryButtonText || 'Get Started';
+const heroSubtitle = homePage?.data.heroSubtitle || SITE_DESCRIPTION;
+
+const primaryButtonText = homePage?.data.primaryButtonText || 'Explore';
 const primaryButtonUrl = homePage?.data.primaryButtonUrl || '/blog';
+
 const secondaryButtonText = homePage?.data.secondaryButtonText || 'Learn More';
 const secondaryButtonUrl = homePage?.data.secondaryButtonUrl || '#';
+
 const heroImage = homePage?.data.heroImage || '';
+
 const heroImageMaxWidth = homePage?.data.heroImageMaxWidth || '500px';
 const heroImageHeight = homePage?.data.heroImageHeight || '350px';
 const heroImageObjectFit = homePage?.data.heroImageObjectFit || 'cover';
 const heroImageColumnWidth = homePage?.data.heroImageColumnWidth || '45%';
+
 const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={heroTitle || SITE_TITLE} description={heroSubtitle || SITE_DESCRIPTION} />
-		<style>
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
+  <head>
+    <BaseHead title={heroTitle} description={heroSubtitle} />
+    <style>
+      body {
+        font-family: Inter, sans-serif;
+        background: #fdfdfd;
+        color: #111;
+      }
 
-			body {
-				font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-				background-color: #fdfdfd;
-				color: #0d0d0d;
-				line-height: 1.5;
-			}
+      main {
+        width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 0 3rem;
+      }
 
-			.container {
-				max-width: 1300px;
-				margin: 0 auto;
-				padding: 0 2.5rem;
-			}
+      .container {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 0 3rem;
+      }
 
-			main {
-				padding: 2rem 0 4rem;
-			}
+      .hero {
+        display: grid;
+        grid-template-columns: calc(100% - var(--hero-image-column-width)) var(--hero-image-column-width);
+        gap: 3rem;
+        align-items: center;
+        min-height: 75vh;
+      }
 
-			.hero {
-				display: grid;
-				grid-template-columns: calc(100% - var(--hero-image-column-width)) var(--hero-image-column-width);
-				gap: 2rem;
-				align-items: center;
-				min-height: 75vh;
-			}
+      .hero-content {
+        max-width: 550px;
+      }
 
-			.hero-content {
-				padding-right: 1rem;
-			}
+      h1 {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+      }
 
-			.badge {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.5rem;
-				background: #f3f3f3;
-				padding: 0.35rem 0.9rem;
-				border-radius: 100px;
-				font-size: 0.72rem;
-				font-weight: 500;
-				margin-bottom: 1.8rem;
-				letter-spacing: 0.01em;
-			}
+      .description {
+        color: #555;
+        margin-bottom: 2rem;
+      }
 
-			.badge::before {
-				content: '';
-				width: 8px;
-				height: 8px;
-				background: #0d0d0d;
-				border-radius: 50%;
-			}
+      .buttons {
+        display: flex;
+        gap: 1rem;
+      }
 
-			h1 {
-				font-size: 4rem;
-				font-weight: 700;
-				line-height: 1.05;
-				margin-bottom: 1.8rem;
-				letter-spacing: -0.04em;
-			}
+      .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+      }
 
-			h1 span {
-				font-style: italic;
-				font-weight: 400;
-				color: #555;
-				font-family: Georgia, 'Times New Roman', Times, serif;
-			}
+      .btn-primary {
+        background: black;
+        color: white;
+      }
 
-			.description {
-				font-size: 0.98rem;
-				color: #555;
-				margin-bottom: 2.2rem;
-				max-width: 520px;
-				line-height: 1.7;
-			}
+      .btn-secondary {
+        border: 1px solid black;
+      }
 
-			.buttons {
-				display: flex;
-				gap: 1.2rem;
-				margin-bottom: 5rem;
-				align-items: center;
-			}
+      /* ✅ FIXED IMAGE SYSTEM */
+      .hero-image {
+        display: flex;
+        width: 100%;
+        justify-self: end;
+        justify-content: flex-end;
+        align-items: center;
+      }
 
-			.btn {
-				padding: 0.9rem 1.8rem;
-				border-radius: 12px;
-				font-size: 0.9rem;
-				font-weight: 600;
-				cursor: pointer;
-				border: none;
-				transition: all 0.2s ease;
-				text-decoration: none;
-				display: inline-block;
-			}
+      .hero-image img {
+        width: 100%;
+        max-width: var(--hero-image-max-width);
+        height: var(--hero-image-height);
+        object-fit: var(--hero-image-object-fit);
+        border-radius: 12px;
+      }
 
-			.btn-primary {
-				background: #0d0d0d;
-				color: white;
-				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-			}
+      .latest-posts {
+        margin-top: 5rem;
+      }
 
-			.btn-primary:hover {
-				background: #262626;
-			}
+      @media (max-width: 768px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
 
-			.btn-secondary {
-				background: transparent;
-				color: #0d0d0d;
-				display: inline-flex;
-				align-items: center;
-				gap: 0.6rem;
-				padding: 0.9rem 1rem;
-				font-weight: 500;
-			}
+        .hero-image {
+          justify-self: auto;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
 
-			.btn-secondary::before {
-				content: '▶';
-				font-size: 0.6rem;
-				width: 28px;
-				height: 28px;
-				border: 2px solid #0d0d0d;
-				border-radius: 50%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
+  <body>
+    <Header />
 
-			.hero-image {
-				position: relative;
-				height: var(--hero-image-height);
-			}
+    <div class="container">
+      <main>
+        <section
+          class="hero"
+          style={`
+            --hero-image-max-width: ${heroImageMaxWidth};
+            --hero-image-height: ${heroImageHeight};
+            --hero-image-object-fit: ${heroImageObjectFit};
+            --hero-image-column-width: ${heroImageColumnWidth};
+          `}
+        >
+          <div class="hero-content">
+            {heroEyebrow && <p>{heroEyebrow}</p>}
+            <h1 set:html={heroTitle} />
+            <p class="description">{heroSubtitle}</p>
 
-			.image-container {
-				position: absolute;
-				right: -4rem;
-				top: 0;
-				width: 120%;
-				height: 100%;
-			}
+            <div class="buttons">
+              <a href={primaryButtonUrl} class="btn btn-primary">{primaryButtonText}</a>
+              <a href={secondaryButtonUrl} class="btn btn-secondary">{secondaryButtonText}</a>
+            </div>
+          </div>
 
-			.gradient-bg {
-				position: absolute;
-				left: 10%;
-				top: 40%;
-				transform: translate(-50%, -50%);
-				width: 65%;
-				height: 70%;
-				background: radial-gradient(ellipse at center, #ffd4d4 0%, #ffb3b3 50%, transparent 70%);
-				border-radius: 50%;
-				filter: blur(70px);
-				opacity: 0.9;
-			}
+          {heroImage && (
+            <div class="hero-image">
+              <img src={heroImage} alt="Hero" />
+            </div>
+          )}
+        </section>
 
-			.portrait-wrapper {
-				position: relative;
-				height: 100%;
-				display: flex;
-				justify-content: flex-end;
-				align-items: flex-end;
-			}
+        <section class="latest-posts">
+          <h2>{latestPostsTitle}</h2>
+          <BlogList posts={posts} />
+        </section>
+      </main>
+    </div>
 
-			.portrait-wrapper img {
-				height: var(--hero-image-height);
-				width: auto;
-				max-width: var(--hero-image-max-width);
-				filter: grayscale(100%);
-				object-fit: var(--hero-image-object-fit);
-				mix-blend-mode: multiply;
-			}
-
-			.latest-posts {
-				margin-top: 6rem;
-				padding-top: 4rem;
-				border-top: 1px solid rgba(0, 0, 0, 0.08);
-			}
-
-			.latest-posts h2 {
-				font-size: 2rem;
-				font-weight: 600;
-				margin-bottom: 2rem;
-			}
-
-			.latest-posts ul {
-				list-style: none;
-				padding: 0;
-			}
-
-			.latest-posts li {
-				margin-bottom: 1rem;
-			}
-
-			.latest-posts a {
-				text-decoration: none;
-				color: inherit;
-				font-weight: 500;
-			}
-
-			.latest-posts .date {
-				margin: 0.25rem 0 0 0;
-				color: #888;
-				font-size: 0.9rem;
-			}
-
-			@media (max-width: 768px) {
-				.hero {
-					grid-template-columns: 1fr;
-					min-height: auto;
-				}
-
-				.hero-image {
-					display: none;
-				}
-
-				h1 {
-					font-size: 2.5rem;
-				}
-
-				.container {
-					padding: 0 1.5rem;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<div class="container">
-			<main>
-				<section class="hero" style={`--hero-image-max-width: ${heroImageMaxWidth}; --hero-image-height: ${heroImageHeight}; --hero-image-object-fit: ${heroImageObjectFit}; --hero-image-column-width: ${heroImageColumnWidth};`}>
-					<div class="hero-content">
-						{heroEyebrow && <span class="badge">{heroEyebrow}</span>}
-						<h1 set:html={heroTitle} />
-						<p class="description">{heroSubtitle}</p>
-						<div class="buttons">
-							<a href={primaryButtonUrl} class="btn btn-primary">{primaryButtonText}</a>
-							<a href={secondaryButtonUrl} class="btn btn-secondary">{secondaryButtonText}</a>
-						</div>
-					</div>
-					{heroImage && (
-						<div class="hero-image">
-							<div class="image-container">
-								<div class="gradient-bg"></div>
-								<div class="portrait-wrapper">
-									<img src={heroImage} alt="Hero" />
-								</div>
-							</div>
-						</div>
-					)}
-				</section>
-
-				<section class="latest-posts">
-					<h2>{latestPostsTitle}</h2>
-					<BlogList posts={posts} />
-				</section>
-			</main>
-		</div>
-		<Footer />
-	</body>
+    <Footer />
+  </body>
 </html>
