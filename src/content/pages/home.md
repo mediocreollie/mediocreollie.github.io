@@ -12,6 +12,6 @@ heroImage: /images/me-1.jpeg
 heroImageMaxWidth: 750px
 heroImageHeight: 525px
 heroImageObjectFit: cover
-heroImageColumnWidth: 60%
+heroImageColumnWidth: 50%
 latestPostsTitle: Latest Posts
 ---
