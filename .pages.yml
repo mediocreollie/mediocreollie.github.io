@@ -82,6 +82,10 @@ content:
         label: Hero Image Column Width
         type: string
         description: "Column width example: 40%, 45%, 50%"
+      - name: heroImageTranslateX
+        label: Hero Image Horizontal Offset
+        type: string
+        description: "Use values like -40px, 0px, 40px. Positive moves image right, negative moves image left."
       - name: latestPostsTitle
         label: Latest Posts Section Title
         type: string

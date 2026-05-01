@@ -28,6 +28,7 @@ const heroImageMaxWidth = homePage?.data.heroImageMaxWidth || '500px';
 const heroImageHeight = homePage?.data.heroImageHeight || '350px';
 const heroImageObjectFit = homePage?.data.heroImageObjectFit || 'cover';
 const heroImageColumnWidth = homePage?.data.heroImageColumnWidth || '45%';
+const heroImageTranslateX = homePage?.data.heroImageTranslateX || '0px';
 
 const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 ---
@@ -113,6 +114,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
         height: var(--hero-image-height);
         object-fit: var(--hero-image-object-fit);
         border-radius: 12px;
+        transform: translateX(var(--hero-image-translate-x));
       }
 
       .latest-posts {
@@ -144,6 +146,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
             --hero-image-height: ${heroImageHeight};
             --hero-image-object-fit: ${heroImageObjectFit};
             --hero-image-column-width: ${heroImageColumnWidth};
+            --hero-image-translate-x: ${heroImageTranslateX};
           `}
         >
           <div class="hero-content">
