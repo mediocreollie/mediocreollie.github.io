@@ -13,6 +13,6 @@ heroImageMaxWidth: 750px
 heroImageHeight: 525px
 heroImageObjectFit: cover
 heroImageColumnWidth: 50%
-heroImageTranslateX: -50px
+heroImageTranslateX: -100px
 latestPostsTitle: Latest Posts
 ---
