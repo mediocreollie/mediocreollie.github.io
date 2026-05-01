@@ -8,10 +8,10 @@ primaryButtonText: Explore Blog
 primaryButtonUrl: /blog
 secondaryButtonText: Learn More
 secondaryButtonUrl: "#about"
-heroImage: /images/your-image.jpg
+heroImage: /images/me-1.jpeg
 heroImageMaxWidth: 750px
 heroImageHeight: 525px
 heroImageObjectFit: cover
-heroImageColumnWidth: 45%
+heroImageColumnWidth: 60%
 latestPostsTitle: Latest Posts
 ---
