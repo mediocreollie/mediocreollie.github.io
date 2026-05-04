@@ -25,6 +25,10 @@ content:
       - name: heroImage
         label: Hero Image
         type: image
+      - name: draft
+        label: Draft
+        type: boolean
+        description: Tick this to hide the post from the live site.
       - name: body
         label: Body
         type: rich-text
