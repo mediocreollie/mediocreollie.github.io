@@ -31,6 +31,14 @@ const heroImageObjectFit = homePage?.data.heroImageObjectFit || 'cover';
 const heroImageColumnWidth = homePage?.data.heroImageColumnWidth || '45%';
 const heroImageTranslateX = homePage?.data.heroImageTranslateX || '0px';
 
+const mobileHeroImageMaxWidth = homePage?.data.mobileHeroImageMaxWidth || '100%';
+const mobileHeroImageHeight = homePage?.data.mobileHeroImageHeight || '360px';
+const mobileHeroImageObjectFit = homePage?.data.mobileHeroImageObjectFit || 'cover';
+const mobileHeroImageTranslateX = homePage?.data.mobileHeroImageTranslateX || '0px';
+const mobileHeroTextAlign = homePage?.data.mobileHeroTextAlign || 'left';
+const mobileHeroTitleSize = homePage?.data.mobileHeroTitleSize || '3rem';
+const mobileShowHeroImage = homePage?.data.mobileShowHeroImage ?? true;
+
 const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 ---
 
@@ -60,10 +68,11 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
 
       .hero {
         display: grid;
-        grid-template-columns: calc(100% - var(--hero-image-column-width)) var(--hero-image-column-width);
+        grid-template-columns: 1fr;
         gap: 3rem;
         align-items: center;
         min-height: 75vh;
+        text-align: var(--mobile-hero-text-align);
       }
 
       .hero-content {
@@ -71,7 +80,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
       }
 
       h1 {
-        font-size: 4rem;
+        font-size: var(--mobile-hero-title-size);
         margin-bottom: 1.5rem;
       }
 
@@ -104,32 +113,52 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
       .hero-image {
         display: flex;
         width: 100%;
-        justify-self: end;
-        justify-content: flex-end;
+        justify-self: auto;
+        justify-content: center;
         align-items: center;
       }
 
       .hero-image img {
         width: 100%;
-        max-width: var(--hero-image-max-width);
-        height: var(--hero-image-height);
-        object-fit: var(--hero-image-object-fit);
+        max-width: var(--mobile-hero-image-max-width);
+        height: var(--mobile-hero-image-height);
+        object-fit: var(--mobile-hero-image-object-fit);
         border-radius: 12px;
-        transform: translateX(var(--hero-image-translate-x));
+        transform: translateX(var(--mobile-hero-image-translate-x));
+      }
+
+      .hero-image.mobile-hide-on-mobile {
+        display: none;
       }
 
       .latest-posts {
         margin-top: 5rem;
       }
 
-      @media (max-width: 768px) {
+      @media (min-width: 768px) {
         .hero {
-          grid-template-columns: 1fr;
+          grid-template-columns: calc(100% - var(--hero-image-column-width)) var(--hero-image-column-width);
+          text-align: left;
         }
 
         .hero-image {
-          justify-self: auto;
-          justify-content: center;
+          justify-self: end;
+          justify-content: flex-end;
+        }
+
+        .hero-image.mobile-hide-on-mobile {
+          display: block;
+        }
+
+        .hero-image img {
+          max-width: var(--hero-image-max-width);
+          height: var(--hero-image-height);
+          object-fit: var(--hero-image-object-fit);
+          transform: translateX(var(--hero-image-translate-x));
+        }
+
+        .hero-content h1 {
+          font-size: 4rem;
         }
       }
     </style>
@@ -148,6 +177,12 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
             --hero-image-object-fit: ${heroImageObjectFit};
             --hero-image-column-width: ${heroImageColumnWidth};
             --hero-image-translate-x: ${heroImageTranslateX};
+            --mobile-hero-image-max-width: ${mobileHeroImageMaxWidth};
+            --mobile-hero-image-height: ${mobileHeroImageHeight};
+            --mobile-hero-image-object-fit: ${mobileHeroImageObjectFit};
+            --mobile-hero-image-translate-x: ${mobileHeroImageTranslateX};
+            --mobile-hero-text-align: ${mobileHeroTextAlign};
+            --mobile-hero-title-size: ${mobileHeroTitleSize};
           `}
         >
           <div class="hero-content">
@@ -162,7 +197,7 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
           </div>
 
           {heroImage && (
-            <div class="hero-image">
+            <div class={"hero-image" + (mobileShowHeroImage ? '' : ' mobile-hide-on-mobile')}>
               <img src={heroImage} alt="Hero" />
             </div>
           )}
