@@ -39,6 +39,13 @@ const pages = defineCollection({
 		heroImageObjectFit: z.string().optional(),
 		heroImageColumnWidth: z.string().optional(),
 		heroImageTranslateX: z.string().optional(),
+		mobileHeroImageMaxWidth: z.string().optional(),
+		mobileHeroImageHeight: z.string().optional(),
+		mobileHeroImageObjectFit: z.string().optional(),
+		mobileHeroImageTranslateX: z.string().optional(),
+		mobileHeroTextAlign: z.string().optional(),
+		mobileHeroTitleSize: z.string().optional(),
+		mobileShowHeroImage: z.boolean().optional(),
 		latestPostsTitle: z.string().optional(),
 	}),
 });

@@ -90,6 +90,33 @@ content:
         label: Hero Image Horizontal Offset
         type: string
         description: "Use values like -40px, 0px, 40px. Positive moves image right, negative moves image left."
+      - name: mobileHeroImageMaxWidth
+        label: Mobile Hero Image Max Width
+        type: string
+        description: "Max width example: 100%, 320px, 20rem"
+      - name: mobileHeroImageHeight
+        label: Mobile Hero Image Height
+        type: string
+        description: "Height example: 360px, 420px, auto"
+      - name: mobileHeroImageObjectFit
+        label: Mobile Hero Image Object Fit
+        type: string
+        description: "Object fit example: cover, contain"
+      - name: mobileHeroImageTranslateX
+        label: Mobile Hero Image Horizontal Offset
+        type: string
+        description: "Use values like -20px, 0px, 20px. Positive moves image right, negative moves image left."
+      - name: mobileHeroTextAlign
+        label: Mobile Hero Text Align
+        type: string
+        description: "Text align example: left, center, right"
+      - name: mobileHeroTitleSize
+        label: Mobile Hero Title Size
+        type: string
+        description: "Title font size example: 3rem, 2.5rem"
+      - name: mobileShowHeroImage
+        label: Show Hero Image on Mobile
+        type: boolean
       - name: latestPostsTitle
         label: Latest Posts Section Title
         type: string

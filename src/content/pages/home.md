@@ -14,5 +14,12 @@ heroImageHeight: 525px
 heroImageObjectFit: cover
 heroImageColumnWidth: 50%
 heroImageTranslateX: -100px
+mobileHeroImageMaxWidth: 100%
+mobileHeroImageHeight: 420px
+mobileHeroImageObjectFit: cover
+mobileHeroImageTranslateX: 0px
+mobileHeroTextAlign: left
+mobileHeroTitleSize: 3rem
+mobileShowHeroImage: true
 latestPostsTitle: Latest Posts
 ---
