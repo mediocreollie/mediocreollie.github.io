@@ -1,22 +1,17 @@
 ---
-siteTitle: "Ollie Writes Things"
+siteTitle: Ollie Writes Things
 navLinks:
-  - label: "Home"
-    url: "/"
-  - label: "Blog"
-    url: "/blog"
-  - label: "About"
-    url: "/about"
+  - label: Home
+    url: /
+  - label: Blog
+    url: /blog
+  - label: About
+    url: /about
 socialLinks:
-  - label: "Mastodon"
-    url: "https://m.webtoo.ls/@astro"
-    icon: "mastodon"
-  - label: "Twitter"
-    url: "https://twitter.com/astrodotbuild"
-    icon: "twitter"
-  - label: "GitHub"
-    url: "https://github.com/withastro/astro"
-    icon: "github"
-footerText: "© 2026 Ollie Writes Things. All rights reserved."
-footerShowSocialLinks: true
+  - label: LinkedIn
+    url: https://www.linkedin.com/in/oliver-wilson-9893ab188/
+    icon: LinkedIn
+  - label: Instagram
+    url: www.instagram.com/user/olliecreatesthings
+    icon: instagram
 ---
