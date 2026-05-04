@@ -163,7 +163,7 @@ content:
           - name: icon
             label: Icon
             type: string
-            description: "Icon name: mastodon, twitter, github"
+            description: "Icon name: mastodon, twitter, github, linkedin, instagram"
       - name: footerText
         label: Footer Text
         type: string
