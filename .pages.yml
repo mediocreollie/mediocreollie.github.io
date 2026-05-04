@@ -164,3 +164,9 @@ content:
             label: Icon
             type: string
             description: "Icon name: mastodon, twitter, github"
+      - name: footerText
+        label: Footer Text
+        type: string
+      - name: footerShowSocialLinks
+        label: Show Social Links in Footer
+        type: boolean

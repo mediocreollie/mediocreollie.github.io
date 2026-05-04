@@ -17,4 +17,6 @@ socialLinks:
   - label: "GitHub"
     url: "https://github.com/withastro/astro"
     icon: "github"
+footerText: "© 2026 Ollie Writes Things. All rights reserved."
+footerShowSocialLinks: true
 ---

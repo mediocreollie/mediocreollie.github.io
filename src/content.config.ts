@@ -69,6 +69,8 @@ const settings = defineCollection({
 				icon: z.string().optional(),
 			})
 		).optional(),
+		footerText: z.string().optional(),
+		footerShowSocialLinks: z.boolean().optional().default(true),
 	}),
 });
 
