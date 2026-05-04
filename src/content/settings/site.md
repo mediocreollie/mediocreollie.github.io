@@ -10,8 +10,9 @@ navLinks:
 socialLinks:
   - label: LinkedIn
     url: https://www.linkedin.com/in/oliver-wilson-9893ab188/
-    icon: LinkedIn
-  - label: Instagram
+    icon: linkedin
+  - label: instagram
     url: www.instagram.com/user/olliecreatesthings
     icon: instagram
+footerShowSocialLinks: false
 ---
