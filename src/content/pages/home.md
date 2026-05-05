@@ -1,9 +1,9 @@
 ---
 title: Homepage
 intro: Welcome
-heroEyebrow: Powered by unemployment
+heroEyebrow: Hi I'm Ollie and
 heroTitle: I made a website
-heroSubtitle: A place for me to store digital creations and track my learnings
+heroSubtitle: "This is a place for me to practice and document new skills "
 primaryButtonText: Explore Blog
 primaryButtonUrl: /blog
 secondaryButtonText: Learn More
