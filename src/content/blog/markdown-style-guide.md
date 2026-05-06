@@ -1,5 +1,6 @@
 ---
 title: Placeholder 2
+slug: markdown-style-guide
 description: Here is a sample of some basic Markdown syntax that can be used
   when writing Markdown content in Astro.
 pubDate: 2026-04-30

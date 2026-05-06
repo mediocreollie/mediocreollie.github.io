@@ -13,6 +13,11 @@ content:
         label: Title
         type: string
         required: true
+      - name: slug
+        label: Slug
+        type: string
+        required: true
+        description: URL slug, for example getting-stuck-in-the-weeds
       - name: description
         label: Description
         type: text
