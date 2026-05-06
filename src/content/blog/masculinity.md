@@ -37,5 +37,5 @@ description: >
   So stop overthinking what it means to be a man.
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
-draft: false
+draft: true
 ---
