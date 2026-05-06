@@ -3,7 +3,7 @@ title: Job Hunting
 slug: Job_Hunting
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
-draft: false
+draft: true
 ---
 I’m a bit cynical when someone who has been in work for three years gives job hunting advice.
 
