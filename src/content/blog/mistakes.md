@@ -3,7 +3,7 @@ title: Mistakes happen we are only human
 slug: Mistakes
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
-draft: false
+draft: true
 ---
 I recently joked in a job interview that there were so many mistakes to pick from when asked what I’d learned from one.
 
