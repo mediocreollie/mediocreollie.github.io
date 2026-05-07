@@ -3,7 +3,7 @@ title: How do I get out of my echo chamber
 slug: Echo-chamber
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
-draft: false
+draft: true
 ---
 “I’ve been reading Playboy.
 
