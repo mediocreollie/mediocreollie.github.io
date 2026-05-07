@@ -1,5 +1,5 @@
 ---
-title: Getting stuck in the weeds
+title: The hill, the woods and the weeds
 slug: getting-stuck-in-the-weeds
 pubDate: 2026-04-30
 updatedDate: 2026-04-30
