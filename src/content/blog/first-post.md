@@ -7,22 +7,30 @@ updatedDate: 2026-04-30
 heroImage: ../../assets/blog/IMG_9376.jpeg
 draft: false
 ---
-There is this idea I've observed at work and with myself, with how you react to new information depending how invested you are in a project/product. 
+One idea I’ve had at work is how your perspective changes depending on how close you are to a project, product, or problem.
 
-When you are on top of the hill your vision isn't clouded by bias, you are able to make decisions being able to see the bigger picture but can't see all the details 
+I think of it like a hill, with woods and weeds around it.
 
-When you are at the bottom of the hill you can't see everything but aren't able to see everything so have some bias but don't know all the details
+At the top of the hill, you can see the bigger picture. You understand how different parts connect, where the organisation is trying to go, and the trade-offs between competing priorities. But because you are further away, some of the operational detail becomes less visible.
 
-When you are in the woods you can't see much apart from the trees around you, but you know most of the details in the woods
+At the bottom of the hill, you still have visibility of the wider landscape, but you are closer to execution. You begin to feel the realities, constraints, and operational pressures more directly.
 
-When you are stuck in the weeds you can't see anything else but the weeds, you know all the little details of the weeds but forget about the bigger picture. 
+In the woods, your visibility narrows, but your understanding deepens. You know your area extremely well because you live in it every day. You feel the problems directly and understand details others may completely miss. The closer you are to the work, the easier it becomes to believe your area is the most important, because you experience the consequences firsthand.
 
+Then there are the weeds.
 
+Being in the weeds is when your focus becomes so narrow that everything outside the immediate issue starts to disappear. You know every tiny detail of the problem in front of you, but it becomes harder to see broader business priorities, competing pressures, or why certain decisions are being made elsewhere.
 
-I think being at the top of the hill is hard, this is often a place where directors of a function will sit.
+The interesting thing is that none of these positions are inherently wrong. Different problems require different levels of perspective.
 
-Being at the bottom of the hill is where a lot of managers sit, they have exposure to other parts of the business and information impacting the business but have more of the details.
+The challenge is recognising where you are, and knowing when you need to move:
 
-Alot of specialist jobs fall into the woods, where your function is the most important and you feel the issues the most. 
+- up the hill to regain perspective,
+- down the hill to reconnect with reality,
+- into the woods to build understanding,
+- or into the weeds to solve difficult problems.
 
-The weeds is something speciailists fall into, where they are so focused on a project or product they forget to learn about other parts of the business and can get frustated when things don't go their way. A bad place to be.
+People often become frustrated with each other because they are viewing the same organisation from completely different positions. Most people are partially right, but naturally limited by what they can see from where they stand.
+
+![image.png](../../assets/blog/image-1.png)
+
