@@ -1,5 +1,5 @@
 ---
-title: I got an E in computer science, I have no made a custom web backend
+title: I got an E in computer science, I have now made a custom web backend
 slug: web-backend
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
