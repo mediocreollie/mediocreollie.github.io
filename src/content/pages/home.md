@@ -30,4 +30,14 @@ featureCards:
     description: Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.
   - title: AI-enabled, people-led work
     description: Calm, practical AI adoption that improves processes and supports internal teams without adding noise.
+workItems:
+  - title: Product rhythm for early-stage teams
+    description: Structured collaboration and storytelling that keeps decision-making calm, clear and forward-moving.
+    tag: Product
+  - title: Audience-led editorial systems
+    description: Building simple publishing foundations for stories, launches and team narratives.
+    tag: Content
+  - title: Designing warm digital experiences
+    description: Softly structured visual language for websites, tools and campaigns that feel human and intentional.
+    tag: Design
 ---

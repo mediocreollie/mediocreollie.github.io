@@ -17,7 +17,7 @@ const {
 
 <ul class="post-list">
   {posts.map((post) => (
-    <li class="post-card">
+    <li class="post-card card card--writing">
       <a class="post-card-link" href={`/blog/${post.id}`} aria-label={`Read ${post.data.title}`}>
         {showImage && post.data.heroImage ? (
           <div class="post-card-image">

@@ -12,269 +12,149 @@ const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 5);
 
-const heroEyebrow = homePage?.data.heroEyebrow || '';
-const heroTitle = homePage?.data.heroTitle || SITE_TITLE;
-const heroSubtitle = homePage?.data.heroSubtitle || SITE_DESCRIPTION;
+const pageData = homePage?.data as Record<string, any> | undefined;
+const heroEyebrow = pageData?.heroEyebrow || '';
+const heroTitle = pageData?.heroTitle || SITE_TITLE;
+const heroSubtitle = pageData?.heroSubtitle || SITE_DESCRIPTION;
 
-const primaryButtonText = homePage?.data.primaryButtonText || 'Explore';
-const primaryButtonUrl = homePage?.data.primaryButtonUrl || '/blog';
+const primaryButtonText = pageData?.primaryButtonText || 'Explore';
+const primaryButtonUrl = pageData?.primaryButtonUrl || '/blog';
 
-const secondaryButtonText = homePage?.data.secondaryButtonText || 'Learn More';
-const secondaryButtonUrl = homePage?.data.secondaryButtonUrl || '#';
+const secondaryButtonText = pageData?.secondaryButtonText || 'Learn More';
+const secondaryButtonUrl = pageData?.secondaryButtonUrl || '#';
 
-const heroImage = homePage?.data.heroImage || '';
-const heroImageMaxWidth = homePage?.data.heroImageMaxWidth || '500px';
-const heroImageHeight = homePage?.data.heroImageHeight || '350px';
-const heroImageObjectFit = homePage?.data.heroImageObjectFit || 'cover';
-const heroImageColumnWidth = homePage?.data.heroImageColumnWidth || '45%';
-const heroImageTranslateX = homePage?.data.heroImageTranslateX || '0px';
+const heroImage = pageData?.heroImage || '';
+const heroImageMaxWidth = pageData?.heroImageMaxWidth || '750px';
+const heroImageHeight = pageData?.heroImageHeight || '525px';
+const heroImageObjectFit = pageData?.heroImageObjectFit || 'cover';
+const heroImageTranslateX = pageData?.heroImageTranslateX || '0px';
 
-const mobileHeroImageMaxWidth = homePage?.data.mobileHeroImageMaxWidth || '100%';
-const mobileHeroImageHeight = homePage?.data.mobileHeroImageHeight || '360px';
-const mobileHeroImageObjectFit = homePage?.data.mobileHeroImageObjectFit || 'cover';
-const mobileHeroImageTranslateX = homePage?.data.mobileHeroImageTranslateX || '0px';
-const mobileHeroTextAlign = homePage?.data.mobileHeroTextAlign || 'left';
-const mobileHeroTitleSize = homePage?.data.mobileHeroTitleSize || '3rem';
-const mobileShowHeroImage = homePage?.data.mobileShowHeroImage ?? true;
-const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
-const featureCards = homePage?.data.featureCards || [];
+const mobileHeroImageMaxWidth = pageData?.mobileHeroImageMaxWidth || '100%';
+const mobileHeroImageHeight = pageData?.mobileHeroImageHeight || '420px';
+const mobileHeroImageObjectFit = pageData?.mobileHeroImageObjectFit || 'cover';
+const mobileHeroImageTranslateX = pageData?.mobileHeroImageTranslateX || '0px';
+const mobileShowHeroImage = pageData?.mobileShowHeroImage ?? true;
+const latestPostsTitle = pageData?.latestPostsTitle || 'Latest Posts';
+const featureCards = pageData?.featureCards || [];
+const workItems = pageData?.workItems || [
+  {
+    title: 'Product rhythm for early-stage teams',
+    description: 'Structured collaboration and storytelling that keeps decision-making calm, clear and forward-moving.',
+    tag: 'Product',
+  },
+  {
+    title: 'Audience-led editorial systems',
+    description: 'Building simple publishing foundations for stories, launches and team narratives.',
+    tag: 'Content',
+  },
+  {
+    title: 'Designing warm digital experiences',
+    description: 'Softly structured visual language for websites, tools and campaigns that feel human and intentional.',
+    tag: 'Design',
+  },
+];
+
+const heroImageClasses = `hero-image${mobileShowHeroImage ? '' : ' hero-image--hidden-mobile'}`;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <BaseHead title={heroTitle} description={heroSubtitle} />
-    <style>
-      body {
-        font-family: Inter, sans-serif;
-        background: rgb(var(--surface));
-        color: rgb(var(--text));
-      }
-
-      main {
-        width: 100%;
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 0 1.5rem 3rem;
-      }
-
-      .hero {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-        align-items: center;
-        padding: 3rem 0 1rem;
-      }
-
-      .hero-card {
-        background: rgba(var(--surface-alt), 0.95);
-        border: 1px solid rgba(var(--border), 0.7);
-        border-radius: 32px;
-        box-shadow: var(--box-shadow);
-        padding: 2.5rem;
-      }
-
-      .hero-content {
-        max-width: 680px;
-      }
-
-      .hero-eyebrow {
-        margin: 0 0 1rem;
-        color: rgb(var(--muted));
-        font-size: 0.95rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-      }
-
-      .hero-content h1 {
-        margin: 0 0 1.25rem;
-        line-height: 1.02;
-      }
-
-      .description {
-        color: rgb(var(--muted));
-        max-width: 44rem;
-        font-size: 1.05rem;
-        line-height: 1.9;
-        margin-bottom: 2rem;
-      }
-
-      .buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.95rem 1.75rem;
-        border-radius: 999px;
-        text-decoration: none;
-        font-weight: 700;
-      }
-
-      .btn-primary {
-        background: rgb(var(--accent));
-        color: white;
-        border: 1px solid transparent;
-        box-shadow: 0 18px 40px rgba(34, 41, 57, 0.12);
-      }
-
-      .btn-secondary {
-        background: rgba(var(--accent), 0.08);
-        color: rgb(var(--text));
-        border: 1px solid rgba(var(--accent), 0.18);
-      }
-
-      .btn-primary:hover {
-        background: rgb(var(--accent-soft));
-      }
-
-      .btn-secondary:hover {
-        background: rgba(var(--accent-soft), 0.12);
-        border-color: rgba(var(--accent-soft), 0.25);
-      }
-
-      .hero-image {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 320px;
-      }
-
-      .hero-image img {
-        width: 100%;
-        max-width: var(--mobile-hero-image-max-width);
-        height: var(--mobile-hero-image-height);
-        object-fit: var(--mobile-hero-image-object-fit);
-        border-radius: 28px;
-        box-shadow: var(--box-shadow);
-        transform: translateX(var(--mobile-hero-image-translate-x));
-      }
-
-      .featured-grid {
-        display: grid;
-        gap: 1rem;
-        margin: 3rem 0 3.5rem;
-      }
-
-      .feature-card {
-        background: rgba(var(--surface-alt), 0.95);
-        border: 1px solid rgba(var(--border), 0.7);
-        border-radius: 28px;
-        box-shadow: var(--box-shadow);
-        padding: 1.75rem;
-      }
-
-      .feature-card h3 {
-        margin-top: 0;
-        margin-bottom: 0.75rem;
-      }
-
-      .feature-card p {
-        margin: 0;
-        color: rgb(var(--muted));
-        line-height: 1.8;
-      }
-
-      .latest-posts {
-        margin-top: 2rem;
-      }
-
-      .latest-posts h2 {
-        margin-bottom: 1.5rem;
-      }
-
-      @media (min-width: 768px) {
-        .hero {
-          grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-          gap: 3rem;
-          padding-top: 4rem;
-        }
-
-        .featured-grid {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .hero-image img {
-          max-width: var(--hero-image-max-width);
-          height: var(--hero-image-height);
-          object-fit: var(--hero-image-object-fit);
-          transform: translateX(var(--hero-image-translate-x));
-        }
-      }
-
-      @media (max-width: 720px) {
-        .hero-card,
-        .feature-card {
-          padding: 1.5rem;
-          border-radius: 24px;
-        }
-
-        .hero {
-          gap: 2rem;
-        }
-
-        .hero-image {
-          min-height: auto;
-        }
-      }
-    </style>
   </head>
 
   <body>
     <Header />
 
     <main>
-      <section class="hero-card hero">
-        <div class="hero-content">
-          {heroEyebrow && <p class="hero-eyebrow">{heroEyebrow}</p>}
-          <h1 set:html={heroTitle} />
-          <p class="description">{heroSubtitle}</p>
-          <div class="buttons">
-            <a href={primaryButtonUrl} class="btn btn-primary">{primaryButtonText}</a>
-            <a href={secondaryButtonUrl} class="btn btn-secondary">{secondaryButtonText}</a>
+      <section class="section section--tight">
+        <div class="page-wrapper hero-grid">
+          <article class="card hero-panel">
+            {heroEyebrow && <p class="section-eyebrow">{heroEyebrow}</p>}
+            <h1 set:html={heroTitle} />
+            <p class="description">{heroSubtitle}</p>
+            <div class="hero-actions">
+              <a href={primaryButtonUrl} class="btn btn-primary">{primaryButtonText}</a>
+              <a href={secondaryButtonUrl} class="btn btn-secondary">{secondaryButtonText}</a>
+            </div>
+          </article>
+
+          {heroImage && (
+            <div class={heroImageClasses} style={`--hero-image-max-width: ${heroImageMaxWidth}; --hero-image-height: ${heroImageHeight}; --hero-image-object-fit: ${heroImageObjectFit}; --hero-image-translate-x: ${heroImageTranslateX}; --mobile-hero-image-max-width: ${mobileHeroImageMaxWidth}; --mobile-hero-image-height: ${mobileHeroImageHeight}; --mobile-hero-image-object-fit: ${mobileHeroImageObjectFit}; --mobile-hero-image-translate-x: ${mobileHeroImageTranslateX};`}>
+              <img src={heroImage} alt="Hero" />
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section class="section section--tight">
+        <div class="page-wrapper">
+          <div class="section-header">
+            <p class="section-eyebrow">What I do</p>
+            <h2 class="section-title">Helping teams and brands land more calm, usable work.</h2>
+          </div>
+
+          <div class="feature-grid">
+            {featureCards.length > 0 ? (
+              featureCards.map((card: any) => (
+                <div class="card card--feature">
+                  <p class="card__eyebrow">{card.title}</p>
+                  <p class="card__copy">{card.description}</p>
+                </div>
+              ))
+            ) : (
+              <>
+                <div class="card card--feature">
+                  <p class="card__eyebrow">Creative strategy with commercial clarity</p>
+                  <p class="card__copy">Bringing modern product and marketing thinking together, grounded in outcomes, audience insight and practical delivery.</p>
+                </div>
+                <div class="card card--feature">
+                  <p class="card__eyebrow">Thoughtful operational delivery</p>
+                  <p class="card__copy">Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.</p>
+                </div>
+                <div class="card card--feature">
+                  <p class="card__eyebrow">AI-enabled, people-led work</p>
+                  <p class="card__copy">Calm, practical AI adoption that improves processes and supports internal teams without adding noise.</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
+      </section>
 
-        {heroImage && (
-          <div class={"hero-image" + (mobileShowHeroImage ? '' : ' mobile-hide-on-mobile')}>
-            <img src={heroImage} alt="Hero" />
+      <section class="section">
+        <div class="page-wrapper">
+          <div class="section-header">
+            <p class="section-eyebrow">Selected Work</p>
+            <h2 class="section-title">A small set of recent projects and experiments.</h2>
           </div>
-        )}
+
+          <div class="work-grid">
+            {workItems.map((work: any) => (
+              <article class="card card--project">
+                <p class="card__eyebrow">{work.tag}</p>
+                <h3 class="card__title">{work.title}</h3>
+                <p class="card__copy">{work.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section class="featured-grid">
-        {featureCards.length > 0 ? (
-          featureCards.map((card) => (
-            <div class="feature-card">
-              <h3>{card.title}</h3>
-              <p>{card.description}</p>
+      <section class="section section--tight">
+        <div class="page-wrapper">
+          <div class="section-header section-header--split">
+            <div>
+              <p class="section-eyebrow">Writing</p>
+              <h2 class="section-title">Recent thinking from the blog.</h2>
             </div>
-          ))
-        ) : (
-          <>
-            <div class="feature-card">
-              <h3>Creative strategy with commercial clarity</h3>
-              <p>Bringing modern product and marketing thinking together, grounded in outcomes, audience insight and practical delivery.</p>
-            </div>
-            <div class="feature-card">
-              <h3>Thoughtful operational delivery</h3>
-              <p>Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.</p>
-            </div>
-            <div class="feature-card">
-              <h3>AI-enabled, people-led work</h3>
-              <p>Calm, practical AI adoption that improves processes and supports internal teams without adding noise.</p>
-            </div>
-          </>
-        )}
-      </section>
+            <a href="/blog" class="btn btn-secondary">Read all posts</a>
+          </div>
 
-      <section class="latest-posts">
-        <h2>{latestPostsTitle}</h2>
-        <BlogList posts={posts} />
+          <div class="writing-preview">
+            <BlogList posts={posts} showImage={false} showDescription={true} />
+          </div>
+        </div>
       </section>
     </main>
 
