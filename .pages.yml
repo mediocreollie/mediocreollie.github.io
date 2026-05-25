@@ -133,7 +133,66 @@ content:
       - name: body
         label: Body
         type: rich-text
-
+      - name: metrics
+        label: Metrics
+        type: object
+        list: true
+        description: Optional metric cards shown above the tabs on About page
+        fields:
+          - name: value
+            label: Metric value
+            type: string
+          - name: label
+            label: Metric label
+            type: string
+      - name: tabs
+        label: About tabs
+        type: object
+        list: true
+        description: Define the tab items shown on the About page
+        fields:
+          - name: label
+            label: Tab label
+            type: string
+            required: true
+          - name: heading
+            label: Heading
+            type: string
+          - name: intro
+            label: Intro text
+            type: string
+          - name: body
+            label: Body text
+            type: string
+          - name: bullets
+            label: Bullet list
+            type: string
+            list: true
+          - name: relatedProjects
+            label: Related projects
+            type: object
+            list: true
+            fields:
+              - name: title
+                label: Project title
+                type: string
+              - name: url
+                label: Project URL
+                type: string
+      - name: featureCards
+        label: Feature cards
+        type: object
+        list: true
+        description: Optional feature cards shown on the home page
+        fields:
+          - name: title
+            label: Card title
+            type: string
+            required: true
+          - name: description
+            label: Card description
+            type: string
+      
   - name: settings
     label: Site Settings
     type: collection
