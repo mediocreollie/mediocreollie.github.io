@@ -85,6 +85,87 @@ export default defineConfig({
             label: "Intro",
           },
           {
+            type: "string",
+            name: "heroEyebrow",
+            label: "Hero eyebrow",
+          },
+          {
+            type: "string",
+            name: "heroTitle",
+            label: "Hero title",
+          },
+          {
+            type: "string",
+            name: "heroSubtitle",
+            label: "Hero subtitle",
+          },
+          {
+            type: "object",
+            list: true,
+            name: "metrics",
+            label: "Metrics row",
+            description: "Optional metric cards shown above the tabs",
+            fields: [
+              { type: "string", name: "value", label: "Metric value" },
+              { type: "string", name: "label", label: "Metric label" },
+            ],
+          },
+          {
+            type: "object",
+            list: true,
+            name: "tabs",
+            label: "About tabs",
+            description: "Define the tab items shown on the About page",
+            fields: [
+              { type: "string", name: "label", label: "Tab label", required: true },
+              { type: "string", name: "heading", label: "Heading" },
+              {
+                type: "string",
+                name: "intro",
+                label: "Intro text",
+                ui: { component: "textarea" },
+              },
+              {
+                type: "string",
+                name: "body",
+                label: "Body text",
+                ui: { component: "textarea" },
+              },
+              {
+                type: "string",
+                list: true,
+                name: "bullets",
+                label: "Bullet list",
+              },
+              {
+                type: "object",
+                list: true,
+                name: "relatedProjects",
+                label: "Related projects",
+                fields: [
+                  { type: "string", name: "title", label: "Project title" },
+                  { type: "string", name: "url", label: "Project URL" },
+                ],
+              },
+            ],
+          },
+          {
+            type: "object",
+            list: true,
+            name: "featureCards",
+            label: "Feature cards",
+            description: "Optional feature cards shown on the home page",
+            fields: [
+              { type: "string", name: "title", label: "Card title", required: true },
+              {
+                type: "string",
+                name: "description",
+                label: "Card description",
+                ui: { component: "textarea" },
+              },
+            ],
+          },
+          {
             type: "rich-text",
             name: "body",
             label: "Body",
@@ -104,6 +185,23 @@ export default defineConfig({
             label: "Site Title",
             isTitle: true,
             required: true,
+          },
+          {
+            type: "string",
+            name: "footerText",
+            label: "Footer text",
+            description: "Copyright notice and footer text",
+          },
+          {
+            type: "string",
+            name: "blogListingTitle",
+            label: "Blog listing page title",
+          },
+          {
+            type: "string",
+            name: "blogListingIntro",
+            label: "Blog listing page intro",
+            ui: { component: "textarea" },
           },
           {
             type: "object",

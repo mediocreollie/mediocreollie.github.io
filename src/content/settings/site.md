@@ -1,5 +1,8 @@
 ---
 siteTitle: Ollie Writes Things
+footerText: © 2026 Ollie. All rights reserved.
+blogListingTitle: Blog
+blogListingIntro: Thoughts on strategy, delivery, and building things.
 navLinks:
   - label: Home
     url: /

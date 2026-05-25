@@ -22,4 +22,11 @@ mobileHeroTextAlign: left
 mobileHeroTitleSize: 3rem
 mobileShowHeroImage: true
 latestPostsTitle: Latest Posts
+featureCards:
+  - title: Creative strategy with commercial clarity
+    description: Bringing modern product and marketing thinking together, grounded in outcomes, audience insight and practical delivery.
+  - title: Thoughtful operational delivery
+    description: Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.
+  - title: AI-enabled, people-led work
+    description: Calm, practical AI adoption that improves processes and supports internal teams without adding noise.
 ---

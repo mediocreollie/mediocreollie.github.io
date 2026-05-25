@@ -37,6 +37,7 @@ const mobileHeroTextAlign = homePage?.data.mobileHeroTextAlign || 'left';
 const mobileHeroTitleSize = homePage?.data.mobileHeroTitleSize || '3rem';
 const mobileShowHeroImage = homePage?.data.mobileShowHeroImage ?? true;
 const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
+const featureCards = homePage?.data.featureCards || [];
 ---
 
 <!doctype html>
@@ -246,18 +247,29 @@ const latestPostsTitle = homePage?.data.latestPostsTitle || 'Latest Posts';
       </section>
 
       <section class="featured-grid">
-        <div class="feature-card">
-          <h3>Creative strategy with commercial clarity</h3>
-          <p>Bringing modern product and marketing thinking together, grounded in outcomes, audience insight and practical delivery.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Thoughtful operational delivery</h3>
-          <p>Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.</p>
-        </div>
-        <div class="feature-card">
-          <h3>AI-enabled, people-led work</h3>
-          <p>Calm, practical AI adoption that improves processes and supports internal teams without adding noise.</p>
-        </div>
+        {featureCards.length > 0 ? (
+          featureCards.map((card) => (
+            <div class="feature-card">
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
+            </div>
+          ))
+        ) : (
+          <>
+            <div class="feature-card">
+              <h3>Creative strategy with commercial clarity</h3>
+              <p>Bringing modern product and marketing thinking together, grounded in outcomes, audience insight and practical delivery.</p>
+            </div>
+            <div class="feature-card">
+              <h3>Thoughtful operational delivery</h3>
+              <p>Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.</p>
+            </div>
+            <div class="feature-card">
+              <h3>AI-enabled, people-led work</h3>
+              <p>Calm, practical AI adoption that improves processes and supports internal teams without adding noise.</p>
+            </div>
+          </>
+        )}
       </section>
 
       <section class="latest-posts">

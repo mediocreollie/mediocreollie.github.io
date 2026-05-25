@@ -5,7 +5,11 @@ import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
+
+const settings = await getEntry('settings', 'site');
+const blogListingTitle = settings?.data.blogListingTitle || 'Blog';
+const blogListingIntro = settings?.data.blogListingIntro || '';
 
 const posts = (await getCollection('blog'))
   .filter((post) => !post.data.draft)
@@ -17,8 +21,24 @@ const posts = (await getCollection('blog'))
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={blogListingTitle} description={blogListingIntro} />
 		<style>
+			.blog-header {
+				margin-bottom: 2rem;
+			}
+
+			.blog-header h1 {
+				margin-bottom: 1rem;
+			}
+
+			.blog-header p {
+				color: rgb(var(--muted));
+				font-size: 1.05rem;
+				line-height: 1.8;
+				max-width: 740px;
+				margin: 0;
+			}
+
 			.blog-posts > ul {
 				list-style: none;
 				padding: 0;
@@ -29,6 +49,12 @@ const posts = (await getCollection('blog'))
 	<body>
 		<Header />
 		<main>
+			{blogListingTitle && (
+				<section class="blog-header">
+					<h1>{blogListingTitle}</h1>
+					{blogListingIntro && <p>{blogListingIntro}</p>}
+				</section>
+			)}
 			<section class="blog-posts">
 				<BlogList posts={posts} />
 			</section>

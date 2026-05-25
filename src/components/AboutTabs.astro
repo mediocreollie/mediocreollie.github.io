@@ -1,100 +1,64 @@
 ---
-// AboutTabs.astro - Tabbed about section component
-// Displays multiple about sections with tab navigation
-// Mobile-first responsive design with minimal JavaScript
+import { getEntry } from 'astro:content';
+
+const about = await getEntry('pages', 'about');
+const data = about?.data || {};
+const intro = data.intro || data.tabsIntro || '';
+const metrics = data.metrics || [];
+const tabs = data.tabs || [];
+const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commercial'];
 ---
 
 <div class="about-tabs-container">
-	<div class="intro-block">
-		<p>
-			My experience sits across marketing, operations, product, AI and commercial work, supporting teams with practical strategy, thoughtful delivery, and measurable business outcomes.
-		</p>
-	</div>
+	{intro && (
+		<div class="intro-block">
+			<p>{intro}</p>
+		</div>
+	)}
 
-	<div class="metrics-row" role="list">
-		<div class="metric-card" role="listitem">
-			<div class="metric-value">30</div>
-			<div class="metric-label">qualified enterprise leads</div>
+	{metrics.length > 0 && (
+		<div class="metrics-row" role="list">
+			{metrics.map((m) => (
+				<div class="metric-card" role="listitem">
+					<div class="metric-value">{m.value}</div>
+					<div class="metric-label">{m.label}</div>
+				</div>
+			))}
 		</div>
-		<div class="metric-card" role="listitem">
-			<div class="metric-value">20–80%</div>
-			<div class="metric-label">AI adoption across workflows</div>
-		</div>
-		<div class="metric-card" role="listitem">
-			<div class="metric-value">£300k</div>
-			<div class="metric-label">inventory reduction</div>
-		</div>
-		<div class="metric-card" role="listitem">
-			<div class="metric-value">~30–40%</div>
-			<div class="metric-label">margin improvement</div>
-		</div>
-	</div>
+	)}
 
 	<div class="tabs-nav">
-		<button class="tab-button active" data-tab="all">All</button>
-		<button class="tab-button" data-tab="marketing">Marketing</button>
-		<button class="tab-button" data-tab="operations">Operations</button>
-		<button class="tab-button" data-tab="product">Product</button>
-		<button class="tab-button" data-tab="ai">AI</button>
-		<button class="tab-button" data-tab="commercial">Commercial</button>
+		{(tabs.length > 0 ? tabs : defaultTabs.map((t) => ({ label: t }))).map((t, i) => (
+			<button class={i === 0 ? 'tab-button active' : 'tab-button'} data-tab={t.label.toLowerCase().replace(/\s+/g, '-')}>{t.label}</button>
+		))}
 	</div>
 
 	<div class="tabs-content">
-		<div class="tab-pane active" id="all">
-			<p>
-				I'm a hybrid marketing, product, and commercial operator with a practical mindset and commercially-driven approach. I combine strategic thinking with hands-on execution—planning campaigns, shipping products, and improving business outcomes. My background spans B2B marketing, product development, operational excellence, and commercial strategy. I thrive in cross-functional environments, whether that's working with internal teams, managing suppliers, or coordinating stakeholders. I care about results: measurable impact, sustainable processes, and teams that work well together.
-			</p>
-		</div>
-
-		<div class="tab-pane" id="marketing">
-			<h3>Marketing</h3>
-			<p>
-				Campaign planning and execution across B2B channels. I've planned integrated campaigns, managed digital marketing initiatives, and driven lead generation through structured funnels. Strong background in marketing fundamentals with a degree in marketing, complemented by hands-on experience.
-			</p>
-			<p>
-				<strong>Core areas:</strong> Campaign strategy and planning • B2B marketing • Funnel tracking and optimization • Event management and coordination • Digital marketing execution • SEO and technical marketing • Social media strategy and management • Marketing analytics and reporting
-			</p>
-		</div>
-
-		<div class="tab-pane" id="operations">
-			<h3>Operations</h3>
-			<p>
-				Cross-functional delivery and process improvement. I've planned and executed operational projects, managed aircraft fleet operations, coordinated complex workflows, and delivered insights through mystery shopper programmes. Strong stakeholder coordination skills and a systematic approach to identifying efficiency gains.
-			</p>
-			<p>
-				<strong>Core areas:</strong> Operational planning and delivery • Cross-functional coordination • Process improvement and efficiency • Fleet management (aircraft operations) • Mystery shopper insight and quality assurance • Stakeholder management • Supply chain and logistics support • Systematic problem-solving
-			</p>
-		</div>
-
-		<div class="tab-pane" id="product">
-			<h3>Product</h3>
-			<p>
-				Product thinking grounded in customer problems. I've built MVPs, worked with user insights, developed internal tools, and delivered features with agile teams. I prioritize ruthlessly, focus on real user needs, and work iteratively to validate assumptions.
-			</p>
-			<p>
-				<strong>Core areas:</strong> Product strategy and thinking • Customer problem discovery and validation • MVP development and launch • User research and insight • Internal tools development • Agile delivery and sprint execution • Feature prioritization and roadmapping • User feedback integration
-			</p>
-		</div>
-
-		<div class="tab-pane" id="ai">
-			<h3>AI</h3>
-			<p>
-				Adoption and integration of AI tools across workflows. I've trained teams on AI adoption, integrated AI into business processes, managed internal communications around AI change, and used AI systematically to improve efficiency and outcomes. Practical focus on real business applications rather than hype.
-			</p>
-			<p>
-				<strong>Core areas:</strong> AI adoption and training • Workflow integration and optimization • Internal communications and change management • AI-driven process improvement • Team productivity enhancement • Business outcome measurement • Tool evaluation and selection • Practical implementation focus
-			</p>
-		</div>
-
-		<div class="tab-pane" id="commercial">
-			<h3>Commercial</h3>
-			<p>
-				Category management and margin improvement. I've managed SKU analysis, negotiated with suppliers, made budget decisions backed by data, tracked KPIs, and delivered business outcomes. Strong focus on sustainable margin improvement and strategic supplier partnerships.
-			</p>
-			<p>
-				<strong>Core areas:</strong> Category management and strategy • SKU analysis and optimization • Margin improvement initiatives • Supplier negotiation and partnerships • Budget management and decisions • KPI tracking and reporting • Business outcome delivery • Commercial strategy and execution
-			</p>
-		</div>
+		{(tabs.length > 0 ? tabs : defaultTabs.map((t) => ({ label: t, heading: t }))).map((t, i) => {
+			const id = t.label.toLowerCase().replace(/\s+/g, '-');
+			return (
+				<div class={i === 0 ? 'tab-pane active' : 'tab-pane'} id={id}>
+					{t.heading && <h3>{t.heading}</h3>}
+					{t.intro && <p>{t.intro}</p>}
+					{t.body && <p>{t.body}</p>}
+					{t.bullets && t.bullets.length > 0 && (
+						<ul>
+							{t.bullets.map((b) => <li>{b}</li>)}
+						</ul>
+					)}
+					{t.relatedProjects && t.relatedProjects.length > 0 && (
+						<div class="related-projects">
+							<h4>Related projects</h4>
+							<ul>
+								{t.relatedProjects.map((p) => (
+									<li><a href={p.url}>{p.title}</a></li>
+								))}
+							</ul>
+						</div>
+					)}
+				</div>
+			);
+		})}
 	</div>
 </div>
 
@@ -234,21 +198,22 @@
 </style>
 
 <script>
-	const tabButtons = document.querySelectorAll('.tab-button');
-	const tabPanes = document.querySelectorAll('.tab-pane');
+	// Minimal tab interaction: delegate clicks and toggle active classes
+	document.addEventListener('click', (e) => {
+		const btn = (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('.tab-button');
+		if (!btn) return;
+		const tabName = btn.getAttribute('data-tab');
+		if (!tabName) return;
+		const container = btn.closest('.about-tabs-container');
+		if (!container) return;
+		const buttons = container.querySelectorAll('.tab-button');
+		const panes = container.querySelectorAll('.tab-pane');
 
-	tabButtons.forEach((button) => {
-		button.addEventListener('click', () => {
-			const tabName = button.getAttribute('data-tab');
+		buttons.forEach((b) => b.classList.remove('active'));
+		panes.forEach((p) => p.classList.remove('active'));
 
-			tabButtons.forEach((btn) => btn.classList.remove('active'));
-			tabPanes.forEach((pane) => pane.classList.remove('active'));
-
-			button.classList.add('active');
-			const activePane = document.getElementById(tabName);
-			if (activePane) {
-				activePane.classList.add('active');
-			}
-		});
+		btn.classList.add('active');
+		const pane = container.querySelector('#' + tabName);
+		if (pane) pane.classList.add('active');
 	});
 </script>
