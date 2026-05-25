@@ -5,6 +5,30 @@
 ---
 
 <div class="about-tabs-container">
+	<div class="intro-block">
+		<p>
+			My experience sits across marketing, operations, product, AI and commercial work, supporting teams with practical strategy, execution and measurable business outcomes.
+		</p>
+	</div>
+	<div class="metrics-row" role="list">
+		<div class="metric-card" role="listitem">
+			<div class="metric-value">30</div>
+			<div class="metric-label">qualified enterprise leads</div>
+		</div>
+		<div class="metric-card" role="listitem">
+			<div class="metric-value">20–80%</div>
+			<div class="metric-label">AI adoption across workflows</div>
+		</div>
+		<div class="metric-card" role="listitem">
+			<div class="metric-value">£300k</div>
+			<div class="metric-label">inventory reduction</div>
+		</div>
+		<div class="metric-card" role="listitem">
+			<div class="metric-value">~30–40%</div>
+			<div class="metric-label">margin improvement</div>
+		</div>
+	</div>
+
 	<!-- Tab Buttons -->
 	<div class="tabs-nav">
 		<button class="tab-button active" data-tab="all">All</button>
@@ -84,6 +108,46 @@
 <style>
 	.about-tabs-container {
 		width: 100%;
+		max-width: 680px;
+		margin: auto;
+		padding-top: 1rem;
+	}
+
+	.intro-block {
+		margin-bottom: 1.5rem;
+		color: rgb(var(--gray-dark));
+	}
+
+	.intro-block p {
+		margin: 0;
+		line-height: 1.75;
+	}
+
+	.metrics-row {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.75rem;
+		margin: 1.25rem 0 1.75rem;
+	}
+
+	.metric-card {
+		background: rgba(35, 55, 255, 0.08);
+		border: 1px solid rgba(35, 55, 255, 0.14);
+		border-radius: 14px;
+		padding: 1rem;
+	}
+
+	.metric-value {
+		font-size: 1.2rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		margin-bottom: 0.25rem;
+	}
+
+	.metric-label {
+		font-size: 0.92rem;
+		color: rgb(var(--gray-dark));
+		line-height: 1.4;
 	}
 
 	/* Tab Navigation */
@@ -118,6 +182,7 @@
 	.tab-button.active {
 		color: var(--accent);
 		border-bottom-color: var(--accent);
+		font-weight: 600;
 	}
 
 	/* Tab Content */
