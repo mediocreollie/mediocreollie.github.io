@@ -7,9 +7,10 @@
 <div class="about-tabs-container">
 	<div class="intro-block">
 		<p>
-			My experience sits across marketing, operations, product, AI and commercial work, supporting teams with practical strategy, execution and measurable business outcomes.
+			My experience sits across marketing, operations, product, AI and commercial work, supporting teams with practical strategy, thoughtful delivery, and measurable business outcomes.
 		</p>
 	</div>
+
 	<div class="metrics-row" role="list">
 		<div class="metric-card" role="listitem">
 			<div class="metric-value">30</div>
@@ -29,7 +30,6 @@
 		</div>
 	</div>
 
-	<!-- Tab Buttons -->
 	<div class="tabs-nav">
 		<button class="tab-button active" data-tab="all">All</button>
 		<button class="tab-button" data-tab="marketing">Marketing</button>
@@ -39,16 +39,13 @@
 		<button class="tab-button" data-tab="commercial">Commercial</button>
 	</div>
 
-	<!-- Tab Content -->
 	<div class="tabs-content">
-		<!-- All Tab -->
 		<div class="tab-pane active" id="all">
 			<p>
 				I'm a hybrid marketing, product, and commercial operator with a practical mindset and commercially-driven approach. I combine strategic thinking with hands-on execution—planning campaigns, shipping products, and improving business outcomes. My background spans B2B marketing, product development, operational excellence, and commercial strategy. I thrive in cross-functional environments, whether that's working with internal teams, managing suppliers, or coordinating stakeholders. I care about results: measurable impact, sustainable processes, and teams that work well together.
 			</p>
 		</div>
 
-		<!-- Marketing Tab -->
 		<div class="tab-pane" id="marketing">
 			<h3>Marketing</h3>
 			<p>
@@ -59,7 +56,6 @@
 			</p>
 		</div>
 
-		<!-- Operations Tab -->
 		<div class="tab-pane" id="operations">
 			<h3>Operations</h3>
 			<p>
@@ -70,7 +66,6 @@
 			</p>
 		</div>
 
-		<!-- Product Tab -->
 		<div class="tab-pane" id="product">
 			<h3>Product</h3>
 			<p>
@@ -81,7 +76,6 @@
 			</p>
 		</div>
 
-		<!-- AI Tab -->
 		<div class="tab-pane" id="ai">
 			<h3>AI</h3>
 			<p>
@@ -92,7 +86,6 @@
 			</p>
 		</div>
 
-		<!-- Commercial Tab -->
 		<div class="tab-pane" id="commercial">
 			<h3>Commercial</h3>
 			<p>
@@ -108,86 +101,81 @@
 <style>
 	.about-tabs-container {
 		width: 100%;
-		max-width: 680px;
+		max-width: 740px;
 		margin: auto;
-		padding-top: 1rem;
-	}
-
-	.intro-block {
-		margin-bottom: 1.5rem;
-		color: rgb(var(--gray-dark));
+		padding: 2rem;
+		border-radius: 32px;
+		background: rgba(var(--surface-alt), 0.96);
+		border: 1px solid rgba(var(--border), 0.85);
+		box-shadow: var(--box-shadow);
 	}
 
 	.intro-block p {
-		margin: 0;
-		line-height: 1.75;
+		margin: 0 0 1.5rem;
+		font-size: 1.05rem;
+		line-height: 1.8;
+		color: rgb(var(--text));
 	}
 
 	.metrics-row {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.75rem;
-		margin: 1.25rem 0 1.75rem;
+		gap: 1rem;
+		margin-bottom: 1.75rem;
 	}
 
 	.metric-card {
-		background: rgba(35, 55, 255, 0.08);
-		border: 1px solid rgba(35, 55, 255, 0.14);
-		border-radius: 14px;
 		padding: 1rem;
+		border-radius: 20px;
+		background: rgba(var(--surface), 0.98);
+		border: 1px solid rgba(var(--border), 0.75);
 	}
 
 	.metric-value {
 		font-size: 1.2rem;
 		font-weight: 700;
-		color: rgb(var(--black));
+		color: rgb(var(--text));
 		margin-bottom: 0.25rem;
 	}
 
 	.metric-label {
-		font-size: 0.92rem;
-		color: rgb(var(--gray-dark));
-		line-height: 1.4;
+		font-size: 0.95rem;
+		color: rgb(var(--muted));
+		line-height: 1.6;
 	}
 
-	/* Tab Navigation */
 	.tabs-nav {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-bottom: 2rem;
-		border-bottom: 2px solid rgb(var(--gray-light));
-		padding-bottom: 1rem;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+		gap: 0.75rem;
+		margin-bottom: 1.75rem;
 	}
 
 	.tab-button {
-		padding: 0.75rem 1rem;
-		border: none;
-		background: transparent;
-		color: rgb(var(--gray-dark));
+		padding: 0.95rem 1rem;
+		border: 1px solid rgba(var(--border), 0.75);
+		background: rgba(var(--surface), 0.98);
+		color: rgb(var(--text));
 		cursor: pointer;
-		font-size: 1rem;
-		font-weight: 500;
-		transition: all 0.2s ease;
-		border-bottom: 3px solid transparent;
-		margin-bottom: -1rem;
-		padding-bottom: 1rem;
-		white-space: nowrap;
+		font-size: 0.95rem;
+		font-weight: 600;
+		border-radius: 18px;
+		transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 	}
 
 	.tab-button:hover {
-		color: var(--accent);
+		background: rgba(var(--accent), 0.08);
 	}
 
 	.tab-button.active {
-		color: var(--accent);
-		border-bottom-color: var(--accent);
-		font-weight: 600;
+		color: rgb(var(--accent));
+		border-color: rgba(var(--accent), 0.45);
+		background: rgba(var(--accent), 0.1);
+		font-weight: 700;
 	}
 
-	/* Tab Content */
 	.tabs-content {
-		min-height: 200px;
+		min-height: 240px;
 	}
 
 	.tab-pane {
@@ -201,19 +189,19 @@
 
 	.tab-pane h3 {
 		margin-top: 0;
-		color: var(--accent);
-		font-size: 1.5rem;
+		color: rgb(var(--accent));
+		font-size: 1.4rem;
 	}
 
 	.tab-pane p {
 		margin: 1rem 0;
-		line-height: 1.6;
-		color: rgb(var(--gray-dark));
+		line-height: 1.75;
+		color: rgb(var(--muted));
 	}
 
 	.tab-pane strong {
-		color: rgb(var(--black));
-		font-weight: 600;
+		color: rgb(var(--text));
+		font-weight: 700;
 	}
 
 	@keyframes fadeIn {
@@ -225,32 +213,27 @@
 		}
 	}
 
-	/* Mobile responsiveness */
-	@media (max-width: 640px) {
-		.tabs-nav {
-			gap: 0.25rem;
-			padding-bottom: 0.5rem;
+	@media (max-width: 680px) {
+		.about-tabs-container {
+			padding: 1.5rem;
+		}
+
+		.metrics-row {
+			grid-template-columns: 1fr;
 		}
 
 		.tab-button {
-			padding: 0.5rem 0.75rem;
-			font-size: 0.9rem;
-			margin-bottom: -0.5rem;
-			padding-bottom: 0.5rem;
+			font-size: 0.92rem;
+			padding: 0.85rem 0.9rem;
 		}
 
 		.tab-pane h3 {
 			font-size: 1.25rem;
 		}
-
-		.tab-pane p {
-			font-size: 0.95rem;
-		}
 	}
 </style>
 
 <script>
-	// Tab switching functionality
 	const tabButtons = document.querySelectorAll('.tab-button');
 	const tabPanes = document.querySelectorAll('.tab-pane');
 
@@ -258,11 +241,9 @@
 		button.addEventListener('click', () => {
 			const tabName = button.getAttribute('data-tab');
 
-			// Remove active class from all buttons and panes
 			tabButtons.forEach((btn) => btn.classList.remove('active'));
 			tabPanes.forEach((pane) => pane.classList.remove('active'));
 
-			// Add active class to clicked button and corresponding pane
 			button.classList.add('active');
 			const activePane = document.getElementById(tabName);
 			if (activePane) {

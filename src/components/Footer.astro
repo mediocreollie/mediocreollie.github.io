@@ -17,42 +17,71 @@ const iconMap: Record<string, string> = {
 ---
 
 <footer>
-	{footerText}
-	{footerShowSocialLinks && socialLinks.length > 0 && (
-		<div class="social-links">
-			{socialLinks.map((link) => (
-				<a href={link.url} target="_blank">
-					<span class="sr-only">{link.label}</span>
-					{link.icon && iconMap[link.icon] ? (
-						<Fragment set:html={iconMap[link.icon]} />
-					) : (
-						<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-							<circle cx="8" cy="8" r="7" fill="currentColor" opacity="0.1" />
-						</svg>
-					)}
-				</a>
-			))}
-		</div>
-	)}
+	<div class="footer-inner">
+		<p>{footerText}</p>
+		{footerShowSocialLinks && socialLinks.length > 0 && (
+			<div class="social-links">
+				{socialLinks.map((link) => (
+					<a href={link.url} target="_blank">
+						<span class="sr-only">{link.label}</span>
+						{link.icon && iconMap[link.icon] ? (
+							<Fragment set:html={iconMap[link.icon]} />
+						) : (
+							<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
+								<circle cx="8" cy="8" r="7" fill="currentColor" opacity="0.1" />
+							</svg>
+						)}
+					</a>
+				))}
+			</div>
+		)}
+	</div>
 </footer>
+
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
-		text-align: center;
+		padding: 3rem 1.5rem 4rem;
+		background: rgba(var(--surface-alt), 0.95);
+		color: rgb(var(--muted));
 	}
+
+	.footer-inner {
+		max-width: 1120px;
+		margin: auto;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	footer p {
+		margin: 0;
+		font-size: 0.95rem;
+	}
+
 	.social-links {
 		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
+		justify-content: flex-end;
+		gap: 1rem;
 	}
+
 	.social-links a {
-		text-decoration: none;
-		color: rgb(var(--gray));
+		color: rgb(var(--muted));
+		transition: color 0.2s ease;
 	}
+
 	.social-links a:hover {
-		color: rgb(var(--gray-dark));
+		color: rgb(var(--accent));
+	}
+
+	@media (max-width: 720px) {
+		.footer-inner {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+		.social-links {
+			justify-content: flex-start;
+		}
 	}
 </style>
