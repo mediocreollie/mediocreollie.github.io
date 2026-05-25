@@ -1,6 +1,7 @@
 ---
 title: HOLD FOR ABOUT PAGE
-slug: >-
+slug: Holdpost
+description: >-
   1. easyJet B2B Marketing Funnel
 
 
@@ -113,5 +114,5 @@ slug: >-
   year-on-year during my time leading club operations.
 pubDate: 2026-05-25
 updatedDate: 2026-05-25
-draft: false
+draft: true
 ---
