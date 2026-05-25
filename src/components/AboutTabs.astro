@@ -1,0 +1,208 @@
+---
+// AboutTabs.astro - Tabbed about section component
+// Displays multiple about sections with tab navigation
+// Mobile-first responsive design with minimal JavaScript
+---
+
+<div class="about-tabs-container">
+	<!-- Tab Buttons -->
+	<div class="tabs-nav">
+		<button class="tab-button active" data-tab="all">All</button>
+		<button class="tab-button" data-tab="marketing">Marketing</button>
+		<button class="tab-button" data-tab="operations">Operations</button>
+		<button class="tab-button" data-tab="product">Product</button>
+		<button class="tab-button" data-tab="ai">AI</button>
+		<button class="tab-button" data-tab="commercial">Commercial</button>
+	</div>
+
+	<!-- Tab Content -->
+	<div class="tabs-content">
+		<!-- All Tab -->
+		<div class="tab-pane active" id="all">
+			<p>
+				I'm a hybrid marketing, product, and commercial operator with a practical mindset and commercially-driven approach. I combine strategic thinking with hands-on execution—planning campaigns, shipping products, and improving business outcomes. My background spans B2B marketing, product development, operational excellence, and commercial strategy. I thrive in cross-functional environments, whether that's working with internal teams, managing suppliers, or coordinating stakeholders. I care about results: measurable impact, sustainable processes, and teams that work well together.
+			</p>
+		</div>
+
+		<!-- Marketing Tab -->
+		<div class="tab-pane" id="marketing">
+			<h3>Marketing</h3>
+			<p>
+				Campaign planning and execution across B2B channels. I've planned integrated campaigns, managed digital marketing initiatives, and driven lead generation through structured funnels. Strong background in marketing fundamentals with a degree in marketing, complemented by hands-on experience.
+			</p>
+			<p>
+				<strong>Core areas:</strong> Campaign strategy and planning • B2B marketing • Funnel tracking and optimization • Event management and coordination • Digital marketing execution • SEO and technical marketing • Social media strategy and management • Marketing analytics and reporting
+			</p>
+		</div>
+
+		<!-- Operations Tab -->
+		<div class="tab-pane" id="operations">
+			<h3>Operations</h3>
+			<p>
+				Cross-functional delivery and process improvement. I've planned and executed operational projects, managed aircraft fleet operations, coordinated complex workflows, and delivered insights through mystery shopper programmes. Strong stakeholder coordination skills and a systematic approach to identifying efficiency gains.
+			</p>
+			<p>
+				<strong>Core areas:</strong> Operational planning and delivery • Cross-functional coordination • Process improvement and efficiency • Fleet management (aircraft operations) • Mystery shopper insight and quality assurance • Stakeholder management • Supply chain and logistics support • Systematic problem-solving
+			</p>
+		</div>
+
+		<!-- Product Tab -->
+		<div class="tab-pane" id="product">
+			<h3>Product</h3>
+			<p>
+				Product thinking grounded in customer problems. I've built MVPs, worked with user insights, developed internal tools, and delivered features with agile teams. I prioritize ruthlessly, focus on real user needs, and work iteratively to validate assumptions.
+			</p>
+			<p>
+				<strong>Core areas:</strong> Product strategy and thinking • Customer problem discovery and validation • MVP development and launch • User research and insight • Internal tools development • Agile delivery and sprint execution • Feature prioritization and roadmapping • User feedback integration
+			</p>
+		</div>
+
+		<!-- AI Tab -->
+		<div class="tab-pane" id="ai">
+			<h3>AI</h3>
+			<p>
+				Adoption and integration of AI tools across workflows. I've trained teams on AI adoption, integrated AI into business processes, managed internal communications around AI change, and used AI systematically to improve efficiency and outcomes. Practical focus on real business applications rather than hype.
+			</p>
+			<p>
+				<strong>Core areas:</strong> AI adoption and training • Workflow integration and optimization • Internal communications and change management • AI-driven process improvement • Team productivity enhancement • Business outcome measurement • Tool evaluation and selection • Practical implementation focus
+			</p>
+		</div>
+
+		<!-- Commercial Tab -->
+		<div class="tab-pane" id="commercial">
+			<h3>Commercial</h3>
+			<p>
+				Category management and margin improvement. I've managed SKU analysis, negotiated with suppliers, made budget decisions backed by data, tracked KPIs, and delivered business outcomes. Strong focus on sustainable margin improvement and strategic supplier partnerships.
+			</p>
+			<p>
+				<strong>Core areas:</strong> Category management and strategy • SKU analysis and optimization • Margin improvement initiatives • Supplier negotiation and partnerships • Budget management and decisions • KPI tracking and reporting • Business outcome delivery • Commercial strategy and execution
+			</p>
+		</div>
+	</div>
+</div>
+
+<style>
+	.about-tabs-container {
+		width: 100%;
+	}
+
+	/* Tab Navigation */
+	.tabs-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 2rem;
+		border-bottom: 2px solid rgb(var(--gray-light));
+		padding-bottom: 1rem;
+	}
+
+	.tab-button {
+		padding: 0.75rem 1rem;
+		border: none;
+		background: transparent;
+		color: rgb(var(--gray-dark));
+		cursor: pointer;
+		font-size: 1rem;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		border-bottom: 3px solid transparent;
+		margin-bottom: -1rem;
+		padding-bottom: 1rem;
+		white-space: nowrap;
+	}
+
+	.tab-button:hover {
+		color: var(--accent);
+	}
+
+	.tab-button.active {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+	}
+
+	/* Tab Content */
+	.tabs-content {
+		min-height: 200px;
+	}
+
+	.tab-pane {
+		display: none;
+		animation: fadeIn 0.3s ease;
+	}
+
+	.tab-pane.active {
+		display: block;
+	}
+
+	.tab-pane h3 {
+		margin-top: 0;
+		color: var(--accent);
+		font-size: 1.5rem;
+	}
+
+	.tab-pane p {
+		margin: 1rem 0;
+		line-height: 1.6;
+		color: rgb(var(--gray-dark));
+	}
+
+	.tab-pane strong {
+		color: rgb(var(--black));
+		font-weight: 600;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	/* Mobile responsiveness */
+	@media (max-width: 640px) {
+		.tabs-nav {
+			gap: 0.25rem;
+			padding-bottom: 0.5rem;
+		}
+
+		.tab-button {
+			padding: 0.5rem 0.75rem;
+			font-size: 0.9rem;
+			margin-bottom: -0.5rem;
+			padding-bottom: 0.5rem;
+		}
+
+		.tab-pane h3 {
+			font-size: 1.25rem;
+		}
+
+		.tab-pane p {
+			font-size: 0.95rem;
+		}
+	}
+</style>
+
+<script>
+	// Tab switching functionality
+	const tabButtons = document.querySelectorAll('.tab-button');
+	const tabPanes = document.querySelectorAll('.tab-pane');
+
+	tabButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			const tabName = button.getAttribute('data-tab');
+
+			// Remove active class from all buttons and panes
+			tabButtons.forEach((btn) => btn.classList.remove('active'));
+			tabPanes.forEach((pane) => pane.classList.remove('active'));
+
+			// Add active class to clicked button and corresponding pane
+			button.classList.add('active');
+			const activePane = document.getElementById(tabName);
+			if (activePane) {
+				activePane.classList.add('active');
+			}
+		});
+	});
+</script>
