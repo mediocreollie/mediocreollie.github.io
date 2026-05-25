@@ -1,5 +1,6 @@
 ---
 title: About Me
+slug: about
 heroEyebrow: About
 heroTitle: About Me
 heroSubtitle: Learn more about my background in marketing, product, operations, AI and commercial strategy.

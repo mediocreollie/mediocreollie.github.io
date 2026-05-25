@@ -48,6 +48,11 @@ content:
         label: Title
         type: string
         required: true
+      - name: slug
+        label: Slug
+        type: text
+        required: true
+        description: URL slug for the page file, for example home or about
       - name: intro
         label: Intro
         type: text
@@ -135,6 +140,11 @@ content:
     path: src/content/settings
     filename: "{fields.slug}.md"
     fields:
+      - name: slug
+        label: Slug
+        type: text
+        required: true
+        description: URL slug for the settings file, for example site
       - name: siteTitle
         label: Site Title
         type: string

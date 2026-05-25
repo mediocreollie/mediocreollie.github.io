@@ -1,4 +1,5 @@
 ---
+slug: site
 siteTitle: Ollie Writes Things
 footerText: © 2026 Ollie. All rights reserved.
 blogListingTitle: Blog

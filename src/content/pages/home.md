@@ -1,5 +1,6 @@
 ---
 title: Homepage
+slug: home
 intro: Welcome
 heroEyebrow: Hi I'm Ollie and
 heroTitle: I made a website
