@@ -22,9 +22,11 @@ mobileShowHeroImage: false
 tabs:
   - label: All
     heading: All
-    intro: "What I do best  I’m good at taking messy, practical problems and turning
-      them into something clearer: a decision, a plan, a project, a test, or a
-      better way of working. "
+    intro: "Marketing experience  I’ve worked across B2B marketing, technical
+      content, events, website projects, campaign measurement and sales
+      enablement. The common thread has been making marketing more useful:
+      clearer for the customer, easier for sales to use, and better connected to
+      commercial outcomes."
     body: " I helped make old stock commercially useful again  At Cromwell, I worked
       on ageing PPE stock that had been sitting in the business for years. Some
       of it could still be sold, some needed discounting, some needed
