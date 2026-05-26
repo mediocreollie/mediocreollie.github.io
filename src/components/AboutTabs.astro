@@ -4,8 +4,8 @@ import { getEntry } from 'astro:content';
 const about = await getEntry('pages', 'about');
 const data = about?.data || {};
 const intro = data.intro || data.tabsIntro || '';
-const metrics = data.metrics || [];
-const tabs = data.tabs || [];
+const metrics = Array.isArray(data.metrics) ? data.metrics : [];
+const tabs = Array.isArray(data.tabs) ? data.tabs : [];
 const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commercial'];
 ---
 
@@ -41,12 +41,12 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 					{t.heading && <h3>{t.heading}</h3>}
 					{t.intro && <p>{t.intro}</p>}
 					{t.body && <p>{t.body}</p>}
-					{t.bullets && t.bullets.length > 0 && (
+					{Array.isArray(t.bullets) && t.bullets.length > 0 && (
 						<ul>
 							{t.bullets.map((b) => <li>{b}</li>)}
 						</ul>
 					)}
-					{t.relatedProjects && t.relatedProjects.length > 0 && (
+					{Array.isArray(t.relatedProjects) && t.relatedProjects.length > 0 && (
 						<div class="related-projects">
 							<h4>Related projects</h4>
 							<ul>
