@@ -323,9 +323,59 @@ tabs:
       practical outcomes."
   - label: Commercial
     heading: Commercial
-    intro: Category management and margin improvement.
-    body: I've managed SKU analysis, negotiated with suppliers, made budget
-      decisions backed by data, tracked KPIs, and delivered business outcomes.
-      Strong focus on sustainable margin improvement and strategic supplier
-      partnerships.
+    intro: "My commercial experience has mostly come from working close to the
+      details: stock, suppliers, pricing, product ranges, marketing spend,
+      customer demand and operational trade-offs.  I’m interested in the point
+      where a good idea has to make financial sense. That might mean asking
+      whether a product is still worth keeping, whether a supplier is giving the
+      business enough value, whether marketing spend is actually creating useful
+      leads, or whether an operational decision supports the commercial goal
+      without creating avoidable risk."
+    body: "I helped make ageing stock commercially useful again  At Cromwell, I
+      worked on ageing PPE stock that had been sitting in the business for
+      years. Some products could still be sold, some needed discounting, some
+      needed recertification, and some had to be written off.  How I did it: I
+      broke the stock down by certification status, saleability and risk, then
+      worked with marketing, website and warehouse teams to help move it
+      forward. The wider project supported around £300k of stock reduction,
+      including around £100k that needed recertification, disposal or
+      write-off.  I helped review product ranges through a commercial lens  In
+      category management, I worked across own-brand and branded PPE products.
+      The work was not just about what products existed in the range. It was
+      about which products were performing, which were weak or unprofitable,
+      what competitors were doing, and where suppliers could offer better
+      value.  How I did it: I reviewed product performance, compared competitor
+      ranges, looked for replacement opportunities, supported supplier
+      conversations and helped assess buying terms, rebates, delivery
+      performance and product quality. The aim was to make the range work harder
+      commercially, not just keep it tidy.  I helped connect marketing activity
+      to commercial outcomes  At easyJet, I worked on B2B marketing for business
+      travel. The team was spending money on marketing, but the measurement was
+      loose and the link to business development was not clear enough.  How I
+      did it: I helped shape a funnel-based plan that connected campaigns,
+      content, email, events and lead generation. I also helped track activity
+      properly, including a Telegraph trial that did not perform, and supported
+      an event activation that generated 20 new leads.  I helped balance
+      commercial opportunity with operational risk  In easyJet operations, I
+      worked on projects where the commercial opportunity had to be weighed
+      against the operational reality. That included charter flying, fleet
+      growth and major event planning.  How I did it: I asked what the knock-on
+      impact would be: which teams would be affected, what customer risk
+      existed, whether limits were fixed or just current practice, and what
+      needed to be in place before moving forward. That helped turn commercial
+      ambition into something more practical and deliverable.  I helped grow a
+      small membership-based operation  At university, I chaired the boxing club
+      and led a move to a new gym after the old facilities became worse and
+      started limiting attendance.  How I did it: I used attendance data to
+      support the move, negotiated better access with the new gym, improved
+      session standards and focused on the new member experience. The club
+      increased membership revenue, hit its membership cap and doubled average
+      session attendance.  What this has taught me  Commercial work is not just
+      spreadsheets or big strategy. A lot of it comes down to asking simple
+      questions properly.  Is this product earning its place? Is this spend
+      doing anything useful? Is this supplier helping or holding us back? Is
+      this opportunity worth the operational cost? What needs to change so the
+      idea works in practice?  That is the kind of commercial work I enjoy:
+      practical, grounded and close enough to the detail to actually make better
+      decisions."
 ---
