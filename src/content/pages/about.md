@@ -157,124 +157,127 @@ tabs:
       bigger problem somewhere else. That has made me quite interested in the
       knock-on effects: what happens next, who is affected, what needs to be
       ready, and what risk is hiding behind the obvious decision."
-    body: "I helped plan for major operational events  At easyJet, I supported
-      operational planning for the Paris Olympics and Paralympics. The work
-      involved airspace restrictions, airport readiness, customer policy, call
-      centre updates, accessibility needs and delay risk.  How I did it: I
-      helped coordinate actions across teams, asked questions to understand the
-      impact on different parts of the business, and supported planning so
-      frontline teams had the right information before the event. For the
-      Paralympics, that also meant thinking through special assistance demand
-      and airport hotspots where increased accessibility needs could create
-      delays if not planned properly.  I helped assess the operational risk of
-      fleet growth  I worked on an A321 fleet expansion review, looking at what
+    body: " **Paris Olympics and Paralympics**. The work involved airspace
+      restrictions, airport readiness, customer policy, call centre updates,
+      accessibility needs and delay risk.  **How I did it:** I helped coordinate
+      actions across teams, asked questions to understand the impact on
+      different parts of the business, and supported planning so frontline teams
+      had the right information before the event.  For the Paralympics, that
+      also meant thinking through **special assistance demand** and airport
+      hotspots where increased accessibility needs could create delays if not
+      planned properly.  ### I helped assess the operational risk of fleet
+      growth  I worked on an **A321 fleet expansion review**, looking at what
       more aircraft would mean beyond the headline of “more capacity.” The
       expansion created opportunities, but also risks around reserve aircraft,
-      pilot training, airport restrictions and future disruption.  How I did it:
-      I reviewed the knock-on impacts across operations, training, airports and
-      commercial teams, then turned the findings into risk reporting for senior
-      stakeholders. The point was to make sure future growth had the right
-      mitigations behind it, not just the ambition.  I helped connect commercial
-      opportunities with operational reality  At easyJet, I also supported work
-      around charter flying and commercial expansion. The opportunity was
-      commercially attractive, but it had to make sense operationally.  How I
-      did it: I helped explore when the revenue opportunity justified the
-      operational risk, what limits were genuinely fixed, and what needed a
-      clearer process around cancellations, costs and delivery. I learned that a
-      good commercial idea still has to survive contact with the operation.  I
-      helped improve customer experience through operational detail  In
-      easyJet’s in-flight experience team, I worked on a low-cost internal
-      mystery shopper-style programme to understand what was actually happening
-      onboard.  How I did it: I helped build the survey, launch it internally,
-      clean the data and turn the findings into useful insight. Some of the best
+      pilot training, airport restrictions and future disruption.  **How I did
+      it:** I reviewed the knock-on impacts across operations, training,
+      airports and commercial teams, then turned the findings into risk
+      reporting for senior stakeholders.  **What it achieved:** The point was to
+      make sure future growth had the right mitigations behind it, not just the
+      ambition.  ### I helped connect commercial opportunities with operational
+      reality  At **easyJet**, I supported work around charter flying and
+      commercial expansion. The opportunity was commercially attractive, but it
+      had to make sense operationally.  **How I did it:** I helped explore when
+      the revenue opportunity justified the operational risk, what limits were
+      genuinely fixed, and what needed a clearer process around cancellations,
+      costs and delivery.  **What it taught me:** A good commercial idea still
+      has to survive contact with the operation.  ### I helped improve customer
+      experience through operational detail  In **easyJet’s in-flight experience
+      team**, I worked on a low-cost internal mystery shopper-style programme to
+      understand what was actually happening onboard.  **How I did it:** I
+      helped build the survey, launch it internally, clean the data and turn the
+      findings into useful insight.  **What it showed:** Some of the best
       examples were small but practical: first-row customers having to walk
       several rows back to collect bags, cleaning ideas that looked good but did
       not work operationally, and hot food that was difficult to serve properly
-      on short flights.  I helped make old stock easier to act on  At Cromwell,
-      I worked on ageing PPE stock that had been sitting in the business for
-      years. Some items could still be sold, some needed discounting, some
-      needed recertification, and some had to be written off.  How I did it: I
-      broke the stock down by certification status, saleability and risk, then
-      worked with marketing, website and warehouse teams to move it forward. The
-      wider project supported around £300k of stock reduction, including around
-      £100k that needed recertification, disposal or write-off.  I helped
-      improve a club’s operating model  At university, I chaired the boxing club
-      and led a move to a new gym after the old facility became worse and
-      started limiting attendance.  How I did it: I met with the new gym owners,
+      on short flights.  ### I helped make old stock easier to act on  At
+      **Cromwell**, I worked on ageing PPE stock that had been sitting in the
+      business for years. Some items could still be sold, some needed
+      discounting, some needed recertification, and some had to be written
+      off.  **How I did it:** I broke the stock down by **certification status,
+      saleability and risk**, then worked with marketing, website and warehouse
+      teams to move it forward.  **What it achieved:** The wider project
+      supported around **£300k of stock reduction**, including around **£100k**
+      that needed recertification, disposal or write-off.  ### I helped improve
+      a club’s operating model  At university, I chaired the boxing club and led
+      a move to a new gym after the old facility became worse and started
+      limiting attendance.  **How I did it:** I met with the new gym owners,
       used attendance data to explain what the club needed, negotiated session
-      access and helped move the club onto a better setup. I also improved how
+      access and helped move the club onto a better setup.  I also improved how
       sessions were run, made sure beginners were looked after properly, and set
-      clearer standards for committee support. The club increased membership
-      revenue, hit its membership cap and doubled average session
-      attendance.  What this has taught me  Operations is often invisible when
-      it works well. The customer does not always see the planning, the risk
-      checks, the awkward questions, the process fixes or the people keeping
-      things aligned.  That is what I enjoy about it. Good operations work is
-      practical, connected and usually a bit messy. It means understanding the
-      real constraint, not just the plan on paper."
+      clearer standards for committee support.  **What it achieved:** The club
+      increased membership revenue, hit its membership cap and **doubled average
+      session attendance**.  ### What this has taught me  Operations is often
+      invisible when it works well. The customer does not always see the
+      planning, the risk checks, the awkward questions, the process fixes or the
+      people keeping things aligned.  That is what I enjoy about it. Good
+      operations work is practical, connected and usually a bit messy. It means
+      understanding the real constraint, not just the plan on paper."
   - label: Product
     heading: Product
     intro: "My product experience has not always had “product” in the job title, but
       a lot of the work has been about the same thing: understanding a problem,
       working out what users or customers actually need, testing what is
       practical, and helping turn that into something useful."
-    body: "I helped review and improve physical product ranges  At Cromwell, I
-      worked across a large PPE portfolio covering own-brand and branded
+    body: "### I helped review and improve physical product ranges  At **Cromwell**,
+      I worked across a large PPE portfolio covering own-brand and branded
       products. The work was not just about keeping products listed. It was
       about asking which products were earning their place, which were
       underperforming, where competitors had stronger ranges, and where
-      suppliers could offer better commercial value.  How I did it: I reviewed
-      product performance, compared ranges against competitors, looked for weak
-      or unprofitable SKUs, and supported supplier conversations around cost,
-      quality, delivery and future product opportunities. I also worked on
-      own-brand product development, helping take products from ideas or samples
-      through review, supplier feedback and order placement.  I helped make old
-      stock easier to act on  One of the clearest product examples was the
-      ageing PPE stock project at Cromwell. Some products had been sitting in
-      the business for years, but they could not all be treated the same way.
-      Some could be sold, some needed discounting, some needed recertification,
-      and some had to be written off.  How I did it: I broke the stock down by
-      certification status, saleability and risk, then worked with marketing,
-      website and warehouse teams to move it forward. The wider project
-      supported around £300k of stock reduction, including around £100k that
-      needed recertification, disposal or write-off.  I helped improve customer
-      experience through product thinking  At easyJet, I worked in customer
+      suppliers could offer better commercial value.  **How I did it:** I
+      reviewed product performance, compared ranges against competitors, looked
+      for weak or unprofitable SKUs, and supported supplier conversations around
+      **cost, quality, delivery and future product opportunities**.  I also
+      worked on own-brand product development, helping take products from ideas
+      or samples through review, supplier feedback and order placement.  ### I
+      helped make old stock easier to act on  One of the clearest product
+      examples was the ageing PPE stock project at **Cromwell**. Some products
+      had been sitting in the business for years, but they could not all be
+      treated the same way. Some could be sold, some needed discounting, some
+      needed recertification, and some had to be written off.  **How I did it:**
+      I broke the stock down by **certification status, saleability and risk**,
+      then worked with marketing, website and warehouse teams to move it
+      forward.  **What it achieved:** The wider project supported around **£300k
+      of stock reduction**, including around **£100k** that needed
+      recertification, disposal or write-off.  ### I helped improve customer
+      experience through product thinking  At **easyJet**, I worked in customer
       experience, looking at what was really happening onboard rather than
-      relying only on assumptions. Some of the work was small in scale, but very
-      product-led: where bags were stored, how crew used information, whether
-      hot food worked on short flights, and how customer-facing processes could
-      be improved.  How I did it: I helped create a low-cost internal mystery
-      shopper-style programme, built the survey, cleaned the data, and worked
-      with analysts to turn findings into useful insight. The work helped
-      highlight practical problems like first-row customers having to walk
-      several rows back to get their bags, and service ideas that looked good on
-      paper but did not work operationally.  I helped people actually adopt
-      internal products  In easyJet’s AI and business change work, I supported
-      internal tools including policy search, document comparison, Excel
-      analysis and a ChatGPT-style assistant. The product challenge was not just
-      whether the tools existed. It was whether people understood them enough to
-      use them.  How I did it: I worked with developers, took user feedback into
+      relying only on assumptions.  Some of the work was small in scale, but
+      very product-led: where bags were stored, how crew used information,
+      whether hot food worked on short flights, and how customer-facing
+      processes could be improved.  **How I did it:** I helped create a low-cost
+      internal mystery shopper-style programme, built the survey, cleaned the
+      data, and worked with analysts to turn findings into useful
+      insight.  **What it showed:** The work helped highlight practical problems
+      like first-row customers having to walk several rows back to get their
+      bags, and service ideas that looked good on paper but did not work
+      operationally.  ### I helped people actually adopt internal products  In
+      **easyJet’s AI and business change work**, I supported internal tools
+      including policy search, document comparison, Excel analysis and a
+      ChatGPT-style assistant.  The product challenge was not just whether the
+      tools existed. It was whether people understood them enough to use
+      them.  **How I did it:** I worked with developers, took user feedback into
       the improvement process, and helped redesign training around real use
-      cases. Instead of passive demos, I used quizzes, hands-on examples and
-      simple explanations so people could see where the tools fitted into their
-      work.  I’m building my own product experiments  Outside formal roles, I’ve
-      been building my own digital projects to learn by making. One is this
-      website, which gives me a place to write, organise projects and control
-      how my work is presented. The other is an AI pixel furniture app that
-      takes uploaded furniture images, turns them into pixel-art assets using a
-      local ComfyUI workflow, and places them into a room-builder
-      interface.  How I’m doing it: I’m treating these as practical product
-      experiments. I’m working through the messy bits: what the user is trying
-      to do, what the system needs to generate, how the output becomes usable,
-      what breaks, and how to debug it. The furniture app is still a work in
-      progress, but that is partly why it has been useful. It has taught me a
-      lot about product constraints, technical trade-offs, AI workflows and
-      building an MVP from a rough idea.  What this has taught me  Product work,
-      for me, is about making things useful. That might be a PPE range, an
-      onboard experience, an internal AI tool, a website, or a small app I’m
-      building myself.  The common thread is the same: understand the need, test
-      the reality, work with the right people, and keep asking whether the thing
-      actually helps."
+      cases.  Instead of passive demos, I used **quizzes, hands-on examples and
+      simple explanations** so people could see where the tools fitted into
+      their work.  ### I’m building my own product experiments  Outside formal
+      roles, I’ve been building my own digital projects to learn by making.  One
+      is this website, which gives me a place to write, organise projects and
+      control how my work is presented. The other is an **AI pixel furniture
+      app** that takes uploaded furniture images, turns them into pixel-art
+      assets using a local **ComfyUI workflow**, and places them into a
+      room-builder interface.  **How I’m doing it:** I’m treating these as
+      practical product experiments. I’m working through the messy bits: what
+      the user is trying to do, what the system needs to generate, how the
+      output becomes usable, what breaks, and how to debug it.  The furniture
+      app is still a work in progress, but that is partly why it has been
+      useful. It has taught me a lot about **product constraints, technical
+      trade-offs, AI workflows and building an MVP from a rough idea**.  ###
+      What this has taught me  Product work, for me, is about making things
+      useful.  That might be a PPE range, an onboard experience, an internal AI
+      tool, a website, or a small app I’m building myself.  The common thread is
+      the same: **understand the need, test the reality, work with the right
+      people, and keep asking whether the thing actually helps.**"
   - label: AI
     heading: AI
     intro: "My AI experience has been practical rather than theoretical. I’m
