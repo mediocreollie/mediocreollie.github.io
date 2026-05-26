@@ -19,15 +19,6 @@ heroTitle: About Me
 heroSubtitle: Learn more about my background in marketing, product, operations,
   AI and commercial strategy.
 mobileShowHeroImage: false
-metrics:
-  - value: "30"
-    label: qualified enterprise leads
-  - value: 20–80%
-    label: AI adoption across workflows
-  - value: £300k
-    label: inventory reduction
-  - value: ~30–40%
-    label: margin improvement
 tabs:
   - label: All
     heading: All
