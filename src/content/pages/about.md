@@ -1,9 +1,19 @@
 ---
 title: About Me
 slug: about
-intro: "Hi I'm Oliver Wilson and I'm 25, I enjoy cooking, swimming, climbing and
-  exploring random niches I find interesting currently vibe coding, writing and
-  art (painting, film-making and comics) "
+intro: >-
+  Hi, I’m Ollie. I’m 25, and I’ve worked across commercial strategy, product
+  thinking, marketing, operations and AI/digital experimentation.
+
+
+  Most of my work has sat in the messy middle: understanding the customer,
+  looking at the numbers, asking useful questions and turning ideas into
+  something practical.
+
+
+  That has meant analysing ageing stock, shaping B2B marketing plans, supporting
+  airline operations, helping people adopt AI tools, and building my own digital
+  projects to keep learning by making things.
 heroEyebrow: About
 heroTitle: About Me
 heroSubtitle: Learn more about my background in marketing, product, operations,
