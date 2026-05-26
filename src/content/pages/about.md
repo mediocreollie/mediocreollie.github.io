@@ -284,56 +284,58 @@ tabs:
       interested in where AI fits into real work: how people use it, what it
       helps with, where it gets confusing, and how to turn it from a clever demo
       into something useful."
-    body: "I helped people understand and adopt internal AI tools  At easyJet, I
-      worked on internal AI adoption across tools for policy search, document
-      comparison, Excel analysis and a ChatGPT-style assistant. The challenge
-      was not just that the tools existed. It was that people did not always
-      understand what they were for, when to use them, or how they could help
-      with real tasks.  How I did it: I worked with developers, took feedback
-      from users, and helped improve how the tools were explained. Instead of
-      relying on passive demos, I helped run more interactive sessions using
-      real questions, quizzes and hands-on examples. The aim was to make people
-      try the tools in the context of their own work, not just watch someone
-      else talk about them.  I helped improve adoption of a policy search
-      tool  One of the strongest examples was Jetstream, an internal policy
-      search tool used in a call centre and crew support context. Usage was low,
-      partly because people did not really understand the point of it,
-      especially if they already knew a lot of the answers from experience.  How
-      I did it: I helped bring user feedback into the product improvement
-      process, worked closely with the developer, and changed the training
-      format. We used real questions users might need to answer, asked people to
-      respond first, then showed how the tool could find the answer. That made
-      the tool feel more relevant and helped usage improve after the
-      sessions.  I helped make AI adoption feel less abstract  I also supported
-      wider AI showcase sessions, graduate workshops and manager-led materials.
-      The goal was to give people simple, practical ways to explore AI without
-      making it feel like a big technical lecture.  How I did it: I used
-      exercises, examples and prompts that were close to people’s day-to-day
-      work. For graduates, that meant gamified sessions. For managers, it meant
-      creating material they could use with their own teams. The useful bit was
-      not saying “AI is important.” It was showing where it could save time,
-      answer questions, compare documents, analyse information or make work
-      easier to start.  I used AI in product and marketing work  At Cromwell, I
-      used AI in a smaller but still practical way, helping generate background
-      options for product visuals during a PPE launch. It was not AI for the
-      sake of it. It was a way to make marketing assets more relevant to
-      different customer sectors and speed up creative exploration.  How I did
-      it: I used the product and customer context to guide the visuals, so the
-      AI output had a job to do rather than just looking interesting.  I’m
-      building my own AI product experiment  Outside work, I’ve been building an
-      AI pixel furniture app. The idea is to upload a real furniture image, turn
-      it into a pixel-art game asset using a local ComfyUI workflow, and then
-      place it into a room-builder interface.  How I’m doing it: I chose a local
-      ComfyUI setup rather than a paid image-generation API, partly to keep
-      costs down and partly to understand the workflow properly. I’ve been
-      working through prompts, checkpoints, LoRA settings, image outputs,
-      debugging and how the generated asset actually becomes usable inside a
-      product experience.  What this has taught me  The most interesting AI work
-      is rarely just the model or the prompt. It is the bit around it: the
-      workflow, the user, the explanation, the trust, the handover, and whether
-      the output actually helps someone do something.  That is where I think my
-      AI experience sits best: not as a pure technical specialist, but as
-      someone who can connect AI tools to real problems, real users and
+    body: " ### I helped people understand and adopt internal AI tools  At
+      **easyJet**, I worked on internal AI adoption across tools for policy
+      search, document comparison, Excel analysis and a ChatGPT-style
+      assistant.  The challenge was not just that the tools existed. It was that
+      people did not always understand what they were for, when to use them, or
+      how they could help with real tasks.  **How I did it:** I worked with
+      developers, took feedback from users, and helped improve how the tools
+      were explained.  Instead of relying on passive demos, I helped run more
+      interactive sessions using **real questions, quizzes and hands-on
+      examples**.  **What it achieved:** The aim was to make people try the
+      tools in the context of their own work, not just watch someone else talk
+      about them.  ### I helped improve adoption of a policy search tool  One of
+      the strongest examples was **Jetstream**, an internal policy search tool
+      used in a call centre and crew support context.  Usage was low, partly
+      because people did not really understand the point of it, especially if
+      they already knew a lot of the answers from experience.  **How I did it:**
+      I helped bring user feedback into the product improvement process, worked
+      closely with the developer, and changed the training format.  We used real
+      questions users might need to answer, asked people to respond first, then
+      showed how the tool could find the answer.  **What it achieved:** That
+      made the tool feel more relevant and helped usage improve after the
+      sessions.  ### I helped make AI adoption feel less abstract  I also
+      supported wider **AI showcase sessions, graduate workshops and manager-led
+      materials**.  The goal was to give people simple, practical ways to
+      explore AI without making it feel like a big technical lecture.  **How I
+      did it:** I used exercises, examples and prompts that were close to
+      people’s day-to-day work.  For graduates, that meant gamified sessions.
+      For managers, it meant creating material they could use with their own
+      teams.  **What it achieved:** The useful bit was not saying “AI is
+      important.” It was showing where it could save time, answer questions,
+      compare documents, analyse information or make work easier to start.  ###
+      I used AI in product and marketing work  At **Cromwell**, I used AI in a
+      smaller but still practical way, helping generate background options for
+      product visuals during a PPE launch.  It was not AI for the sake of it. It
+      was a way to make marketing assets more relevant to different customer
+      sectors and speed up creative exploration.  **How I did it:** I used the
+      product and customer context to guide the visuals, so the AI output had a
+      job to do rather than just looking interesting.  ### I’m building my own
+      AI product experiment  Outside work, I’ve been building an **AI pixel
+      furniture app**.  The idea is to upload a real furniture image, turn it
+      into a pixel-art game asset using a local **ComfyUI workflow**, and then
+      place it into a room-builder interface.  **How I’m doing it:** I chose a
+      local ComfyUI setup rather than a paid image-generation API, partly to
+      keep costs down and partly to understand the workflow properly.  I’ve been
+      working through **prompts, checkpoints, LoRA settings, image outputs,
+      debugging** and how the generated asset actually becomes usable inside a
+      product experience.  ### What this has taught me  The most interesting AI
+      work is rarely just the model or the prompt.  It is the bit around it:
+      **the workflow, the user, the explanation, the trust, the handover, and
+      whether the output actually helps someone do something.**  That is where I
+      think my AI experience sits best: not as a pure technical specialist, but
+      as someone who can connect AI tools to real problems, real users and
       practical outcomes."
   - label: Commercial
     heading: Commercial
@@ -345,51 +347,54 @@ tabs:
       business enough value, whether marketing spend is actually creating useful
       leads, or whether an operational decision supports the commercial goal
       without creating avoidable risk."
-    body: "I helped make ageing stock commercially useful again  At Cromwell, I
-      worked on ageing PPE stock that had been sitting in the business for
-      years. Some products could still be sold, some needed discounting, some
-      needed recertification, and some had to be written off.  How I did it: I
-      broke the stock down by certification status, saleability and risk, then
-      worked with marketing, website and warehouse teams to help move it
-      forward. The wider project supported around £300k of stock reduction,
-      including around £100k that needed recertification, disposal or
-      write-off.  I helped review product ranges through a commercial lens  In
-      category management, I worked across own-brand and branded PPE products.
-      The work was not just about what products existed in the range. It was
-      about which products were performing, which were weak or unprofitable,
-      what competitors were doing, and where suppliers could offer better
-      value.  How I did it: I reviewed product performance, compared competitor
-      ranges, looked for replacement opportunities, supported supplier
-      conversations and helped assess buying terms, rebates, delivery
-      performance and product quality. The aim was to make the range work harder
-      commercially, not just keep it tidy.  I helped connect marketing activity
-      to commercial outcomes  At easyJet, I worked on B2B marketing for business
-      travel. The team was spending money on marketing, but the measurement was
-      loose and the link to business development was not clear enough.  How I
-      did it: I helped shape a funnel-based plan that connected campaigns,
-      content, email, events and lead generation. I also helped track activity
-      properly, including a Telegraph trial that did not perform, and supported
-      an event activation that generated 20 new leads.  I helped balance
-      commercial opportunity with operational risk  In easyJet operations, I
-      worked on projects where the commercial opportunity had to be weighed
-      against the operational reality. That included charter flying, fleet
-      growth and major event planning.  How I did it: I asked what the knock-on
-      impact would be: which teams would be affected, what customer risk
-      existed, whether limits were fixed or just current practice, and what
-      needed to be in place before moving forward. That helped turn commercial
-      ambition into something more practical and deliverable.  I helped grow a
-      small membership-based operation  At university, I chaired the boxing club
-      and led a move to a new gym after the old facilities became worse and
-      started limiting attendance.  How I did it: I used attendance data to
-      support the move, negotiated better access with the new gym, improved
-      session standards and focused on the new member experience. The club
-      increased membership revenue, hit its membership cap and doubled average
-      session attendance.  What this has taught me  Commercial work is not just
-      spreadsheets or big strategy. A lot of it comes down to asking simple
-      questions properly.  Is this product earning its place? Is this spend
-      doing anything useful? Is this supplier helping or holding us back? Is
-      this opportunity worth the operational cost? What needs to change so the
-      idea works in practice?  That is the kind of commercial work I enjoy:
-      practical, grounded and close enough to the detail to actually make better
+    body: "### I helped make ageing stock commercially useful again  At
+      **Cromwell**, I worked on ageing PPE stock that had been sitting in the
+      business for years. Some products could still be sold, some needed
+      discounting, some needed recertification, and some had to be written
+      off.  **How I did it:** I broke the stock down by **certification status,
+      saleability and risk**, then worked with marketing, website and warehouse
+      teams to help move it forward.  **What it achieved:** The wider project
+      supported around **£300k of stock reduction**, including around **£100k**
+      that needed recertification, disposal or write-off.  ### I helped review
+      product ranges through a commercial lens  In category management, I worked
+      across **own-brand and branded PPE products**. The work was not just about
+      what products existed in the range. It was about which products were
+      performing, which were weak or unprofitable, what competitors were doing,
+      and where suppliers could offer better value.  **How I did it:** I
+      reviewed product performance, compared competitor ranges, looked for
+      replacement opportunities, supported supplier conversations and helped
+      assess **buying terms, rebates, delivery performance and product
+      quality**.  **What it achieved:** The aim was to make the range work
+      harder commercially, not just keep it tidy.  ### I helped connect
+      marketing activity to commercial outcomes  At **easyJet**, I worked on B2B
+      marketing for business travel. The team was spending money on marketing,
+      but the measurement was loose and the link to business development was not
+      clear enough.  **How I did it:** I helped shape a **funnel-based plan**
+      that connected campaigns, content, email, events and lead generation.  I
+      also helped track activity properly, including a Telegraph trial that did
+      not perform, and supported an event activation that generated **20 new
+      leads**.  ### I helped balance commercial opportunity with operational
+      risk  In **easyJet operations**, I worked on projects where the commercial
+      opportunity had to be weighed against the operational reality. That
+      included charter flying, fleet growth and major event planning.  **How I
+      did it:** I asked what the knock-on impact would be: which teams would be
+      affected, what customer risk existed, whether limits were fixed or just
+      current practice, and what needed to be in place before moving
+      forward.  **What it achieved:** That helped turn commercial ambition into
+      something more practical and deliverable.  ### I helped grow a small
+      membership-based operation  At university, I chaired the boxing club and
+      led a move to a new gym after the old facilities became worse and started
+      limiting attendance.  **How I did it:** I used attendance data to support
+      the move, negotiated better access with the new gym, improved session
+      standards and focused on the new member experience.  **What it achieved:**
+      The club increased membership revenue, hit its membership cap and
+      **doubled average session attendance**.  ### What this has taught
+      me  Commercial work is not just spreadsheets or big strategy. A lot of it
+      comes down to asking simple questions properly.  **Is this product earning
+      its place?**   **Is this spend doing anything useful?**   **Is this
+      supplier helping or holding us back?**   **Is this opportunity worth the
+      operational cost?**   **What needs to change so the idea works in
+      practice?**  That is the kind of commercial work I enjoy: practical,
+      grounded and close enough to the detail to actually make better
       decisions."
 ---
