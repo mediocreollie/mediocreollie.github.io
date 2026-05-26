@@ -91,54 +91,63 @@ tabs:
       understand what happens when an idea meets real constraints."
   - label: Marketing
     heading: Marketing
-    intro: Campaign planning and execution across B2B channels.
-    body: "I helped turn B2B marketing spend into a clearer plan  At easyJet, I
-      worked in the B2B marketing team, focused on business travel rather than
-      the main leisure audience. The team was targeting travel managers and
-      corporate decision-makers, but a lot of the activity was awareness-led and
-      the measurement was not clear enough.  How I did it: I helped shape a
-      funnel-based plan that connected paid media, content, email, events and
-      lead generation. The aim was to move away from loose activity and build a
-      clearer view of what was working, what was not, and how marketing could
-      support the business development team more directly.  I helped make event
-      marketing more engaging  At a business travel event, I helped create a
-      stand activation around a competitive packing game. It was simple,
-      relevant to the audience and gave people a reason to stop, talk and bring
-      others over.  How I did it: Instead of relying on passive stand traffic,
-      the activity gave people something to do. It increased dwell time, created
-      more natural conversations and generated 20 new leads from the event. At a
-      later event where the game was not used, fewer people came to the stand,
-      which gave a useful comparison point.  I helped make technical products
-      easier to understand  At Silicon Sensing, I worked on marketing for
-      technical products, including social media, website content, campaigns and
-      events. The challenge was making complex products more interesting without
-      losing technical accuracy.  How I did it: I worked with technical sales to
+    intro: "## My marketing experience has mostly been about making activity
+      clearer, more useful and easier to measure. I’ve worked across B2B
+      marketing, technical content, events, websites, campaign tracking and
+      product launch support.  "
+    body: "### I helped turn B2B marketing spend into a clearer plan  At
+      **easyJet**, I worked in the B2B marketing team, focused on business
+      travel rather than the main leisure audience. The team was targeting
+      travel managers and corporate decision-makers, but a lot of the activity
+      was awareness-led and the measurement was not clear enough.  **How I did
+      it:** I helped shape a **funnel-based plan** that connected paid media,
+      content, email, events and lead generation.  **What it achieved:** The aim
+      was to move away from loose activity and build a clearer view of what was
+      working, what was not, and how marketing could support the business
+      development team more directly.  ### I helped make event marketing more
+      engaging  At a business travel event, I helped create a stand activation
+      around a **competitive packing game**. It was simple, relevant to the
+      audience and gave people a reason to stop, talk and bring others
+      over.  **How I did it:** Instead of relying on passive stand traffic, the
+      activity gave people something to do. It increased dwell time and created
+      more natural conversations.  **What it achieved:** The activation
+      generated **20 new leads** from the event. At a later event where the game
+      was not used, fewer people came to the stand, which gave a useful
+      comparison point.  ### I helped make technical products easier to
+      understand  At **Silicon Sensing**, I worked on marketing for technical
+      products, including social media, website content, campaigns and events.
+      The challenge was making complex products more interesting without losing
+      technical accuracy.  **How I did it:** I worked with technical sales to
       make sure LinkedIn content was accurate, used product features as the
-      basis for campaigns, and reused existing assets where possible. During my
-      time there, social following grew by around 20%.  I helped improve a
-      website that was expensive and hard to manage  At Silicon Sensing, the
-      website was out of date and cost around £20,000 a year to update. Some
-      content was hard-coded, which meant the business did not have enough
-      control.  How I did it: I helped lead the website redevelopment process:
-      speaking to developers, comparing costs and features, building a weighted
-      comparison, supporting copywriting, and working with the chosen supplier
-      through to launch. I also used Google Analytics and Hotjar to understand
-      how people moved through the site and where content needed improving.  I
-      helped support product launches and sales teams  At Cromwell, I worked
-      closely with marketing and sales across a large PPE portfolio. Marketing
-      needed to know which products to push, sales needed the right information,
-      and the business needed to move stock in a commercially sensible way.  How
-      I did it: I used product and stock data to help guide what should be
-      prioritised in marketing materials, brochures, website activity and sales
-      conversations. I also supported launch activity, including clean air range
-      readiness and Hydros photoshoot planning, making sure the right products,
-      sizes and visuals were represented.  I use marketing as a way to make
-      decisions clearer  The marketing work I enjoy most is not just making
-      something look good or sound polished. It is the bit underneath: who are
-      we trying to reach, what do they need to understand, what should they do
-      next, and how will we know if it worked?  That is where my marketing
-      experience connects with the rest of my work: commercial thinking, product
-      detail, customer understanding, operations and measurement."
+      basis for campaigns, and reused existing assets where possible.  **What it
+      achieved:** During my time there, social following grew by around
+      **20%**.  ### I helped improve a website that was expensive and hard to
+      manage  At **Silicon Sensing**, the website was out of date and cost
+      around **£20,000 a year** to update. Some content was hard-coded, which
+      meant the business did not have enough control.  **How I did it:** I
+      helped lead the website redevelopment process: speaking to developers,
+      comparing costs and features, building a weighted comparison, supporting
+      copywriting, and working with the chosen supplier through to
+      launch.  **What it achieved:** The business moved towards a more usable
+      website setup, with better control over content. I also used **Google
+      Analytics** and **Hotjar** to understand how people moved through the site
+      and where content needed improving.  ### I helped support product launches
+      and sales teams  At **Cromwell**, I worked closely with marketing and
+      sales across a large PPE portfolio. Marketing needed to know which
+      products to push, sales needed the right information, and the business
+      needed to move stock in a commercially sensible way.  **How I did it:** I
+      used product and stock data to help guide what should be prioritised in
+      marketing materials, brochures, website activity and sales
+      conversations.  **What it achieved:** I supported launch activity,
+      including clean air range readiness and Hydros photoshoot planning, making
+      sure the right products, sizes and visuals were represented.  ### I use
+      marketing as a way to make decisions clearer  The marketing work I enjoy
+      most is not just making something look good or sound polished. It is the
+      bit underneath: **who are we trying to reach, what do they need to
+      understand, what should they do next, and how will we know if it
+      worked?**  That is where my marketing experience connects with the rest of
+      my work: commercial thinking, product detail, customer understanding,
+      operations and measurement."
   - label: Operations
     heading: Operations
     intro: "My operations experience has mainly been about understanding how
