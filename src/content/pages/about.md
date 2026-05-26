@@ -266,11 +266,61 @@ tabs:
       actually helps."
   - label: AI
     heading: AI
-    intro: Adoption and integration of AI tools across workflows.
-    body: I've trained teams on AI adoption, integrated AI into business processes,
-      managed internal communications around AI change, and used AI
-      systematically to improve efficiency and outcomes. Practical focus on real
-      business applications rather than hype.
+    intro: "My AI experience has been practical rather than theoretical. I’m
+      interested in where AI fits into real work: how people use it, what it
+      helps with, where it gets confusing, and how to turn it from a clever demo
+      into something useful."
+    body: "I helped people understand and adopt internal AI tools  At easyJet, I
+      worked on internal AI adoption across tools for policy search, document
+      comparison, Excel analysis and a ChatGPT-style assistant. The challenge
+      was not just that the tools existed. It was that people did not always
+      understand what they were for, when to use them, or how they could help
+      with real tasks.  How I did it: I worked with developers, took feedback
+      from users, and helped improve how the tools were explained. Instead of
+      relying on passive demos, I helped run more interactive sessions using
+      real questions, quizzes and hands-on examples. The aim was to make people
+      try the tools in the context of their own work, not just watch someone
+      else talk about them.  I helped improve adoption of a policy search
+      tool  One of the strongest examples was Jetstream, an internal policy
+      search tool used in a call centre and crew support context. Usage was low,
+      partly because people did not really understand the point of it,
+      especially if they already knew a lot of the answers from experience.  How
+      I did it: I helped bring user feedback into the product improvement
+      process, worked closely with the developer, and changed the training
+      format. We used real questions users might need to answer, asked people to
+      respond first, then showed how the tool could find the answer. That made
+      the tool feel more relevant and helped usage improve after the
+      sessions.  I helped make AI adoption feel less abstract  I also supported
+      wider AI showcase sessions, graduate workshops and manager-led materials.
+      The goal was to give people simple, practical ways to explore AI without
+      making it feel like a big technical lecture.  How I did it: I used
+      exercises, examples and prompts that were close to people’s day-to-day
+      work. For graduates, that meant gamified sessions. For managers, it meant
+      creating material they could use with their own teams. The useful bit was
+      not saying “AI is important.” It was showing where it could save time,
+      answer questions, compare documents, analyse information or make work
+      easier to start.  I used AI in product and marketing work  At Cromwell, I
+      used AI in a smaller but still practical way, helping generate background
+      options for product visuals during a PPE launch. It was not AI for the
+      sake of it. It was a way to make marketing assets more relevant to
+      different customer sectors and speed up creative exploration.  How I did
+      it: I used the product and customer context to guide the visuals, so the
+      AI output had a job to do rather than just looking interesting.  I’m
+      building my own AI product experiment  Outside work, I’ve been building an
+      AI pixel furniture app. The idea is to upload a real furniture image, turn
+      it into a pixel-art game asset using a local ComfyUI workflow, and then
+      place it into a room-builder interface.  How I’m doing it: I chose a local
+      ComfyUI setup rather than a paid image-generation API, partly to keep
+      costs down and partly to understand the workflow properly. I’ve been
+      working through prompts, checkpoints, LoRA settings, image outputs,
+      debugging and how the generated asset actually becomes usable inside a
+      product experience.  What this has taught me  The most interesting AI work
+      is rarely just the model or the prompt. It is the bit around it: the
+      workflow, the user, the explanation, the trust, the handover, and whether
+      the output actually helps someone do something.  That is where I think my
+      AI experience sits best: not as a pure technical specialist, but as
+      someone who can connect AI tools to real problems, real users and
+      practical outcomes."
   - label: Commercial
     heading: Commercial
     intro: Category management and margin improvement.
