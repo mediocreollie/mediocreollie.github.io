@@ -20,7 +20,7 @@ heroSubtitle: Learn more about my background in marketing, product, operations,
   AI and commercial strategy.
 mobileShowHeroImage: false
 tabs:
-  - label: All
+  - label: Biggest Achievements
     heading: All
     intro: "What I do best  I’m good at taking messy, practical problems and turning
       them into something clearer: a decision, a plan, a project, a test, or a
@@ -89,7 +89,7 @@ tabs:
       debugging, diagrams and product decisions.  The furniture app is still a
       work in progress, but that is part of the point. It is helping me
       understand what happens when an idea meets real constraints."
-  - label: Marketing
+  - label: Marketing Experience
     heading: Marketing
     intro: "## My marketing experience has mostly been about making activity
       clearer, more useful and easier to measure. I’ve worked across B2B
@@ -148,7 +148,7 @@ tabs:
       worked?**  That is where my marketing experience connects with the rest of
       my work: commercial thinking, product detail, customer understanding,
       operations and measurement."
-  - label: Operations
+  - label: Operations Experience
     heading: Operations
     intro: "My operations experience has mainly been about understanding how
       decisions play out in the real world: with customers, teams, systems,
@@ -213,7 +213,7 @@ tabs:
       people keeping things aligned.  That is what I enjoy about it. Good
       operations work is practical, connected and usually a bit messy. It means
       understanding the real constraint, not just the plan on paper."
-  - label: Product
+  - label: Product Experience
     heading: Product
     intro: "My product experience has not always had “product” in the job title, but
       a lot of the work has been about the same thing: understanding a problem,
@@ -278,7 +278,7 @@ tabs:
       tool, a website, or a small app I’m building myself.  The common thread is
       the same: **understand the need, test the reality, work with the right
       people, and keep asking whether the thing actually helps.**"
-  - label: AI
+  - label: AI Experience
     heading: AI
     intro: "My AI experience has been practical rather than theoretical. I’m
       interested in where AI fits into real work: how people use it, what it
@@ -337,7 +337,7 @@ tabs:
       think my AI experience sits best: not as a pure technical specialist, but
       as someone who can connect AI tools to real problems, real users and
       practical outcomes."
-  - label: Commercial
+  - label: Commercial Experience
     heading: Commercial
     intro: "My commercial experience has mostly come from working close to the
       details: stock, suppliers, pricing, product ranges, marketing spend,
