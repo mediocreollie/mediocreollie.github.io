@@ -114,5 +114,5 @@ description: >-
   year-on-year during my time leading club operations.
 pubDate: 2026-05-25
 updatedDate: 2026-05-25
-draft: false
+draft: true
 ---
