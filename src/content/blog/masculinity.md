@@ -3,7 +3,7 @@ title: Being a man
 slug: Masculinity
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
-draft: true
+draft: false
 ---
 What does it mean to be masculine
 
