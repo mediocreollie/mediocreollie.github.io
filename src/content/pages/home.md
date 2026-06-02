@@ -24,20 +24,15 @@ mobileHeroTitleSize: 3rem
 mobileShowHeroImage: true
 latestPostsTitle: Latest Posts
 featureCards:
-  - title: Creative strategy with commercial clarity
-    description: Bringing modern product and marketing thinking together, grounded in outcomes, audience insight and practical delivery.
-  - title: Thoughtful operational delivery
-    description: Softly structured execution that keeps cross-functional teams aligned and business decisions moving forward.
-  - title: AI-enabled, people-led work
-    description: Calm, practical AI adoption that improves processes and supports internal teams without adding noise.
-workItems:
-  - title: Product rhythm for early-stage teams
-    description: Structured collaboration and storytelling that keeps decision-making calm, clear and forward-moving.
-    tag: Product
-  - title: Audience-led editorial systems
-    description: Building simple publishing foundations for stories, launches and team narratives.
-    tag: Content
-  - title: Designing warm digital experiences
-    description: Softly structured visual language for websites, tools and campaigns that feel human and intentional.
-    tag: Design
+  - title: I learn by doing
+    description: Tutorials help, but I remember things by making, breaking, testing,
+      fixing and learning as I go. I'm not scared to change the direction as my
+      knowledge increases.
+  - title: Everything is a story
+    description: Everything you know comes from what you have done or what you've
+      been told. If I can tell the right story to the right person, anything can
+      be done
+  - title: Curious across disciplines
+    description: Film, writing, AI, design, cooking and business ideas all feed the
+      same brain and help make sense of how things work.
 ---
