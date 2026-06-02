@@ -77,4 +77,4 @@ I’ve also been building an **AI pixel furniture app** that takes uploaded furn
 
 **How I’m doing it:** I’m using the projects to learn by making: working through GitHub, CMS editing, local AI workflows, prompts, image generation, debugging, diagrams and product decisions.
 
-The furniture app is still a work in progress, but that is part of the point. It is helping me understand what happens when an idea meets real constraints.
+The furniture app is still a work in progress, but that is part of the point. It is helping me understand what happens when an idea meets real constraints
