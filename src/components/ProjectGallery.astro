@@ -1,0 +1,42 @@
+---
+const { images } = Astro.props;
+const hasImages = Array.isArray(images) && images.length > 0;
+---
+{hasImages && (
+	<div class="project-gallery">
+		{images.map((image) => (
+			<figure>
+				<img src={image.src} alt={image.alt || image.caption || ''} loading="lazy" />
+				{image.caption && <figcaption>{image.caption}</figcaption>}
+			</figure>
+		))}
+	</div>
+)}
+
+<style>
+	.project-gallery {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 1rem;
+		margin-top: 1.5rem;
+	}
+
+	.project-gallery figure {
+		margin: 0;
+	}
+
+	.project-gallery img {
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		border-radius: 22px;
+		box-shadow: var(--box-shadow);
+	}
+
+	.project-gallery figcaption {
+		margin-top: 0.6rem;
+		font-size: 0.92rem;
+		color: rgb(var(--muted));
+		line-height: 1.6;
+	}
+</style>

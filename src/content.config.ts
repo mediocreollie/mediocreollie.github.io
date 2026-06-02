@@ -66,6 +66,35 @@ const pages = defineCollection({
 						url: z.string().optional(),
 					})
 				).optional(),
+				projects: z.array(
+					z.object({
+						title: z.string(),
+						summary: z.string().optional(),
+						challenge: z.string().optional(),
+						approach: z.string().optional(),
+						outcome: z.string().optional(),
+						metrics: z.array(
+							z.object({
+								label: z.string().optional(),
+								value: z.string().optional(),
+							})
+						).optional(),
+						tags: z.array(z.string()).optional(),
+						images: z.array(
+							z.object({
+								src: z.string().optional(),
+								alt: z.string().optional(),
+								caption: z.string().optional(),
+							})
+						).optional(),
+						links: z.array(
+							z.object({
+								label: z.string().optional(),
+								url: z.string().optional(),
+							})
+						).optional(),
+					})
+				).optional(),
 			})
 		).optional(),
 		featureCards: z.array(

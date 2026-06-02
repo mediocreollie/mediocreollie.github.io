@@ -147,6 +147,52 @@ export default defineConfig({
                   { type: "string", name: "url", label: "Project URL" },
                 ],
               },
+              {
+                type: "object",
+                list: true,
+                name: "projects",
+                label: "Projects",
+                description: "Structured portfolio or case study cards for this tab",
+                fields: [
+                  { type: "string", name: "title", label: "Project title", required: true },
+                  { type: "string", name: "summary", label: "Short summary", ui: { component: "textarea" } },
+                  { type: "string", name: "challenge", label: "Challenge", ui: { component: "textarea" } },
+                  { type: "string", name: "approach", label: "Approach / How I did it", ui: { component: "textarea" } },
+                  { type: "string", name: "outcome", label: "Outcome", ui: { component: "textarea" } },
+                  {
+                    type: "object",
+                    list: true,
+                    name: "metrics",
+                    label: "Metrics",
+                    fields: [
+                      { type: "string", name: "label", label: "Metric label" },
+                      { type: "string", name: "value", label: "Metric value" },
+                    ],
+                  },
+                  { type: "string", list: true, name: "tags", label: "Tags / categories" },
+                  {
+                    type: "object",
+                    list: true,
+                    name: "images",
+                    label: "Supporting images",
+                    fields: [
+                      { type: "image", name: "src", label: "Image source" },
+                      { type: "string", name: "alt", label: "Alt text" },
+                      { type: "string", name: "caption", label: "Caption" },
+                    ],
+                  },
+                  {
+                    type: "object",
+                    list: true,
+                    name: "links",
+                    label: "Links",
+                    fields: [
+                      { type: "string", name: "label", label: "Link text" },
+                      { type: "string", name: "url", label: "URL" },
+                    ],
+                  },
+                ],
+              },
             ],
           },
           {

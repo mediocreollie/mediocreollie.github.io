@@ -1,14 +1,14 @@
 ---
 import Layout from '../layouts/BlogPost.astro';
-import AboutTabs from '../components/AboutTabs.astro';
+import { getEntry, render } from 'astro:content';
 
-const title = "About Me";
-const description = "Learn more about my background in marketing, product, operations, AI, and commercial strategy.";
+const about = await getEntry('pages', 'about');
+const pageData = about?.data || {};
+const title = pageData.title || 'About';
+const description = pageData.heroSubtitle || 'Learn more about my background in marketing, product, operations, AI and commercial strategy.';
+const { Content } = about ? await render(about) : { Content: () => null };
 ---
 
-<Layout
-	title={title}
-	description={description}
->
-	<AboutTabs />
+<Layout title={title} description={description} heroImage={pageData.heroImage}>
+	<Content />
 </Layout>

@@ -1,0 +1,29 @@
+---
+const { heading, content } = Astro.props;
+---
+{content && (
+	<section class="project-section">
+		{heading && <h4>{heading}</h4>}
+		<p>{content}</p>
+	</section>
+)}
+
+<style>
+	.project-section {
+		margin-top: 1.25rem;
+	}
+
+	.project-section h4 {
+		margin: 0 0 0.65rem;
+		font-size: 1rem;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: rgb(var(--accent));
+	}
+
+	.project-section p {
+		margin: 0;
+		line-height: 1.8;
+		color: rgb(var(--text));
+	}
+</style>

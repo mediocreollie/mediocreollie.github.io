@@ -1,5 +1,8 @@
 ---
 import { getEntry } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+import ProjectCard from './ProjectCard.astro';
+import ProjectCard from './ProjectCard.astro';
 
 const about = await getEntry('pages', 'about');
 const data = about?.data || {};
@@ -44,8 +47,18 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 					{Array.isArray(t.bullets) && t.bullets.length > 0 && (
 						<ul>
 							{t.bullets.map((b) => <li>{b}</li>)}
-						</ul>
+						</ul>projects) && t.projects.length > 0 && (
+						<div class="project-grid">
+							{t.projects.map((project) => <ProjectCard project={project} />)}
+						</div>
 					)}
+					{Array.isArray(t.
+					)}projects) && t.projects.length > 0 && (
+						<div class="project-grid">
+							{t.projects.map((project) => <ProjectCard project={project} />)}
+						</div>
+					)}
+					{Array.isArray(t.
 					{Array.isArray(t.relatedProjects) && t.relatedProjects.length > 0 && (
 						<div class="related-projects">
 							<h4>Related projects</h4>
@@ -130,13 +143,25 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 	.tab-button:hover {
 		background: rgba(var(--accent), 0.08);
 	}
+project-grid {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.5rem;
+	}
 
+	.
 	.tab-button.active {
 		color: rgb(var(--accent));
 		border-color: rgba(var(--accent), 0.45);
 		background: rgba(var(--accent), 0.1);
 		font-weight: 700;
+	}project-grid {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.5rem;
 	}
+
+	.
 
 	.tabs-content {
 		min-height: 240px;

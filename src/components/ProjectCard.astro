@@ -1,0 +1,154 @@
+---
+import ProjectSection from './ProjectSection.astro';
+import MetricsList from './MetricsList.astro';
+import ProjectGallery from './ProjectGallery.astro';
+
+const { project } = Astro.props;
+const hasTags = Array.isArray(project.tags) && project.tags.length > 0;
+const hasLinks = Array.isArray(project.links) && project.links.length > 0;
+const hasDetails = Boolean(
+	project.challenge ||
+	project.approach ||
+	project.outcome ||
+	(Array.isArray(project.metrics) && project.metrics.length > 0) ||
+	(Array.isArray(project.images) && project.images.length > 0) ||
+	hasLinks
+);
+---
+<details class="project-card" open={false}>
+	<summary class="project-card-summary">
+		<div>
+			<div class="project-title-row">
+				<h3>{project.title}</h3>
+				{hasTags && (
+					<div class="project-tags">
+						{project.tags.map((tag) => <span>{tag}</span>)}
+					</div>
+				)}
+			</div>
+			{project.summary && <p class="project-summary">{project.summary}</p>}
+		</div>
+		{hasDetails && <span class="details-indicator">Show details</span>}
+	</summary>
+	<div class="project-card-body">
+		{project.challenge && <ProjectSection heading="Challenge" content={project.challenge} />}
+		{project.approach && <ProjectSection heading="How I did it" content={project.approach} />}
+		{project.outcome && <ProjectSection heading="Outcome" content={project.outcome} />}
+		<MetricsList metrics={project.metrics || []} />
+		<ProjectGallery images={project.images || []} />
+		{hasLinks && (
+			<div class="project-links">
+				<h4>Links</h4>
+				<ul>
+					{project.links.map((link) => (
+						<li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a></li>
+					))}
+				</ul>
+			</div>
+		)}
+	</div>
+</details>
+
+<style>
+	.project-card {
+		border: 1px solid rgba(var(--border), 0.75);
+		border-radius: 28px;
+		background: rgba(var(--surface), 0.96);
+		box-shadow: var(--box-shadow);
+		overflow: hidden;
+		margin-top: 1.25rem;
+	}
+
+	.project-card summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.35rem 1.5rem;
+		cursor: pointer;
+		list-style: none;
+		border-bottom: 1px solid rgba(var(--border), 0.75);
+		background: rgba(var(--surface-alt), 0.97);
+	}
+
+	.project-card summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.project-title-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.project-card h3 {
+		margin: 0;
+		font-size: 1.15rem;
+		color: rgb(var(--text));
+	}
+
+	.project-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+
+	.project-tags span {
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+		background: rgba(var(--accent), 0.14);
+		color: rgb(var(--accent));
+		font-size: 0.82rem;
+		font-weight: 700;
+	}
+
+	.project-summary {
+		margin: 0.65rem 0 0;
+		color: rgb(var(--muted));
+		line-height: 1.75;
+	}
+
+	.details-indicator {
+		font-size: 0.95rem;
+		color: rgb(var(--muted));
+	}
+
+	.project-card-body {
+		padding: 1.5rem;
+	}
+
+	.project-links {
+		margin-top: 1.5rem;
+	}
+
+	.project-links h4 {
+		margin: 0 0 0.75rem;
+		font-size: 1rem;
+		color: rgb(var(--accent));
+	}
+
+	.project-links ul {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.project-links a {
+		color: rgb(var(--text));
+		text-decoration: underline;
+	}
+
+	.project-card[open] summary {
+		background: rgba(var(--surface), 0.98);
+	}
+
+	@media (max-width: 680px) {
+		.project-card summary {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+</style>
