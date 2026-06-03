@@ -2,18 +2,12 @@
 title: About
 slug: about
 intro: >-
-  Hi, I’m Ollie. I’m 25, and I’ve worked across commercial strategy, product
-  thinking, marketing, operations and AI/digital experimentation.
+  Hi I'm Ollie, and I like a challenge, whether that's solving a business
+  problem, figuring out how to make a meal out of leftovers or trying to climb a
+  colourful wall.
 
 
-  Most of my work has sat in the messy middle: understanding the customer,
-  looking at the numbers, asking useful questions and turning ideas into
-  something practical.
-
-
-  That has meant analysing ageing stock, shaping B2B marketing plans, supporting
-  airline operations, helping people adopt AI tools, and building my own digital
-  projects to keep learning by making things.
+  I'm no stranger to change having worked multiple roles over the past 10 years
 heroEyebrow: About
 heroTitle: About Me
 heroSubtitle: Learn more about my background in marketing, product, operations,
@@ -334,11 +328,15 @@ tabs:
       practical outcomes."
   - label: CV
     heading: CV
-    intro: "A quick version of my experience, mainly covering marketing, product, operations, commercial and AI adoption work."
-    body: |
-      <p>Here is the website version of my CV: the roles, the core focus and the practical work I did in each place.</p>
+    intro: A quick version of my experience, mainly covering marketing, product,
+      operations, commercial and AI adoption work.
+    body: >
+      <p>Here is the website version of my CV: the roles, the core focus and the
+      practical work I did in each place.</p>
+
 
       <h4>Assistant Category Manager, PPE | Cromwell | Oct 2025 to Apr 2026</h4>
+
       <ul>
         <li>Supported range reviews across own-brand and branded PPE products.</li>
         <li>Worked with suppliers, sales, marketing, website and warehouse teams to improve product performance.</li>
@@ -346,7 +344,9 @@ tabs:
         <li>Supported product development, samples, launch activity and sales enablement.</li>
       </ul>
 
+
       <h4>Marketing Executive, B2B | easyJet | Apr 2025 to Oct 2025</h4>
+
       <ul>
         <li>Worked on B2B marketing for easyJet’s business travel audience.</li>
         <li>Helped build a clearer KPI and funnel plan for B2B marketing activity.</li>
@@ -354,7 +354,9 @@ tabs:
         <li>Created an interactive event activation that generated 20 new leads.</li>
       </ul>
 
+
       <h4>Junior Business Change Manager | easyJet | Oct 2024 to Mar 2025</h4>
+
       <ul>
         <li>Supported internal change projects across Jira, expenses, baggage systems and AI tools.</li>
         <li>Helped run AI adoption workshops and made training more interactive.</li>
@@ -362,7 +364,9 @@ tabs:
         <li>Supported Agile delivery, testing, progress tracking and process mapping.</li>
       </ul>
 
+
       <h4>Operations Executive | easyJet | Apr 2024 to Sep 2024</h4>
+
       <ul>
         <li>Supported operational planning for the Paris Olympics and Paralympics.</li>
         <li>Helped coordinate actions across crew planning, airports, routes, commercial and customer teams.</li>
@@ -370,7 +374,10 @@ tabs:
         <li>Worked in a live airline environment where small details could affect customers, crew and operations.</li>
       </ul>
 
-      <h4>Product Owner / Customer Experience | easyJet | Sep 2023 to Mar 2024</h4>
+
+      <h4>Product Owner / Customer Experience | easyJet | Sep 2023 to Mar
+      2024</h4>
+
       <ul>
         <li>Supported customer experience reporting and insight.</li>
         <li>Helped launch an internal Mystery Shopper approach.</li>
@@ -378,18 +385,24 @@ tabs:
         <li>Supported CSAT reporting and customer journey improvement work.</li>
       </ul>
 
+
       <h4>Marketing Executive | Silicon Sensing | Sep 2021 to Sep 2022</h4>
+
       <ul>
         <li>Supported social media, website updates, campaigns and event activity.</li>
         <li>Helped turn technical product information into clearer marketing content.</li>
         <li>Worked with sales and technical teams to create more useful marketing messages.</li>
       </ul>
 
-      <p><strong>Skills:</strong> Marketing strategy, B2B marketing, campaign planning,
-      product development, category management, AI adoption, Agile delivery,
-      stakeholder management, customer experience, operations planning,
-      data-led decision making.</p>
 
+      <p><strong>Skills:</strong> Marketing strategy, B2B marketing, campaign
+      planning,
+
+      product development, category management, AI adoption, Agile delivery,
+
+      stakeholder management, customer experience, operations planning,
+
+      data-led decision making.</p>
   - label: Commercial
     heading: Commercial
     intro: "My commercial experience has mostly come from working close to the
@@ -448,4 +461,3 @@ tabs:
       practical, grounded and close enough to the detail to actually make better
       decisions."
 ---
-
