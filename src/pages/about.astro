@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/BlogPost.astro';
+import AboutTabs from '../components/AboutTabs.astro';
 import { getEntry, render } from 'astro:content';
 
 const about = await getEntry('pages', 'about');
@@ -10,5 +11,6 @@ const { Content } = about ? await render(about) : { Content: () => null };
 ---
 
 <Layout title={title} description={description} heroImage={pageData.heroImage}>
+	<AboutTabs />
 	<Content />
 </Layout>
