@@ -3,13 +3,13 @@ title: Job Hunting
 slug: Job_Hunting
 pubDate: 2026-05-06
 updatedDate: 2026-05-06
-draft: true
+draft: false
 ---
 I’m a bit cynical when someone who has been in work for three years gives job hunting advice.
 
 Not because their experience is invalid, but because of how much the market changes.
 
-I’ve been in a unique situation recently. Being made redundant before my probation ended meant I was suddenly job hunting again less than eight months into the role. So I’m still relatively early into my career, but this period has felt completely different to anything I’d experienced before.
+I’ve been in a unique situation recently. Being made redundant before my probation ended meant I was suddenly job hunting again less than four months into the role. I’m still relatively early into my career, but this period has felt completely different to anything I’d experienced before.
 
 I’ve been fortunate enough to get quite a few interviews, but the weird steps afterwards have honestly surprised me more than the rejection itself.
 
