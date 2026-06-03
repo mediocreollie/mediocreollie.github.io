@@ -1,13 +1,9 @@
 ---
 import { getEntry } from 'astro:content';
-import ProjectCard from './ProjectCard.astro';
-import ProjectCard from './ProjectCard.astro';
-import ProjectCard from './ProjectCard.astro';
 
 const about = await getEntry('pages', 'about');
 const data = about?.data || {};
-const intro = data.intro || data.tabsIntro || '';
-const metrics = Array.isArray(data.metrics) ? data.metrics : [];
+const intro = data.intro || '';
 const tabs = Array.isArray(data.tabs) ? data.tabs : [];
 const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commercial'];
 ---
@@ -16,17 +12,6 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 	{intro && (
 		<div class="intro-block">
 			<p>{intro}</p>
-		</div>
-	)}
-
-	{metrics.length > 0 && (
-		<div class="metrics-row" role="list">
-			{metrics.map((m) => (
-				<div class="metric-card" role="listitem">
-					<div class="metric-value">{m.value}</div>
-					<div class="metric-label">{m.label}</div>
-				</div>
-			))}
 		</div>
 	)}
 
@@ -43,32 +28,7 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 				<div class={i === 0 ? 'tab-pane active' : 'tab-pane'} id={id}>
 					{t.heading && <h3>{t.heading}</h3>}
 					{t.intro && <p>{t.intro}</p>}
-					{t.body && <p>{t.body}</p>}
-					{Array.isArray(t.bullets) && t.bullets.length > 0 && (
-						<ul>
-							{t.bullets.map((b) => <li>{b}</li>)}
-						</ul>projects) && t.projects.length > 0 && (
-						<div class="project-grid">
-							{t.projects.map((project) => <ProjectCard project={project} />)}
-						</div>
-					)}
-					{Array.isArray(t.
-					)}projects) && t.projects.length > 0 && (
-						<div class="project-grid">
-							{t.projects.map((project) => <ProjectCard project={project} />)}
-						</div>
-					)}
-					{Array.isArray(t.
-					{Array.isArray(t.relatedProjects) && t.relatedProjects.length > 0 && (
-						<div class="related-projects">
-							<h4>Related projects</h4>
-							<ul>
-								{t.relatedProjects.map((p) => (
-									<li><a href={p.url}>{p.title}</a></li>
-								))}
-							</ul>
-						</div>
-					)}
+					{t.body && <p set:html={t.body} />}
 				</div>
 			);
 		})}
@@ -94,33 +54,6 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 		color: rgb(var(--text));
 	}
 
-	.metrics-row {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1rem;
-		margin-bottom: 1.75rem;
-	}
-
-	.metric-card {
-		padding: 1rem;
-		border-radius: 20px;
-		background: rgba(var(--surface), 0.98);
-		border: 1px solid rgba(var(--border), 0.75);
-	}
-
-	.metric-value {
-		font-size: 1.2rem;
-		font-weight: 700;
-		color: rgb(var(--text));
-		margin-bottom: 0.25rem;
-	}
-
-	.metric-label {
-		font-size: 0.95rem;
-		color: rgb(var(--muted));
-		line-height: 1.6;
-	}
-
 	.tabs-nav {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -143,25 +76,13 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 	.tab-button:hover {
 		background: rgba(var(--accent), 0.08);
 	}
-project-grid {
-		display: grid;
-		gap: 1.25rem;
-		margin-top: 1.5rem;
-	}
 
-	.
 	.tab-button.active {
 		color: rgb(var(--accent));
 		border-color: rgba(var(--accent), 0.45);
 		background: rgba(var(--accent), 0.1);
 		font-weight: 700;
-	}project-grid {
-		display: grid;
-		gap: 1.25rem;
-		margin-top: 1.5rem;
 	}
-
-	.
 
 	.tabs-content {
 		min-height: 240px;
@@ -182,10 +103,21 @@ project-grid {
 		font-size: 1.4rem;
 	}
 
-	.tab-pane p {
+	.tab-pane p,
+	.tab-pane ul,
+	.tab-pane ol {
 		margin: 1rem 0;
 		line-height: 1.75;
 		color: rgb(var(--muted));
+	}
+
+	.tab-pane ul,
+	.tab-pane ol {
+		padding-inline-start: 1.25rem;
+	}
+
+	.tab-pane li {
+		margin-bottom: 0.55rem;
 	}
 
 	.tab-pane strong {
@@ -205,10 +137,6 @@ project-grid {
 	@media (max-width: 680px) {
 		.about-tabs-container {
 			padding: 1.5rem;
-		}
-
-		.metrics-row {
-			grid-template-columns: 1fr;
 		}
 
 		.tab-button {
