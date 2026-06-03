@@ -5,9 +5,9 @@ pubDate: 2026-05-06
 updatedDate: 2026-05-06
 draft: true
 ---
-“I’ve been reading Playboy.
+I’ve been reading Playboy.
 
-Defending when gen were being so ‘reactive’ to their various messages. I have really enjoyed their recent articles about politics, sex and celebrities.
+Depending which generation you were born in you may have a different reaction to that. But I have really enjoyed their recent articles about politics, sex and celebrities.
 
 These are perspectives about topics that I wouldn’t have come close to knowing two years ago.
 
@@ -17,4 +17,4 @@ Since then I have made a conscious effort to view content I’m interested in by
 
 I’ve never been in the generation who read newspapers for information, but as trust of large media erodes over time with concerns over influence, I am relying more and more on views of individuals who I trust and are informed.
 
-Even if that source is Playboy.”
+Even if that source is Playboy.
