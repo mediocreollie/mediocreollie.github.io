@@ -28,7 +28,37 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 				<div class={i === 0 ? 'tab-pane active' : 'tab-pane'} id={id}>
 					{t.heading && <h3>{t.heading}</h3>}
 					{t.intro && <p>{t.intro}</p>}
-					{t.body && <p set:html={t.body} />}
+					{t.projects && t.projects.length > 0 ? (
+						<div class="projects-grid">
+							{t.projects.map((project) => (
+								<article class="project-card">
+									{project.eyebrow && <div class="project-eyebrow">{project.eyebrow}</div>}
+									<h4 class="project-title">{project.title}</h4>
+									{project.shortSummary && <p class="project-summary">{project.shortSummary}</p>}
+									{project.challenge && (
+										<div class="project-section">
+											<h5>Challenge</h5>
+											<p>{project.challenge}</p>
+										</div>
+									)}
+									{project.approach && (
+										<div class="project-section">
+											<h5>Approach</h5>
+											<p>{project.approach}</p>
+										</div>
+									)}
+									{project.outcome && (
+										<div class="project-section">
+											<h5>Outcome</h5>
+											<p>{project.outcome}</p>
+										</div>
+									)}
+								</article>
+							))}
+						</div>
+					) : (
+						 t.body && <div set:html={t.body} />
+					)}
 				</div>
 			);
 		})}
