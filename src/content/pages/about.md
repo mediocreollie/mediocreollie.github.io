@@ -15,74 +15,47 @@ heroSubtitle: Learn more about my background in marketing, product, operations,
 mobileShowHeroImage: false
 tabs:
   - label: All
-    heading: All
-    intro: "What I do best  I’m good at taking messy, practical problems and turning
-      them into something clearer: a decision, a plan, a project, a test, or a
-      better way of working."
-    body: "## What I do best  I’m good at taking messy, practical problems and
-      turning them into something clearer: a decision, a plan, a project, a
-      test, or a better way of working.  ### I helped make old stock
-      commercially useful again  At **Cromwell**, I worked on ageing PPE stock
-      that had been sitting in the business for years. Some of it could still be
-      sold, some needed discounting, some needed recertifying, and some had to
-      be written off.  **How I did it:** I broke the stock down by
-      **certification status, saleability and risk**, then worked with
-      marketing, website and warehouse teams to help move it forward.  The wider
-      project supported around **£300k of stock reduction**, including around
-      **£100k** that needed recertification, disposal or write-off.  ### I
-      helped turn B2B marketing spend into a clearer plan  At **easyJet**, I
-      worked on business travel marketing, targeting travel managers rather than
-      the usual leisure audience. The team was spending money on awareness, but
-      the measurement was loose and the link to sales was not clear
-      enough.  **How I did it:** I helped shape a **funnel-based plan** that
-      connected paid media, content, email, events and lead generation.  I also
-      helped track campaign activity properly, including a Telegraph trial that
-      did not perform, and supported an event activation that generated **20 new
-      leads**.  ### I helped people actually use AI tools  At **easyJet**, I
-      worked on internal AI adoption, including tools for policy search,
-      document comparison and Excel analysis. One tool had poor usage because
-      people did not really understand what it was for.  **How I did it:** I
-      worked with developers, took user feedback into the product, then changed
-      the training approach.  Instead of passive Teams demos, I used **Slido
-      quizzes, real questions and hands-on examples** so people could see how
-      the tool helped. Usage improved, and I also supported wider AI showcases,
-      graduate sessions and manager-led adoption materials.  ### I helped
-      improve the graduate experience  At **easyJet**, I helped introduce a
-      graduate buddy system after seeing that new grads could feel isolated or
-      struggle to get up to speed when managers were busy.  **How I did it:** I
-      worked with the graduate scheme lead to match new graduates with more
-      experienced graduates, giving people someone practical to ask questions,
-      settle in faster and understand how the business worked.  ### I helped
-      improve customer experience through small operational details  In
-      **easyJet’s in-flight experience team**, I created a low-cost internal
-      mystery shopper-style programme to understand what was really happening
-      onboard.  **How I did it:** I built the survey, worked with crew
-      standards, launched it internally, cleaned the data in Excel and worked
-      with analysts to check the findings.  The data helped highlight issues
-      around **cleanliness, greetings, baggage access and onboard service**. One
-      useful example was first-row baggage, where customers were having to walk
-      several rows back to collect bags. That insight helped support a change
-      that improved customer satisfaction and gave people more reason to book
-      those seats.  ### I helped lead a boxing club through a proper operational
-      change  At university, I chaired the boxing club and led a move to a new
-      gym after the old facilities became worse and started limiting
-      attendance.  **How I did it:** I met with the new gym owners, used
-      attendance data to explain what we needed, negotiated session access and
-      helped move the club onto a better setup.  I also improved session
-      standards, made sure beginners were looked after properly, and set a rule
-      that enough committee members had to be present for sessions to run
-      well.  The club increased membership revenue, hit its membership cap and
-      **doubled average session attendance**.  ### I build my own projects to
-      learn by doing  I’ve been building this website as a place to write, show
-      projects properly and create something more useful than a CV alone.  I’ve
-      also been building an **AI pixel furniture app** that takes uploaded
-      furniture images, turns them into pixel-art assets using a local **ComfyUI
-      workflow**, and places them into a room-builder interface.  **How I’m
-      doing it:** I’m using the projects to learn by making: working through
-      GitHub, CMS editing, local AI workflows, prompts, image generation,
-      debugging, diagrams and product decisions.  The furniture app is still a
-      work in progress, but that is part of the point. It is helping me
-      understand what happens when an idea meets real constraints."
+    heading: Recent projects and experiments
+    intro: "A few things I’ve worked on across marketing, AI, operations, product, customer experience and personal projects."
+    body: |
+      <h3>Making B2B marketing easier to measure</h3>
+      <p>At <strong>easyJet</strong>, I worked on business travel marketing, targeting travel managers rather than the usual leisure audience. The team was spending money on awareness, but the measurement was loose and the link to sales was not clear enough.</p>
+      <p><strong>How I did it:</strong> I helped shape a funnel-based plan that connected paid media, content, email, events and lead generation. I also helped track campaign activity properly, including a Telegraph trial that did not perform, and supported an event activation that generated <strong>20 new leads</strong>.</p>
+
+      <h3>Turning an event stand into something people actually wanted to visit</h3>
+      <p>For a business travel event, I helped create a simple interactive game to get people onto the stand and start better conversations.</p>
+      <p><strong>How I did it:</strong> We used a competitive packing game that made sense for the travel industry. It was quick to understand, easy to join and gave people a reason to stop rather than walk past.</p>
+      <p><strong>Outcome:</strong> The activation generated <strong>20 new leads</strong> and improved stand engagement. At a later event without the game, fewer people came to the stand, which gave us a useful comparison point.</p>
+
+      <h3>Helping people actually use AI tools</h3>
+      <p>At <strong>easyJet</strong>, I worked on internal AI adoption, including tools for policy search, document comparison and Excel analysis. One tool had poor usage because people did not really understand what it was for.</p>
+      <p><strong>How I did it:</strong> I worked with developers, took user feedback into the product, then changed the training approach. Instead of passive Teams demos, I used Slido quizzes, real questions and hands-on examples so people could see how the tool helped.</p>
+      <p><strong>Outcome:</strong> Usage improved, and I also supported wider AI showcases, graduate sessions and manager-led adoption materials.</p>
+
+      <h3>Sorting out £300k of old stock</h3>
+      <p>At <strong>Cromwell</strong>, I worked on ageing PPE stock that had been sitting in the business for years. Some of it could still be sold, some needed discounting, some needed recertifying, and some had to be written off.</p>
+      <p><strong>How I did it:</strong> I broke the stock down by certification status, saleability and risk, then worked with marketing, website and warehouse teams to help move it forward.</p>
+      <p><strong>Outcome:</strong> The wider project supported around <strong>£300k of stock reduction</strong>, including around <strong>£100k</strong> that needed recertification, disposal or write-off.</p>
+
+      <h3>Building better product ranges from customer needs</h3>
+      <p>At <strong>Cromwell</strong>, I supported own-brand PPE range development, including products designed around larger customer requirements.</p>
+      <p><strong>How I did it:</strong> I worked with suppliers on samples, reviewed product options, compared competitors and helped move products from idea or adapted sample through to order.</p>
+      <p><strong>Outcome:</strong> The work helped develop more practical own-brand ranges, including inclusive size options that made the range stronger for organisations with varied workforce needs.</p>
+
+      <h3>Planning for the Paris Olympics without creating chaos</h3>
+      <p>At <strong>easyJet</strong>, I supported operational planning for the Paris Olympics, helping teams prepare for airspace restrictions, cancellations and customer impact.</p>
+      <p><strong>How I did it:</strong> I helped coordinate actions across crew planning, airports, routes, commercial and customer teams, asking questions to understand knock-on impacts and supporting planning around customer policy and call centre readiness.</p>
+      <p><strong>Outcome:</strong> The planning helped the business get through the period with no unexpected operational impacts or negative PR.</p>
+
+      <h3>Making the customer experience easier to understand</h3>
+      <p>In <strong>easyJet’s customer experience team</strong>, I worked on feedback and reporting that helped connect what customers were saying with what the business could improve.</p>
+      <p><strong>How I did it:</strong> I supported monthly CSAT reporting and helped launch an internal Mystery Shopper approach, gathering structured feedback from staff travelling through the journey.</p>
+      <p><strong>Outcome:</strong> The work helped identify practical customer experience improvements, including cleanliness actions, and contributed to a reported <strong>2-point CSAT uplift</strong>.</p>
+
+      <h3>Building an AI pixel furniture app</h3>
+      <p>I’m building a web app that turns real furniture photos into isometric pixel-art sprites, then lets you place them into a room-builder style grid.</p>
+      <p><strong>How I’m doing it:</strong> I’m using a local ComfyUI workflow, image-to-image generation, prompt testing, frontend UX decisions, backend debugging and a review step so the outputs can be checked rather than blindly accepted.</p>
+      <p><strong>Outcome:</strong> It is still a live build, but it shows how I like to learn: by making something slightly too ambitious, breaking it, fixing it and slowly turning it into something real.</p>
   - label: Marketing
     heading: Marketing
     intro: "## My marketing experience has mostly been about making activity
