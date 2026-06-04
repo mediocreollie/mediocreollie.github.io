@@ -68,7 +68,9 @@ const pages = defineCollection({
 				).optional(),
 				projects: z.array(
 					z.object({
+						eyebrow: z.string().optional(),
 						title: z.string(),
+						shortSummary: z.string().optional(),
 						summary: z.string().optional(),
 						challenge: z.string().optional(),
 						approach: z.string().optional(),

@@ -88,6 +88,59 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 		min-height: 240px;
 	}
 
+	.projects-grid {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.project-card {
+		padding: 1.5rem;
+		border-radius: 28px;
+		background: rgba(var(--surface), 0.98);
+		border: 1px solid rgba(var(--border), 0.75);
+		box-shadow: var(--box-shadow);
+	}
+
+	.project-eyebrow {
+		display: inline-block;
+		margin-bottom: 0.65rem;
+		font-size: 0.75rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		font-weight: 700;
+		color: rgb(var(--accent));
+	}
+
+	.project-title {
+		margin: 0.35rem 0 0.85rem;
+		font-size: 1.2rem;
+		line-height: 1.25;
+		color: rgb(var(--text));
+	}
+
+	.project-summary {
+		margin: 0;
+		color: rgb(var(--muted));
+		line-height: 1.8;
+	}
+
+	.project-section {
+		margin-top: 1.2rem;
+	}
+
+	.project-section h5 {
+		margin: 0 0 0.55rem;
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: rgb(var(--accent));
+	}
+
+	.project-section p {
+		margin: 0;
+		line-height: 1.8;
+		color: rgb(var(--muted));
+	}
+
 	.tab-pane {
 		display: none;
 		animation: fadeIn 0.3s ease;

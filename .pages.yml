@@ -179,6 +179,30 @@ content:
               - name: url
                 label: Project URL
                 type: string
+          - name: projects
+            label: Projects
+            type: object
+            list: true
+            fields:
+              - name: eyebrow
+                label: Eyebrow
+                type: string
+              - name: title
+                label: Project title
+                type: string
+                required: true
+              - name: shortSummary
+                label: Short summary
+                type: text
+              - name: challenge
+                label: Challenge
+                type: text
+              - name: approach
+                label: Approach / How I did it
+                type: text
+              - name: outcome
+                label: Outcome
+                type: text
       - name: projects
         label: Projects
         type: object

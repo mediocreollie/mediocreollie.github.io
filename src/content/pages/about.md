@@ -58,63 +58,38 @@ tabs:
       <p><strong>Outcome:</strong> It is still a live build, but it shows how I like to learn: by making something slightly too ambitious, breaking it, fixing it and slowly turning it into something real.</p>
   - label: Marketing
     heading: Marketing
-    intro: "## My marketing experience has mostly been about making activity
-      clearer, more useful and easier to measure. I’ve worked across B2B
-      marketing, technical content, events, websites, campaign tracking and
-      product launch support.  "
-    body: "### I helped turn B2B marketing spend into a clearer plan  At
-      **easyJet**, I worked in the B2B marketing team, focused on business
-      travel rather than the main leisure audience. The team was targeting
-      travel managers and corporate decision-makers, but a lot of the activity
-      was awareness-led and the measurement was not clear enough.  **How I did
-      it:** I helped shape a **funnel-based plan** that connected paid media,
-      content, email, events and lead generation.  **What it achieved:** The aim
-      was to move away from loose activity and build a clearer view of what was
-      working, what was not, and how marketing could support the business
-      development team more directly.  ### I helped make event marketing more
-      engaging  At a business travel event, I helped create a stand activation
-      around a **competitive packing game**. It was simple, relevant to the
-      audience and gave people a reason to stop, talk and bring others
-      over.  **How I did it:** Instead of relying on passive stand traffic, the
-      activity gave people something to do. It increased dwell time and created
-      more natural conversations.  **What it achieved:** The activation
-      generated **20 new leads** from the event. At a later event where the game
-      was not used, fewer people came to the stand, which gave a useful
-      comparison point.  ### I helped make technical products easier to
-      understand  At **Silicon Sensing**, I worked on marketing for technical
-      products, including social media, website content, campaigns and events.
-      The challenge was making complex products more interesting without losing
-      technical accuracy.  **How I did it:** I worked with technical sales to
-      make sure LinkedIn content was accurate, used product features as the
-      basis for campaigns, and reused existing assets where possible.  **What it
-      achieved:** During my time there, social following grew by around
-      **20%**.  ### I helped improve a website that was expensive and hard to
-      manage  At **Silicon Sensing**, the website was out of date and cost
-      around **£20,000 a year** to update. Some content was hard-coded, which
-      meant the business did not have enough control.  **How I did it:** I
-      helped lead the website redevelopment process: speaking to developers,
-      comparing costs and features, building a weighted comparison, supporting
-      copywriting, and working with the chosen supplier through to
-      launch.  **What it achieved:** The business moved towards a more usable
-      website setup, with better control over content. I also used **Google
-      Analytics** and **Hotjar** to understand how people moved through the site
-      and where content needed improving.  ### I helped support product launches
-      and sales teams  At **Cromwell**, I worked closely with marketing and
-      sales across a large PPE portfolio. Marketing needed to know which
-      products to push, sales needed the right information, and the business
-      needed to move stock in a commercially sensible way.  **How I did it:** I
-      used product and stock data to help guide what should be prioritised in
-      marketing materials, brochures, website activity and sales
-      conversations.  **What it achieved:** I supported launch activity,
-      including clean air range readiness and Hydros photoshoot planning, making
-      sure the right products, sizes and visuals were represented.  ### I use
-      marketing as a way to make decisions clearer  The marketing work I enjoy
-      most is not just making something look good or sound polished. It is the
-      bit underneath: **who are we trying to reach, what do they need to
-      understand, what should they do next, and how will we know if it
-      worked?**  That is where my marketing experience connects with the rest of
-      my work: commercial thinking, product detail, customer understanding,
-      operations and measurement."
+    intro: "Marketing projects where I worked on making activity clearer, more useful and easier to measure."
+    projects:
+      - eyebrow: "B2B MARKETING"
+        title: "Making B2B marketing easier to measure"
+        shortSummary: "At easyJet, I worked on business travel marketing, targeting travel managers rather than the usual leisure audience."
+        challenge: "The team was spending money on awareness, but the measurement was loose and the link to sales was not clear enough."
+        approach: "I helped shape a funnel-based plan that connected paid media, content, email, events and lead generation. I also helped track campaign activity properly, including a Telegraph trial that did not perform."
+        outcome: "The work helped move activity away from loose awareness and towards a clearer view of what was working, what was not, and how marketing could support business development."
+      - eyebrow: "EVENT ACTIVATION"
+        title: "Turning an event stand into something people actually wanted to visit"
+        shortSummary: "For a business travel event, I helped create a simple interactive game to get people onto the stand and start better conversations."
+        challenge: "At events, it is easy to have a stand people walk past. We needed something that gave people a reason to stop, stay and talk to the team."
+        approach: "We used a competitive packing game that made sense for the travel industry. It was quick to understand, easy to join and gave people a reason to bring others over."
+        outcome: "The activation generated 20 new leads and improved stand engagement. At a later event without the game, fewer people came to the stand, which gave us a useful comparison point."
+      - eyebrow: "PRODUCT MARKETING"
+        title: "Making technical products easier to understand"
+        shortSummary: "At Silicon Sensing, I worked on marketing technical products across social, website content, campaigns and events."
+        challenge: "The products were complex, so the challenge was making the content more interesting without losing technical accuracy."
+        approach: "I worked with the technical sales team to understand product features, then turned that into clearer campaign and social content."
+        outcome: "During my time there, social following grew by around 20%."
+      - eyebrow: "WEBSITE"
+        title: "Improving a website that was expensive and hard to update"
+        shortSummary: "At Silicon Sensing, the website was out of date and expensive to update."
+        challenge: "Some content was hard-coded, meaning the business did not have enough control and simple updates could cost around £20,000 a year."
+        approach: "I helped lead the redevelopment process, comparing costs and features, building a weighted comparison, supporting copywriting and working with the chosen supplier."
+        outcome: "The business moved towards a more usable website setup with better control over content. I also used Google Analytics and Hotjar to understand how people moved through the site."
+      - eyebrow: "SALES ENABLEMENT"
+        title: "Helping product launches land with sales and marketing"
+        shortSummary: "At Cromwell, I worked closely with marketing and sales across a large PPE portfolio."
+        challenge: "Marketing needed to know which products to push, sales needed the right information, and the business needed to move stock in a commercially sensible way."
+        approach: "I helped decide which products should be prioritised in marketing materials, brochures, website activity and sales conversations."
+        outcome: "I supported launch activity, including clean air range support, sales enablement and product guidance."
   - label: Operations
     heading: Operations
     intro: "My operations experience has mainly been about understanding how
