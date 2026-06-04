@@ -105,6 +105,13 @@ const pages = defineCollection({
 				description: z.string().optional(),
 			})
 		).optional(),
+		workItems: z.array(
+			z.object({
+				title: z.string(),
+				description: z.string().optional(),
+				tag: z.string().optional(),
+			})
+		).optional(),
 	}),
 });
 

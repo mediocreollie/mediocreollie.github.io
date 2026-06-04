@@ -278,6 +278,22 @@ content:
           - name: description
             label: Card description
             type: string
+      - name: workItems
+        label: Selected work cards
+        type: object
+        list: true
+        description: Cards for the homepage Selected Work section
+        fields:
+          - name: tag
+            label: Label
+            type: string
+          - name: title
+            label: Title
+            type: string
+            required: true
+          - name: description
+            label: Text
+            type: text
       
   - name: settings
     label: Site Settings
