@@ -23,20 +23,31 @@ const posts = (await getCollection('blog'))
 	<head>
 		<BaseHead title={blogListingTitle} description={blogListingIntro} />
 		<style>
+			.blog-page {
+				width: min(100%, 1040px);
+				margin: 0 auto;
+				padding-inline: 1.5rem;
+			}
+
 			.blog-header {
-				margin-bottom: 2rem;
+				margin-bottom: 1.75rem;
+				max-width: 100%;
 			}
 
 			.blog-header h1 {
-				margin-bottom: 1rem;
+				margin-bottom: 0.75rem;
 			}
 
 			.blog-header p {
 				color: rgb(var(--muted));
 				font-size: 1.05rem;
-				line-height: 1.8;
-				max-width: 740px;
+				line-height: 1.7;
+				max-width: 760px;
 				margin: 0;
+			}
+
+			.blog-posts {
+				width: 100%;
 			}
 
 			.blog-posts > ul {
@@ -49,15 +60,17 @@ const posts = (await getCollection('blog'))
 	<body>
 		<Header />
 		<main>
-			{blogListingTitle && (
-				<section class="blog-header">
-					<h1>{blogListingTitle}</h1>
-					{blogListingIntro && <p>{blogListingIntro}</p>}
+			<div class="blog-page">
+				{blogListingTitle && (
+					<section class="blog-header">
+						<h1>{blogListingTitle}</h1>
+						{blogListingIntro && <p>{blogListingIntro}</p>}
+					</section>
+				)}
+				<section class="blog-posts">
+					<BlogList posts={posts} />
 				</section>
-			)}
-			<section class="blog-posts">
-				<BlogList posts={posts} />
-			</section>
+			</div>
 		</main>
 		<Footer />
 	</body>
