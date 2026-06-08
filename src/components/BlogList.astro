@@ -13,33 +13,64 @@ const {
   showImage = true,
   showDescription = true,
 } = Astro.props;
+
+const MAX_PREVIEW_LENGTH = 150;
+
+function normalizePreviewText(source: string) {
+  return source
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+    .replace(/`+([^`]+)`+/g, '$1')
+    .replace(/#+/g, '')
+    .replace(/>\s?/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getPreviewText(post: any) {
+  const source =
+    post.data.description ||
+    (typeof post.body === 'string'
+      ? post.body
+      : post.body?.raw ?? '') ||
+    '';
+
+  const text = normalizePreviewText(source);
+  if (!text) return '';
+  if (text.length <= MAX_PREVIEW_LENGTH) return text;
+
+  const truncated = text.slice(0, MAX_PREVIEW_LENGTH);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return `${truncated.slice(0, lastSpace > 0 ? lastSpace : MAX_PREVIEW_LENGTH)}…`;
+}
 ---
 
 <ul class="post-list">
-  {posts.map((post) => (
-    <li class="post-card card card--writing">
-      <a class="post-card-link" href={`/blog/${post.id}`} aria-label={`Read ${post.data.title}`}>
-        {showImage && post.data.heroImage ? (
-          <div class="post-card-image">
-            <Image
-              src={post.data.heroImage}
-              alt={post.data.title}
-              width={120}
-              height={80}
-            />
-          </div>
-        ) : null}
-
-        <div class="post-card-content">
-          <h2>{post.data.title}</h2>
-          <p class="date"><FormattedDate date={post.data.pubDate} /></p>
-          {showDescription && post.data.description ? (
-            <p class="description">{post.data.description}</p>
+  {posts.map((post) => {
+    const preview = showDescription ? getPreviewText(post) : '';
+    return (
+      <li class="post-card card card--writing">
+        <a class="post-card-link" href={`/blog/${post.id}`} aria-label={`Read ${post.data.title}`}>
+          {showImage && post.data.heroImage ? (
+            <div class="post-card-image">
+              <Image
+                src={post.data.heroImage}
+                alt={post.data.title}
+                width={120}
+                height={80}
+              />
+            </div>
           ) : null}
-        </div>
-      </a>
-    </li>
-  ))}
+
+          <div class="post-card-content">
+            <h2>{post.data.title}</h2>
+            <p class="date"><FormattedDate date={post.data.pubDate} /></p>
+            {preview ? <p class="description">{preview}</p> : null}
+          </div>
+        </a>
+      </li>
+    );
+  })}
 </ul>
 
 <style>
@@ -48,15 +79,15 @@ const {
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 1rem;
+    gap: 0.9rem;
   }
 
   .post-card {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
     margin: 0;
-    padding: 1rem;
+    padding: 0.95rem;
     border: 1px solid rgba(var(--border), 0.75);
     border-radius: 24px;
     background: rgba(var(--surface), 0.98);
@@ -71,7 +102,7 @@ const {
 
   .post-card-image {
     width: 100%;
-    min-height: 120px;
+    min-height: 100px;
     overflow: hidden;
     border-radius: 18px;
     background: rgba(var(--surface-alt), 0.9);
@@ -87,7 +118,7 @@ const {
   .post-card-link {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
     width: 100%;
     color: inherit;
     text-decoration: none;
@@ -100,36 +131,42 @@ const {
 
   .post-card-content h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: rgb(var(--text));
+    line-height: 1.2;
   }
 
   .date {
-    margin: 0.25rem 0 0;
+    margin: 0.2rem 0 0;
     color: rgb(var(--muted));
     font-size: 0.9rem;
   }
 
   .description {
-    margin: 0.75rem 0 0;
+    margin: 0.5rem 0 0;
     color: rgb(var(--muted));
-    line-height: 1.6;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 3rem;
   }
 
   @media (min-width: 768px) {
     .post-card {
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .post-card-link {
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .post-card-image {
-      flex: 0 0 130px;
-      width: 130px;
+      flex: 0 0 120px;
+      width: 120px;
       height: 90px;
     }
   }
