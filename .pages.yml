@@ -130,6 +130,33 @@ content:
       - name: latestPostsTitle
         label: Latest Posts Section Title
         type: string
+      - name: featureCards
+        label: What I do cards
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Card title
+            type: string
+            required: true
+          - name: description
+            label: Card description
+            type: text
+      - name: workItems
+        label: Selected work cards
+        type: object
+        list: true
+        fields:
+          - name: tag
+            label: Work card tag
+            type: string
+          - name: title
+            label: Work card title
+            type: string
+            required: true
+          - name: description
+            label: Work card description
+            type: text
       - name: body
         label: Body
         type: rich-text
