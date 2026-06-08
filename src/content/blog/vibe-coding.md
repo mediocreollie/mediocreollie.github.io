@@ -2,7 +2,7 @@
 title: How vibecoding could impact product management
 slug: vibe-coding
 description: >
-  I believe vibe coding will change product delivery by giving developers
+  I believe vibe coding could change product delivery by giving developers
   clearer direction before they start building.
 
 
@@ -20,7 +20,7 @@ description: >
   is likely to be used as much as first proposed.
 
 
-  This means you often do not see the real results of a new feature until after
+  This means you often do not see the real results of new features until after
   the MVP has already been produced and product feature testing begins. This can
   lead to multiple failed product features. A solution might be created, only
   for teams to realise that it does not properly solve the customer need. It can
@@ -28,7 +28,7 @@ description: >
   developer time in the process.
 
 
-  Whilst a lot of features can now be turned around much faster than before,
+  While a lot of features can now be turned around much faster than before,
   there are still big risks that come with adding new features to live systems.
   This is where I think vibe coding could be part of the solution.
 
@@ -41,7 +41,7 @@ description: >
 
 
   Successful product features can then be presented to developers with clearer
-  success factors based on user feedback. Whilst this still carries risk amongst
+  success factors based on user feedback. While this still carries risk amongst
   a larger user base, it should lead to a higher success rate for new features
   that are implemented. It should also allow developers to spend more time
   adding value where they are best placed, such as making the feature scalable,
@@ -54,19 +54,18 @@ description: >
   effectively with more knowledge, leading to better prioritisation over time.
 
 
-  During my research, I discovered that GitHub has already shown a similar
-  version of this using GitHub Copilot. A prototype was built first, before
-  engineering resource was brought in to move it towards production. This shows
-  how vibe coding can support the early validation stage without replacing the
-  need for proper engineering.
+  During my research, I found an example of GitHub already using a similar
+  version of this method, using GitHub Copilot. A prototype was built first,
+  before engineering resource was brought in to move it towards production. This
+  shows how vibe coding can support the early validation stage without replacing
+  the need for proper engineering.
 
 
   This will create additional work, as teams will need to manage more moving
   pieces at one time. There will still need to be decisions around which MVPs
   should be mocked up, which should be tested further and which should then be
   taken on by a developer. However, this trade-off should lower the risk of
-  larger changes and allow more successful product features to make it into
-  development.
+  larger changes and allow more successful product features to be developed.
 
 
   This should also allow developers to produce more with fewer iterations and
@@ -89,9 +88,9 @@ description: >
 
 
   Vibe coding is currently seen as quite gimmicky by a lot of people on
-  LinkedIn, I believe there is a lot of untapped potential in the product space.
-  The real value may not just be building things faster, but helping teams test
-  ideas earlier, reduce wasted development time and give developers
+  LinkedIn, but I believe there is a lot of untapped potential in the product
+  space. The real value may not just be building things faster, but helping
+  teams test ideas earlier, reduce wasted development time and give developers
   better-quality problems to solve.
 pubDate: 2026-06-06
 updatedDate: 2026-06-06
