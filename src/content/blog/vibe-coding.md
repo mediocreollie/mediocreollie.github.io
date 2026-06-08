@@ -93,6 +93,6 @@ description: >
   teams test ideas earlier, reduce wasted development time and give developers
   better-quality problems to solve.
 pubDate: 2026-06-06
-updatedDate: 2026-06-06
+updatedDate: 2026-06-08
 draft: true
 ---
