@@ -36,13 +36,19 @@ featureCards:
     description: Film, writing, AI, design, cooking and business ideas all feed the
       same brain and help make sense of how things work.
 workItems:
-  - tag: CREATIVE
-    title: Exploring creativity in small ways
-    description: I’m trying to make more things, even when they’re rough. That usually means filming short videos, editing clips, taking photos, writing ideas down, playing with music choices, or trying to make something ordinary feel a bit more interesting.
-  - tag: LIFE
-    title: Exploring the world properly
-    description: I like travel, trying new food, cooking, staying active and finding small stories in new places. Since moving to Australia, that has meant getting outside more, seeing new places, eating well, swimming, walking, and saying yes to more things.
-  - tag: EXPERIMENTS
-    title: Trying things before I know if I’m good at them
-    description: I like learning by doing, whether that’s trying a new camera, messing around with editing, painting badly, going tubing on a river, testing a recipe, or building something online. Most of it starts messy, which is usually the point.
+  - title: Exploring creativity in small ways
+    description: I’m trying to make more things, even when they’re rough. That
+      usually means filming short videos, editing clips, taking photos, writing
+      ideas down, playing with music choices, or trying to make something
+      ordinary feel a bit more interesting.
+  - title: Exploring the world properly
+    description: I like travel, trying new food, cooking, staying active and finding
+      small stories in new places. Since moving to Australia, that has meant
+      getting outside more, seeing new places, eating well, swimming, walking,
+      and saying yes to more things.
+  - title: Trying things before I know if I’m good at them
+    description: I like learning by doing, whether that’s trying a new camera,
+      messing around with editing, painting badly, going tubing on a river,
+      testing a recipe, or building something online. Most of it starts messy,
+      which is usually the point.
 ---
