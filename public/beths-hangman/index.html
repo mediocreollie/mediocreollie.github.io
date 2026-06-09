@@ -1,2 +1,71 @@
-<link rel="stylesheet" href="./style.css">
-<script src="./game.js" defer></script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beth’s Hangman</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="phone-game" aria-labelledby="game-title">
+        <header class="site-header">
+          <h1 id="game-title">Beth’s Hangman</h1>
+          <p class="intro">One word a day. Same puzzle for everyone.</p>
+        </header>
+
+        <section class="hangman-wrap" aria-label="Hangman drawing">
+          <svg class="hangman" viewBox="0 0 220 240" role="img" aria-labelledby="hangman-title">
+            <title id="hangman-title">Hangman drawing with parts revealed as wrong guesses are made</title>
+            <path class="gallows" d="M15 220 C48 218 84 222 118 224"></path>
+            <path class="gallows" d="M57 220 C56 174 58 122 57 79 C56 55 58 37 59 27"></path>
+            <path class="gallows" d="M59 27 C89 26 119 27 151 27"></path>
+            <path class="gallows" d="M151 27 C154 29 154 40 153 52"></path>
+
+            <path class="part part-head" d="M134 61 C143 52 161 53 171 62 C181 72 178 89 168 96 C156 104 140 100 132 88 C126 79 127 68 134 61 Z"></path>
+            <path class="part part-neck" d="M153 98 C153 104 153 110 152 116"></path>
+            <path class="part part-left-arm" d="M151 121 C139 127 128 139 119 153"></path>
+            <path class="part part-right-arm" d="M153 120 C165 127 176 138 185 151"></path>
+            <path class="part part-body" d="M153 116 C153 134 153 150 153 168"></path>
+            <path class="part part-left-leg" d="M153 168 C141 179 130 193 121 208"></path>
+            <path class="part part-right-leg" d="M154 168 C165 181 176 195 184 208"></path>
+            <g class="part part-left-eye">
+              <line x1="142" y1="72" x2="150" y2="80"></line>
+              <line x1="150" y1="72" x2="142" y2="80"></line>
+            </g>
+            <g class="part part-right-eye">
+              <line x1="157" y1="72" x2="165" y2="80"></line>
+              <line x1="165" y1="72" x2="157" y2="80"></line>
+            </g>
+            <path class="part part-sad-mouth" d="M140 91 Q151 86 162 91"></path>
+          </svg>
+        </section>
+
+        <div id="wordSlots" class="word-slots" aria-label="Word to guess"></div>
+
+        <section class="misses-panel" aria-label="Wrong guesses">
+          <span class="misses-label">Misses</span>
+          <div id="misses" class="misses"></div>
+        </section>
+
+        <p id="answer" class="answer" hidden></p>
+
+        <section>
+          <div id="keyboard" class="keyboard" aria-label="Letter keyboard"></div>
+        </section>
+
+        <section class="status-panel" aria-live="polite">
+          <p id="dateLabel" class="date-label"></p>
+          <p id="message" class="message">Choose a letter to begin.</p>
+        </section>
+
+        <footer class="actions">
+          <button id="shareButton" class="share-button" type="button">Share result</button>
+          <p id="shareStatus" class="share-status" role="status" aria-live="polite"></p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
