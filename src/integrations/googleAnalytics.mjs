@@ -18,7 +18,7 @@ export default function googleAnalytics({ measurementId, excludedPaths = DEFAULT
 const GA_MEASUREMENT_ID = ${escapedMeasurementId};
 const GA_EXCLUDED_PATHS = ${escapedExcludedPaths};
 const isExcludedFromAnalytics = GA_EXCLUDED_PATHS.some((path) =>
-	window.location.pathname === path || window.location.pathname.startsWith(`${path}/`)
+	window.location.pathname === path || window.location.pathname.startsWith(path + '/')
 );
 
 if (!isExcludedFromAnalytics && !window.__ga4Loaded) {
@@ -28,7 +28,7 @@ if (!isExcludedFromAnalytics && !window.__ga4Loaded) {
 
 	const gaScript = document.createElement('script');
 	gaScript.async = true;
-	gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+	gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
 	document.head.appendChild(gaScript);
 
 	window.gtag('js', new Date());
