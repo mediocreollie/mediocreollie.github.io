@@ -385,15 +385,14 @@ function updateStreaks(stats, status, date) {
 }
 
 function openStatsModal() {
-  if (statsModalOpenedToday) return;
-  statsModalOpenedToday = true;
-
+ function openStatsModal() {
   const modal = document.querySelector(".stats-modal-overlay");
   if (!modal) return;
 
   renderStatsContent();
   modal.classList.add("open");
   document.body.style.overflow = "hidden";
+  statsModalOpenedToday = true;
 }
 
 function closeStatsModal() {
@@ -410,19 +409,24 @@ function renderStatsContent() {
   if (!container) return;
 
   const winPercent = stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0;
-  const avgMisses = stats.wins > 0 ? (stats.totalMisses / stats.wins).toFixed(1) : 0;
 
   const resultMessage = state.status === "won"
     ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
-    : `Missed with 10 misses`;
+    : state.status === "lost"
+      ? "Missed with 10 misses"
+      : "Today’s puzzle is still in progress.";
 
-  let maxCount = Math.max(...Object.values(stats.guessDistribution), 1);
+  const maxCount = Math.max(...Object.values(stats.guessDistribution), 1);
 
-  const distributionHtml = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(misses => {
-    const count = stats.guessDistribution[misses] || 0;
+  const distributionHtml = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((missCount) => {
+    const count = stats.guessDistribution[missCount] || 0;
     const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
-    const label = misses === 10 ? "X" : misses;
-    const isToday = stats.recentResults[0] && stats.recentResults[0].date === todayKey && stats.recentResults[0].misses === misses;
+    const label = missCount === 10 ? "X" : missCount;
+    const isToday =
+      stats.recentResults[0] &&
+      stats.recentResults[0].date === todayKey &&
+      stats.recentResults[0].misses === missCount;
+
     const highlightClass = isToday ? " highlight-today" : "";
 
     return `
@@ -436,20 +440,20 @@ function renderStatsContent() {
     `;
   }).join("");
 
-  const recentHtml = stats.recentResults.slice(0, 3).map(result => {
-  const icon = result.status === "won" ? "✓" : "✗";
-  const label = result.status === "won" ? result.misses : "X";
-  const text = result.status === "won"
-    ? `Solved with ${result.misses} ${pluralize("miss", result.misses)}`
-    : "Missed with 10 misses";
+  const recentHtml = stats.recentResults.slice(0, 3).map((result) => {
+    const icon = result.status === "won" ? "✓" : "✗";
+    const label = result.status === "won" ? result.misses : "X";
+    const text = result.status === "won"
+      ? `Solved with ${result.misses} ${pluralize("miss", result.misses)}`
+      : "Missed with 10 misses";
 
-  return `
-    <div class="recent-result-wrap">
-      <span class="recent-result recent-${result.status}" aria-label="${text}">${icon}${label}</span>
-      <span class="recent-result-text">${text}</span>
-    </div>
-  `;
-}).join("");
+    return `
+      <div class="recent-result-wrap">
+        <span class="recent-result recent-${result.status}" aria-label="${text}">${icon}${label}</span>
+        <span class="recent-result-text">${text}</span>
+      </div>
+    `;
+  }).join("");
 
   container.innerHTML = `
     <div class="stats-header">
@@ -488,24 +492,33 @@ function renderStatsContent() {
     </div>
 
     ${recentHtml ? `
-    <div class="stats-section">
-      <h3>Recent</h3>
-      <div class="recent-results">
-        ${recentHtml}
+      <div class="stats-section">
+        <h3>Recent</h3>
+        <div class="recent-results">
+          ${recentHtml}
+        </div>
       </div>
-    </div>
     ` : ""}
 
-   <div class="stats-footer">
-  <button class="share-button stats-share" type="button">Share result</button>
-  <p class="share-status stats-share-status" role="status" aria-live="polite"></p>
-  <button class="stats-button stats-reset" type="button">Reset stats</button>
-</div>
+    <div class="stats-footer">
+      <button class="share-button stats-share" type="button">Share result</button>
+      <p class="share-status stats-share-status" role="status" aria-live="polite"></p>
+      <button class="stats-button stats-reset" type="button">Reset stats</button>
+    </div>
   `;
 
   const closeBtn = container.querySelector(".stats-close");
   if (closeBtn) {
     closeBtn.addEventListener("click", closeStatsModal);
+  }
+
+  const modalShareBtn = container.querySelector(".stats-share");
+  const modalShareStatus = container.querySelector(".stats-share-status");
+
+  if (modalShareBtn && modalShareStatus) {
+    modalShareBtn.addEventListener("click", () => {
+      shareResult(modalShareStatus);
+    });
   }
 
   const resetBtn = container.querySelector(".stats-reset");
@@ -522,28 +535,21 @@ function renderStatsContent() {
     });
   }
 }
-const modalShareBtn = container.querySelector(".stats-share");
-const modalShareStatus = container.querySelector(".stats-share-status");
 
-if (modalShareBtn && modalShareStatus) {
-  modalShareBtn.addEventListener("click", () => {
-    shareResult(modalShareStatus);
-  });
-}
 document.addEventListener("DOMContentLoaded", () => {
-  const statsButton = document.querySelector(".stats-button");
+  const statsButton = document.querySelector(".actions .stats-button");
+
   if (statsButton) {
-    statsButton.addEventListener("click", (e) => {
-      if (!e.target.classList.contains("stats-reset")) {
-        openStatsModal();
-      }
+    statsButton.addEventListener("click", () => {
+      openStatsModal();
     });
   }
 
   const modal = document.querySelector(".stats-modal-overlay");
+
   if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
         closeStatsModal();
       }
     });
@@ -551,22 +557,76 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 shareButton.addEventListener("click", () => {
-  shareButton.addEventListener("click", async () => {
+  shareResult(shareStatus);
+});
+
+async function shareResult(statusElement) {
   if (!state || state.status === "playing") {
-    shareStatus.textContent = "Finish today’s puzzle to share your result.";
+    statusElement.textContent = "Finish today’s puzzle to share your result.";
     return;
   }
 
-  const resultMark = state.status === "won" ? "Solved" : "Missed";
-  const shareText = [
-    `Beth's Hangman ${todayKey}`,
-    `${resultMark} with ${state.wrongGuesses}/${MAX_WRONG_GUESSES} wrong guesses`
-  ].join("\n");
+  const shareText = buildShareText();
 
   try {
-    await navigator.clipboard.writeText(shareText);
-    shareStatus.textContent = "Result copied to clipboard.";
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(shareText);
+      statusElement.textContent = "Result copied to clipboard.";
+    } else {
+      fallbackCopyShareText(shareText, statusElement);
+    }
   } catch {
-    shareStatus.textContent = shareText;
+    fallbackCopyShareText(shareText, statusElement);
   }
-});
+}
+
+function buildShareText() {
+  const puzzleNumber = getPuzzleNumber(todayKey);
+  const resultLine = state.status === "won"
+    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
+    : "Missed with 10 misses";
+
+  return [
+    `Beth’s Hangman #${puzzleNumber}`,
+    resultLine,
+    buildShareSquares(),
+    GAME_URL
+  ].join("\n");
+}
+
+function buildShareSquares() {
+  if (state.status === "lost") {
+    return "🟥".repeat(MAX_WRONG_GUESSES);
+  }
+
+  const savedParts = MAX_WRONG_GUESSES - state.wrongGuesses;
+  return "🟩".repeat(savedParts) + "🟥".repeat(state.wrongGuesses);
+}
+
+function getPuzzleNumber(dateString) {
+  const start = new Date(`${PUZZLE_START_DATE}T00:00:00`);
+  const current = new Date(`${dateString}T00:00:00`);
+  const daysSinceStart = Math.floor((current - start) / 86400000);
+
+  return Math.max(1, daysSinceStart + 1);
+}
+
+function fallbackCopyShareText(text, statusElement) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    document.execCommand("copy");
+    statusElement.textContent = "Result copied to clipboard.";
+  } catch {
+    statusElement.textContent = text;
+  }
+
+  document.body.removeChild(textarea);
+}
