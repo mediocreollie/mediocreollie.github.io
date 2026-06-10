@@ -551,148 +551,22 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 shareButton.addEventListener("click", () => {
-  shareResult(shareStatus);
-});
-
-async function shareResult(statusElement) {
+  shareButton.addEventListener("click", async () => {
   if (!state || state.status === "playing") {
-    statusElement.textContent = "Finish today’s puzzle to share your result.";
+    shareStatus.textContent = "Finish today’s puzzle to share your result.";
     return;
   }
 
-  const shareText = buildShareText();
-
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(shareText);
-      statusElement.textContent = "Result copied to clipboard.";
-    } else {
-      fallbackCopyShareText(shareText, statusElement);
-    }
-  } catch {
-    fallbackCopyShareText(shareText, statusElement);
-  }
-}
-
-function buildShareText() {
-  const puzzleNumber = getPuzzleNumber(todayKey);
-  const resultLine = state.status === "won"
-    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
-    : "Missed with 10 misses";
-
-  return [
-    `Beth’s Hangman #${puzzleNumber}`,
-    resultLine,
-    buildShareSquares(),
-    "https://olliewritesthings.com/beths-hangman/"
+  const resultMark = state.status === "won" ? "Solved" : "Missed";
+  const shareText = [
+    `Beth's Hangman ${todayKey}`,
+    `${resultMark} with ${state.wrongGuesses}/${MAX_WRONG_GUESSES} wrong guesses`
   ].join("\n");
-}
-
-function buildShareSquares() {
-  if (state.status === "lost") {
-    return "🟥".repeat(MAX_WRONG_GUESSES);
-  }
-
-  const savedParts = MAX_WRONG_GUESSES - state.wrongGuesses;
-  return "🟩".repeat(savedParts) + "🟥".repeat(state.wrongGuesses);
-}
-
-function getPuzzleNumber(dateString) {
-  const start = new Date("2026-06-09T00:00:00");
-  const current = new Date(`${dateString}T00:00:00`);
-  const daysSinceStart = Math.floor((current - start) / 86400000);
-
-  return Math.max(1, daysSinceStart + 1);
-}
-
-function fallbackCopyShareText(text, statusElement) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.setAttribute("readonly", "");
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
-  textarea.style.top = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
 
   try {
-    document.execCommand("copy");
-    statusElement.textContent = "Result copied to clipboard.";
+    await navigator.clipboard.writeText(shareText);
+    shareStatus.textContent = "Result copied to clipboard.";
   } catch {
-    statusElement.textContent = text;
+    shareStatus.textContent = shareText;
   }
-
-  document.body.removeChild(textarea);
-}
 });
-
-async function shareResult(statusElement) {
-  if (!state || state.status === "playing") {
-    statusElement.textContent = "Finish today’s puzzle to share your result.";
-    return;
-  }
-
-  const shareText = buildShareText();
-
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(shareText);
-      statusElement.textContent = "Result copied to clipboard.";
-    } else {
-      fallbackCopyShareText(shareText, statusElement);
-    }
-  } catch {
-    fallbackCopyShareText(shareText, statusElement);
-  }
-}
-
-function buildShareText() {
-  const puzzleNumber = getPuzzleNumber(todayKey);
-  const resultLine = state.status === "won"
-    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
-    : "Missed with 10 misses";
-
-  return [
-    `Beth’s Hangman #${puzzleNumber}`,
-    resultLine,
-    buildShareSquares(),
-    GAME_URL
-  ].join("\n");
-}
-
-function buildShareSquares() {
-  if (state.status === "lost") {
-    return "🟥".repeat(MAX_WRONG_GUESSES);
-  }
-
-  const savedParts = MAX_WRONG_GUESSES - state.wrongGuesses;
-  return "🟩".repeat(savedParts) + "🟥".repeat(state.wrongGuesses);
-}
-
-function getPuzzleNumber(dateString) {
-  const start = new Date(`${PUZZLE_START_DATE}T00:00:00`);
-  const current = new Date(`${dateString}T00:00:00`);
-  const daysSinceStart = Math.floor((current - start) / 86400000);
-
-  return Math.max(1, daysSinceStart + 1);
-}
-
-function fallbackCopyShareText(text, statusElement) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.setAttribute("readonly", "");
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
-  textarea.style.top = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
-
-  try {
-    document.execCommand("copy");
-    statusElement.textContent = "Result copied to clipboard.";
-  } catch {
-    statusElement.textContent = text;
-  }
-
-  document.body.removeChild(textarea);
-}
