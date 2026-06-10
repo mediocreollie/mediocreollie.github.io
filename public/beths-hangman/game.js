@@ -1,634 +1,506 @@
-const WORDS = [
-  "anchor",
-  "bakery",
-  "blanket",
-  "breeze",
-  "candle",
-  "canyon",
-  "castle",
-  "coffee",
-  "copper",
-  "daisy",
-  "drift",
-  "ember",
-  "fabric",
-  "forest",
-  "garden",
-  "ginger",
-  "harbor",
-  "honest",
-  "jacket",
-  "journal",
-  "kettle",
-  "lantern",
-  "letter",
-  "meadow",
-  "mellow",
-  "mirror",
-  "museum",
-  "napkin",
-  "orchard",
-  "parcel",
-  "pepper",
-  "pillow",
-  "pocket",
-  "quartz",
-  "ribbon",
-  "saddle",
-  "silver",
-  "sketch",
-  "sunlit",
-  "teapot",
-  "thread",
-  "velvet",
-  "violet",
-  "wander",
-  "window",
-  "winter",
-  "yellow",
-  "zipper"
-];
+(function () {
+  "use strict";
 
-const MAX_WRONG_GUESSES = 10;
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const PART_CLASSES = [
-  "part-head",
-  "part-neck",
-  "part-left-arm",
-  "part-right-arm",
-  "part-body",
-  "part-left-leg",
-  "part-right-leg",
-  "part-left-eye",
-  "part-right-eye",
-  "part-sad-mouth"
-];
+  const scriptElement = document.currentScript;
 
-const wordSlots = document.querySelector("#wordSlots");
-const misses = document.querySelector("#misses");
-const keyboard = document.querySelector("#keyboard");
-const message = document.querySelector("#message");
-const answer = document.querySelector("#answer");
-const dateLabel = document.querySelector("#dateLabel");
-const shareButton = document.querySelector("#shareButton");
-const shareStatus = document.querySelector("#shareStatus");
-
-// Developer testing helper:
-// Uncomment either value while developing, then comment it again before publishing.
-const DEV_OVERRIDE = {
-  // date: "2026-06-09",
-  // word: "ASTRO"
-};
-
-const todayKey = DEV_OVERRIDE.date || getTodayKey();
-let word = "";
-const storageKey = `daily-hangman:${todayKey}`;
-let state;
-
-dateLabel.textContent = formatToday();
-buildKeyboard();
-initGame();
-
-setInterval(() => {
-  if (!DEV_OVERRIDE.date && getTodayKey() !== todayKey) {
-    window.location.reload();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      const replacement = document.createElement("script");
+      replacement.src = scriptElement ? scriptElement.src : "game.js";
+      document.body.appendChild(replacement);
+    });
+    return;
   }
-}, 60000);
 
-async function initGame() {
-  const selectedWord = DEV_OVERRIDE.word
-    ? DEV_OVERRIDE.word
-    : await fetchDailyWord(todayKey);
+  if (window.__bethsHangmanLoaded) {
+    return;
+  }
 
-  word = (selectedWord || getDailyWord(todayKey)).toUpperCase();
-  state = loadState();
-  render();
-}
+  window.__bethsHangmanLoaded = true;
 
-async function fetchDailyWord(dateString) {
-  try {
-    const response = await fetch('./words.json');
+  const MAX_MISSES = 10;
+  const SITE_URL = "olliewritesthings.com/beths-hangman/";
+  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const PART_CLASSES = [
+    "part-head",
+    "part-neck",
+    "part-left-arm",
+    "part-right-arm",
+    "part-body",
+    "part-left-leg",
+    "part-right-leg",
+    "part-left-eye",
+    "part-right-eye",
+    "part-sad-mouth"
+  ];
+
+  const DEV_OVERRIDE = {
+    // date: "2026-06-09",
+    // word: "ASTRO"
+  };
+
+  const gameRoot = document.querySelector(".phone-game") || document.body;
+  const elements = {
+    wordSlots: findOrCreate("#wordSlots", ".word-slots", "div", "wordSlots", "word-slots", ".misses-panel"),
+    misses: findOrCreate("#misses", ".misses", "div", "misses", "misses", ".misses-panel"),
+    keyboard: findOrCreate("#keyboard", ".keyboard", "div", "keyboard", "keyboard", ".status-panel"),
+    message: document.querySelector("#message, .message"),
+    answer: findOrCreate("#answer", ".answer", "p", "answer", "answer", ".keyboard"),
+    dateLabel: document.querySelector("#dateLabel, .date-label"),
+    shareButton: document.querySelector("#shareButton, .share-button"),
+    shareStatus: document.querySelector("#shareStatus, .share-status"),
+    statsButton: document.querySelector("#statsButton, #openStatsButton, [data-open-stats]"),
+    statsModal: document.querySelector("#statsModal, [data-stats-modal]"),
+    statsContent: document.querySelector("#statsContent, [data-stats-content]"),
+    statsCloseButton: document.querySelector("#statsCloseButton, #closeStatsButton, [data-close-stats]"),
+    statsShareButton: document.querySelector("#statsShareButton, #shareStatsButton, [data-stats-share]")
+  };
+
+  if (elements.answer) {
+    elements.answer.hidden = true;
+  }
+
+  let word = "";
+  let puzzleNumber = 0;
+  let todayKey = "";
+  let storageKey = "";
+  let state = null;
+
+  init();
+
+  async function init() {
+    try {
+      const dailyPuzzle = await loadDailyPuzzle();
+      word = dailyPuzzle.word;
+      puzzleNumber = dailyPuzzle.puzzleNumber;
+      todayKey = dailyPuzzle.todayKey;
+      storageKey = "beths-hangman:" + todayKey;
+      state = loadState();
+
+      if (elements.dateLabel) {
+        elements.dateLabel.textContent = formatToday();
+      }
+
+      buildKeyboard();
+      bindActions();
+      render();
+
+      window.setInterval(function () {
+        if (!DEV_OVERRIDE.date && getTodayKey() !== todayKey) {
+          window.location.reload();
+        }
+      }, 60000);
+    } catch (error) {
+      showLoadError(error);
+    }
+  }
+
+  function findOrCreate(idSelector, classSelector, tagName, id, className, beforeSelector) {
+    const found = document.querySelector(idSelector + ", " + classSelector);
+    if (found) {
+      if (!found.id) {
+        found.id = id;
+      }
+      found.classList.add(className);
+      return found;
+    }
+
+    const node = document.createElement(tagName);
+    node.id = id;
+    node.className = className;
+
+    const before = document.querySelector(beforeSelector);
+    if (before && before.parentNode) {
+      before.parentNode.insertBefore(node, before);
+    } else {
+      gameRoot.appendChild(node);
+    }
+
+    return node;
+  }
+
+  async function loadDailyPuzzle() {
+    const response = await fetch(new URL("words.json", window.location.href), { cache: "no-cache" });
     if (!response.ok) {
-      console.warn('Could not load words.json; using the internal word list.');
-      return null;
+      throw new Error("Could not load words.json");
     }
 
     const data = await response.json();
-    if (!Array.isArray(data)) {
-      console.warn('words.json is not a valid array; using the internal word list.');
-      return null;
-    }
+    const words = normalizeWords(data);
+    const dateKey = DEV_OVERRIDE.date || getTodayKey();
+    const index = getPuzzleIndex(dateKey, words.length);
 
-    const entry = data.find(
-      (item) => item && item.date === dateString && typeof item.word === 'string'
-    );
-
-    return entry ? entry.word : null;
-  } catch (error) {
-    console.warn('Could not load words.json; using the internal word list.', error);
-    return null;
+    return {
+      todayKey: dateKey,
+      word: String(DEV_OVERRIDE.word || words[index]).toUpperCase(),
+      puzzleNumber: index + 1
+    };
   }
-}
 
-function getTodayKey() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function getDailyWord(dateString) {
-  const seed = Number(dateString.replace(/-/g, ""));
-  return WORDS[seed % WORDS.length].toUpperCase();
-}
-
-function formatToday() {
-  return new Intl.DateTimeFormat(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric"
-  }).format(new Date());
-}
-
-function loadState() {
-  const freshState = {
-    date: todayKey,
-    guesses: [],
-    wrongGuesses: 0,
-    status: "playing"
-  };
-
-  try {
-    const saved = JSON.parse(localStorage.getItem(storageKey));
-    if (saved && saved.date === todayKey && Array.isArray(saved.guesses)) {
-      return {
-        ...freshState,
-        guesses: saved.guesses,
-        wrongGuesses: Number(saved.wrongGuesses) || 0,
-        status: saved.status || "playing"
-      };
+  function normalizeWords(data) {
+    if (Array.isArray(data)) {
+      return data.map(String).filter(Boolean);
     }
-  } catch {
+
+    if (data && Array.isArray(data.words)) {
+      return data.words.map(String).filter(Boolean);
+    }
+
+    throw new Error("words.json must be an array or contain a words array");
+  }
+
+  function getPuzzleIndex(dateString, wordCount) {
+    const seed = Number(dateString.replace(/-/g, ""));
+    return seed % wordCount;
+  }
+
+  function getTodayKey() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return year + "-" + month + "-" + day;
+  }
+
+  function formatToday() {
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric"
+    }).format(new Date());
+  }
+
+  function loadState() {
+    const freshState = {
+      date: todayKey,
+      guesses: [],
+      wrongGuesses: 0,
+      status: "playing"
+    };
+
     try {
-      localStorage.removeItem(storageKey);
-    } catch {
-      // Some private browsing modes block storage access entirely.
-    }
-  }
-
-  return freshState;
-}
-
-function saveState() {
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(state));
-  } catch {
-    // The game still works for the current page load if storage is unavailable.
-  }
-}
-
-function buildKeyboard() {
-  keyboard.innerHTML = "";
-
-  LETTERS.forEach((letter) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "key";
-    button.textContent = letter;
-    button.setAttribute("aria-label", `Guess ${letter}`);
-    button.addEventListener("click", () => guessLetter(letter));
-    keyboard.appendChild(button);
-  });
-}
-
-function guessLetter(letter) {
-  if (state.status !== "playing" || state.guesses.includes(letter)) {
-    return;
-  }
-
-  state.guesses.push(letter);
-
-  if (!word.includes(letter)) {
-    state.wrongGuesses += 1;
-  }
-
-  if (isWordComplete()) {
-    state.status = "won";
-  } else if (state.wrongGuesses >= MAX_WRONG_GUESSES) {
-    state.status = "lost";
-  }
-
-  saveState();
-  render();
-}
-
-function isWordComplete() {
-  return word.split("").every((letter) => state.guesses.includes(letter));
-}
-
-function render() {
-  renderWord();
-  renderMisses();
-  renderKeyboard();
-  renderHangman();
-  renderMessage();
-}
-
-function renderWord() {
-  wordSlots.innerHTML = "";
-
-  word.split("").forEach((letter) => {
-    const slot = document.createElement("span");
-    slot.className = "slot";
-    slot.textContent = state.guesses.includes(letter) ? letter : "";
-    slot.classList.toggle("correct-letter", Boolean(slot.textContent));
-    slot.setAttribute("aria-label", slot.textContent || "blank");
-    wordSlots.appendChild(slot);
-  });
-}
-
-function renderMisses() {
-  const wrongLetters = state.guesses.filter((letter) => !word.includes(letter));
-  misses.textContent = wrongLetters.join(" ");
-}
-
-function renderKeyboard() {
-  document.querySelectorAll(".key").forEach((button) => {
-    const letter = button.textContent;
-    const guessed = state.guesses.includes(letter);
-
-    button.disabled = guessed || state.status !== "playing";
-    button.classList.toggle("correct", guessed && word.includes(letter));
-    button.classList.toggle("wrong", guessed && !word.includes(letter));
-  });
-}
-
-function renderHangman() {
-  PART_CLASSES.forEach((className, index) => {
-    const part = document.querySelector(`.${className}`);
-    part.classList.toggle("visible", index < state.wrongGuesses);
-  });
-}
-
-function renderMessage() {
-  message.className = "message";
-  answer.hidden = true;
-  answer.textContent = "";
-
-  if (state.status === "won") {
-    message.textContent = `You found it in ${state.wrongGuesses} wrong ${pluralize("guess", state.wrongGuesses)}. Nicely done.`;
-    message.classList.add("win");
-    saveResult(todayKey, "won", state.wrongGuesses);
-    setTimeout(() => openStatsModal(), 100);
-    return;
-  }
-
-  if (state.status === "lost") {
-    message.textContent = "That was the last part. Tomorrow brings another word.";
-    message.classList.add("lose");
-    answer.textContent = `Today's word was ${word}.`;
-    answer.hidden = false;
-    saveResult(todayKey, "lost", state.wrongGuesses);
-    setTimeout(() => openStatsModal(), 100);
-    return;
-  }
-
-  const remaining = MAX_WRONG_GUESSES - state.wrongGuesses;
-  message.textContent = `${remaining} wrong ${pluralize("guess", remaining)} left.`;
-}
-
-function pluralize(wordToPluralize, count) {
-  return count === 1 ? wordToPluralize : `${wordToPluralize}es`;
-}
-
-const STATS_KEY = "hangman-stats";
-const PUZZLE_START_DATE = "2026-06-09";
-const GAME_URL = "https://olliewritesthings.com/beths-hangman/";
-let statsModalOpenedToday = false;
-
-function getStats() {
-  const defaultStats = {
-    played: 0,
-    wins: 0,
-    losses: 0,
-    currentStreak: 0,
-    bestStreak: 0,
-    totalMisses: 0,
-    guessDistribution: {
-      0: 0, 1: 0, 2: 0, 3: 0, 4: 0,
-      5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0
-    },
-    recentResults: []
-  };
-
-  try {
-    const saved = localStorage.getItem(STATS_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return {
-        ...defaultStats,
-        ...parsed,
-        guessDistribution: { ...defaultStats.guessDistribution, ...parsed.guessDistribution }
-      };
-    }
-  } catch (error) {
-    console.warn("Could not load stats from localStorage", error);
-  }
-
-  return defaultStats;
-}
-
-function saveStats(stats) {
-  try {
-    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
-  } catch (error) {
-    console.warn("Could not save stats to localStorage", error);
-  }
-}
-
-function saveResult(date, status, misses) {
-  const stats = getStats();
-  
-  const existingIndex = stats.recentResults.findIndex(r => r.date === date);
-  if (existingIndex !== -1) {
-    return;
-  }
-
-  const result = { date, status, misses };
-  stats.recentResults.unshift(result);
-  stats.recentResults = stats.recentResults.slice(0, 10);
-
-  stats.played += 1;
-  if (status === "won") {
-    stats.wins += 1;
-    stats.totalMisses += misses;
-    stats.guessDistribution[misses] = (stats.guessDistribution[misses] || 0) + 1;
-  } else {
-    stats.losses += 1;
-    stats.guessDistribution[10] = (stats.guessDistribution[10] || 0) + 1;
-  }
-
-  updateStreaks(stats, status, date);
-  saveStats(stats);
-}
-
-function updateStreaks(stats, status, date) {
-  if (status === "won") {
-    stats.currentStreak = (stats.currentStreak || 0) + 1;
-    if (stats.currentStreak > (stats.bestStreak || 0)) {
-      stats.bestStreak = stats.currentStreak;
-    }
-  } else {
-    stats.currentStreak = 0;
-  }
-}
-
-function openStatsModal() {
- function openStatsModal() {
-  const modal = document.querySelector(".stats-modal-overlay");
-  if (!modal) return;
-
-  renderStatsContent();
-  modal.classList.add("open");
-  document.body.style.overflow = "hidden";
-  statsModalOpenedToday = true;
-}
-
-function closeStatsModal() {
-  const modal = document.querySelector(".stats-modal-overlay");
-  if (!modal) return;
-
-  modal.classList.remove("open");
-  document.body.style.overflow = "";
-}
-
-function renderStatsContent() {
-  const stats = getStats();
-  const container = document.querySelector(".stats-content");
-  if (!container) return;
-
-  const winPercent = stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0;
-
-  const resultMessage = state.status === "won"
-    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
-    : state.status === "lost"
-      ? "Missed with 10 misses"
-      : "Today’s puzzle is still in progress.";
-
-  const maxCount = Math.max(...Object.values(stats.guessDistribution), 1);
-
-  const distributionHtml = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((missCount) => {
-    const count = stats.guessDistribution[missCount] || 0;
-    const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
-    const label = missCount === 10 ? "X" : missCount;
-    const isToday =
-      stats.recentResults[0] &&
-      stats.recentResults[0].date === todayKey &&
-      stats.recentResults[0].misses === missCount;
-
-    const highlightClass = isToday ? " highlight-today" : "";
-
-    return `
-      <div class="dist-row${highlightClass}">
-        <span class="dist-label">${label}</span>
-        <div class="dist-bar-container">
-          <div class="dist-bar" style="width: ${percentage}%"></div>
-        </div>
-        <span class="dist-count">${count}</span>
-      </div>
-    `;
-  }).join("");
-
-  const recentHtml = stats.recentResults.slice(0, 3).map((result) => {
-    const icon = result.status === "won" ? "✓" : "✗";
-    const label = result.status === "won" ? result.misses : "X";
-    const text = result.status === "won"
-      ? `Solved with ${result.misses} ${pluralize("miss", result.misses)}`
-      : "Missed with 10 misses";
-
-    return `
-      <div class="recent-result-wrap">
-        <span class="recent-result recent-${result.status}" aria-label="${text}">${icon}${label}</span>
-        <span class="recent-result-text">${text}</span>
-      </div>
-    `;
-  }).join("");
-
-  container.innerHTML = `
-    <div class="stats-header">
-      <h2>Stats</h2>
-      <button class="stats-close" type="button" aria-label="Close stats">✕</button>
-    </div>
-
-    <div class="stats-result-message">
-      ${resultMessage}
-    </div>
-
-    <div class="stats-tiles">
-      <div class="stat-tile">
-        <div class="stat-value">${stats.played}</div>
-        <div class="stat-label">Played</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-value">${winPercent}%</div>
-        <div class="stat-label">Win %</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-value">${stats.currentStreak}</div>
-        <div class="stat-label">Streak</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-value">${stats.bestStreak}</div>
-        <div class="stat-label">Best</div>
-      </div>
-    </div>
-
-    <div class="stats-section">
-      <h3>Guess Distribution</h3>
-      <div class="distribution">
-        ${distributionHtml}
-      </div>
-    </div>
-
-    ${recentHtml ? `
-      <div class="stats-section">
-        <h3>Recent</h3>
-        <div class="recent-results">
-          ${recentHtml}
-        </div>
-      </div>
-    ` : ""}
-
-    <div class="stats-footer">
-      <button class="share-button stats-share" type="button">Share result</button>
-      <p class="share-status stats-share-status" role="status" aria-live="polite"></p>
-      <button class="stats-button stats-reset" type="button">Reset stats</button>
-    </div>
-  `;
-
-  const closeBtn = container.querySelector(".stats-close");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", closeStatsModal);
-  }
-
-  const modalShareBtn = container.querySelector(".stats-share");
-  const modalShareStatus = container.querySelector(".stats-share-status");
-
-  if (modalShareBtn && modalShareStatus) {
-    modalShareBtn.addEventListener("click", () => {
-      shareResult(modalShareStatus);
-    });
-  }
-
-  const resetBtn = container.querySelector(".stats-reset");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      if (confirm("Are you sure? This will permanently delete all your stats.")) {
-        try {
-          localStorage.removeItem(STATS_KEY);
-          location.reload();
-        } catch (error) {
-          console.warn("Could not reset stats", error);
-        }
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      if (saved && saved.date === todayKey && Array.isArray(saved.guesses)) {
+        return {
+          date: freshState.date,
+          guesses: saved.guesses,
+          wrongGuesses: Number(saved.wrongGuesses) || 0,
+          status: saved.status || "playing"
+        };
       }
-    });
-  }
-}
+    } catch (error) {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (storageError) {
+        // Storage can be unavailable in private browsing modes.
+      }
+    }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const statsButton = document.querySelector(".actions .stats-button");
-
-  if (statsButton) {
-    statsButton.addEventListener("click", () => {
-      openStatsModal();
-    });
+    return freshState;
   }
 
-  const modal = document.querySelector(".stats-modal-overlay");
+  function saveState() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch (error) {
+      // The page-load game still works if localStorage is blocked.
+    }
+  }
 
-  if (modal) {
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal) {
+  function buildKeyboard() {
+    elements.keyboard.innerHTML = "";
+
+    LETTERS.forEach(function (letter) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "key";
+      button.textContent = letter;
+      button.setAttribute("aria-label", "Guess " + letter);
+      button.addEventListener("click", function () {
+        guessLetter(letter);
+      });
+      elements.keyboard.appendChild(button);
+    });
+  }
+
+  function bindActions() {
+    if (elements.shareButton) {
+      elements.shareButton.addEventListener("click", shareResult);
+    }
+
+    if (elements.statsShareButton) {
+      elements.statsShareButton.addEventListener("click", shareResult);
+    }
+
+    if (elements.statsButton) {
+      elements.statsButton.addEventListener("click", openStatsModal);
+    }
+
+    if (elements.statsCloseButton) {
+      elements.statsCloseButton.addEventListener("click", closeStatsModal);
+    }
+
+    if (elements.statsModal) {
+      elements.statsModal.addEventListener("click", function (event) {
+        if (event.target === elements.statsModal) {
+          closeStatsModal();
+        }
+      });
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
         closeStatsModal();
       }
     });
   }
-});
 
-shareButton.addEventListener("click", () => {
- shareButton.addEventListener("click", () => {
-  shareResult(shareStatus);
-});
-
-async function shareResult(statusElement) {
-  if (!state || state.status === "playing") {
-    statusElement.textContent = "Finish today’s puzzle to share your result.";
-    return;
-  }
-
-  const shareText = buildShareText();
-
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(shareText);
-      statusElement.textContent = "Result copied to clipboard.";
-    } else {
-      fallbackCopyShareText(shareText, statusElement);
+  function guessLetter(letter) {
+    if (state.status !== "playing" || state.guesses.indexOf(letter) !== -1) {
+      return;
     }
-  } catch {
-    fallbackCopyShareText(shareText, statusElement);
-  }
-}
 
-function buildShareText() {
-  const puzzleNumber = getPuzzleNumber(todayKey);
-  const resultLine = state.status === "won"
-    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
-    : "Missed with 10 misses";
+    state.guesses.push(letter);
 
-  return [
-    `Beth’s Hangman #${puzzleNumber}`,
-    resultLine,
-    buildShareSquares(),
-    "",
-    "olliewritesthings.com/beths-hangman/"
-  ].join("\n");
-}
+    if (word.indexOf(letter) === -1) {
+      state.wrongGuesses += 1;
+    }
 
-function buildShareSquares() {
-  if (state.status === "lost") {
-    return "🟥".repeat(MAX_WRONG_GUESSES);
+    if (isWordComplete()) {
+      state.status = "won";
+      updateStats(true);
+    } else if (state.wrongGuesses >= MAX_MISSES) {
+      state.status = "lost";
+      updateStats(false);
+    }
+
+    saveState();
+    render();
   }
 
-  const savedParts = MAX_WRONG_GUESSES - state.wrongGuesses;
-  return "🟩".repeat(savedParts) + "🟥".repeat(state.wrongGuesses);
-}
-
-function getPuzzleNumber(dateString) {
-  const start = new Date("2026-06-09T00:00:00");
-  const current = new Date(`${dateString}T00:00:00`);
-  const daysSinceStart = Math.floor((current - start) / 86400000);
-
-  return Math.max(1, daysSinceStart + 1);
-}
-
-function fallbackCopyShareText(text, statusElement) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.setAttribute("readonly", "");
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
-  textarea.style.top = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
-
-  try {
-    document.execCommand("copy");
-    statusElement.textContent = "Result copied to clipboard.";
-  } catch {
-    statusElement.textContent = text;
+  function isWordComplete() {
+    return word.split("").every(function (letter) {
+      return state.guesses.indexOf(letter) !== -1;
+    });
   }
 
-  document.body.removeChild(textarea);
-}
+  function render() {
+    renderWord();
+    renderMisses();
+    renderKeyboard();
+    renderHangman();
+    renderMessage();
+    renderStatsContent();
+  }
+
+  function renderWord() {
+    elements.wordSlots.innerHTML = "";
+
+    word.split("").forEach(function (letter) {
+      const slot = document.createElement("span");
+      slot.className = "slot";
+      slot.textContent = state.guesses.indexOf(letter) !== -1 ? letter : "";
+      slot.classList.toggle("correct-letter", Boolean(slot.textContent));
+      slot.setAttribute("aria-label", slot.textContent || "blank");
+      elements.wordSlots.appendChild(slot);
+    });
+  }
+
+  function renderMisses() {
+    const wrongLetters = state.guesses.filter(function (letter) {
+      return word.indexOf(letter) === -1;
+    });
+    elements.misses.textContent = wrongLetters.join(" ");
+  }
+
+  function renderKeyboard() {
+    elements.keyboard.querySelectorAll(".key").forEach(function (button) {
+      const letter = button.textContent;
+      const guessed = state.guesses.indexOf(letter) !== -1;
+
+      button.disabled = guessed || state.status !== "playing";
+      button.classList.toggle("correct", guessed && word.indexOf(letter) !== -1);
+      button.classList.toggle("wrong", guessed && word.indexOf(letter) === -1);
+    });
+  }
+
+  function renderHangman() {
+    PART_CLASSES.forEach(function (className, index) {
+      const part = document.querySelector("." + className);
+      if (part) {
+        part.classList.toggle("visible", index < state.wrongGuesses);
+      }
+    });
+  }
+
+  function renderMessage() {
+    if (!elements.message) {
+      return;
+    }
+
+    elements.message.className = "message";
+    elements.answer.hidden = true;
+    elements.answer.textContent = "";
+
+    if (state.status === "won") {
+      elements.message.textContent = "You found it in " + state.wrongGuesses + " " + missLabel(state.wrongGuesses) + ". Nicely done.";
+      elements.message.classList.add("win");
+      return;
+    }
+
+    if (state.status === "lost") {
+      elements.message.textContent = "That was the last part. Tomorrow brings another word.";
+      elements.message.classList.add("lose");
+      elements.answer.textContent = "Today's word was " + word + ".";
+      elements.answer.hidden = false;
+      return;
+    }
+
+    const remaining = MAX_MISSES - state.wrongGuesses;
+    elements.message.textContent = remaining + " " + missLabel(remaining) + " left.";
+  }
+
+  function missLabel(count) {
+    return count === 1 ? "miss" : "misses";
+  }
+
+  function updateStats(won) {
+    const stats = loadStats();
+
+    if (stats.lastCompletedDate === todayKey) {
+      return;
+    }
+
+    stats.played += 1;
+    stats.currentStreak = won ? stats.currentStreak + 1 : 0;
+    stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
+    stats.lastCompletedDate = todayKey;
+
+    if (won) {
+      stats.won += 1;
+    }
+
+    saveStats(stats);
+  }
+
+  function loadStats() {
+    const freshStats = {
+      played: 0,
+      won: 0,
+      currentStreak: 0,
+      bestStreak: 0,
+      lastCompletedDate: ""
+    };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem("beths-hangman:stats"));
+      if (!saved) {
+        return freshStats;
+      }
+
+      return {
+        played: Number(saved.played) || 0,
+        won: Number(saved.won) || 0,
+        currentStreak: Number(saved.currentStreak) || 0,
+        bestStreak: Number(saved.bestStreak) || 0,
+        lastCompletedDate: saved.lastCompletedDate || ""
+      };
+    } catch (error) {
+      return freshStats;
+    }
+  }
+
+  function saveStats(stats) {
+    try {
+      localStorage.setItem("beths-hangman:stats", JSON.stringify(stats));
+    } catch (error) {
+      // Stats are optional if storage is blocked.
+    }
+  }
+
+  function renderStatsContent() {
+    if (!elements.statsContent) {
+      return;
+    }
+
+    const stats = loadStats();
+    const winPercent = stats.played ? Math.round((stats.won / stats.played) * 100) : 0;
+
+    elements.statsContent.innerHTML =
+      '<dl class="stats-grid">' +
+      "<div><dt>Played</dt><dd>" + stats.played + "</dd></div>" +
+      "<div><dt>Won</dt><dd>" + winPercent + "%</dd></div>" +
+      "<div><dt>Streak</dt><dd>" + stats.currentStreak + "</dd></div>" +
+      "<div><dt>Best</dt><dd>" + stats.bestStreak + "</dd></div>" +
+      "</dl>";
+  }
+
+  function openStatsModal() {
+    if (!elements.statsModal) {
+      return;
+    }
+
+    renderStatsContent();
+    elements.statsModal.hidden = false;
+    elements.statsModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeStatsModal() {
+    if (!elements.statsModal) {
+      return;
+    }
+
+    elements.statsModal.hidden = true;
+    elements.statsModal.setAttribute("aria-hidden", "true");
+  }
+
+  async function shareResult() {
+    const shareText = getShareText();
+
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        throw new Error("Clipboard API unavailable");
+      }
+
+      await navigator.clipboard.writeText(shareText);
+      setShareStatus("Result copied to clipboard.");
+    } catch (error) {
+      setShareStatus(shareText);
+    }
+  }
+
+  function getShareText() {
+    const solved = state.status === "won";
+    const result = solved ? "Solved" : "Missed";
+    const missesCount = solved ? state.wrongGuesses : MAX_MISSES;
+    const greenCount = solved ? MAX_MISSES - missesCount : 0;
+    let squares = "";
+
+    for (let index = 0; index < MAX_MISSES; index += 1) {
+      squares += index < greenCount ? "🟩" : "🟥";
+    }
+
+    return [
+      "Beth’s Hangman #" + puzzleNumber,
+      result + " with " + missesCount + " " + missLabel(missesCount),
+      squares,
+      "",
+      SITE_URL
+    ].join("\n");
+  }
+
+  function setShareStatus(text) {
+    if (elements.shareStatus) {
+      elements.shareStatus.textContent = text;
+    }
+  }
+
+  function showLoadError(error) {
+    if (elements.message) {
+      elements.message.textContent = "The puzzle could not load. Please refresh the page.";
+      elements.message.classList.add("lose");
+    }
+
+    console.error(error);
+  }
+})();
