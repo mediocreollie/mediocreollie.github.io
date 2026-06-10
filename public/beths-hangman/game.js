@@ -93,11 +93,11 @@
     const index = getPuzzleIndex(dateKey, entries.length);
     const entry = entries[index];
 
-    return {
-      todayKey: dateKey,
-      word: cleanWord(DEV_OVERRIDE.word || entry.word),
-      puzzleNumber: Number(entry.number || entry.id || index + 1)
-    };
+  return {
+  todayKey: dateKey,
+  word: cleanWord(DEV_OVERRIDE.word || entry.word),
+  puzzleNumber: getPuzzleNumber(dateKey)
+};
   }
 
   function normalizeWords(data) {
@@ -135,8 +135,17 @@
   }
 
   function getPuzzleIndex(dateString, wordCount) {
-    const seed = Number(dateString.replace(/-/g, ""));
-    return seed % wordCount;
+  const puzzleNumber = getPuzzleNumber(dateString);
+  return (puzzleNumber - 1) % wordCount;
+}
+
+function getPuzzleNumber(dateString) {
+  const start = new Date("2026-06-09T00:00:00");
+  const current = new Date(`${dateString}T00:00:00`);
+  const daysSinceStart = Math.floor((current - start) / 86400000);
+
+  return Math.max(1, daysSinceStart + 1);
+}
   }
 
   function getTodayKey() {
@@ -458,20 +467,24 @@
 
   function getShareText() {
     const solved = state.status === "won";
-    const result = solved ? "Solved" : "Missed";
-    const missesCount = solved ? state.wrongGuesses : MAX_MISSES;
-    const greenCount = solved ? MAX_MISSES - missesCount : 0;
-    const squares = Array.from({ length: MAX_MISSES }, (_, index) =>
-      index < greenCount ? "🟩" : "🟥"
-    ).join("");
+  const solved = state.status === "won";
+const missesCount = solved ? state.wrongGuesses : MAX_MISSES;
+const greenCount = solved ? MAX_MISSES - missesCount : 0;
+const squares = Array.from({ length: MAX_MISSES }, (_, index) =>
+  index < greenCount ? "🟩" : "🟥"
+).join("");
 
-    return [
-      `Beth’s Hangman #${puzzleNumber}`,
-      `${result} with ${missesCount} ${missLabel(missesCount)}`,
-      squares,
-      "",
-      SITE_URL
-    ].join("\n");
+const resultLine = solved
+  ? `Solved with ${missesCount} ${missLabel(missesCount)}`
+  : "Missed";
+
+return [
+  `Beth’s Hangman #${puzzleNumber}`,
+  resultLine,
+  squares,
+  "",
+  SITE_URL
+].join("\n");
   }
 
   function setShareStatus(text) {
