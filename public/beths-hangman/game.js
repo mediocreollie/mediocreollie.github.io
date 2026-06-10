@@ -557,6 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 shareButton.addEventListener("click", () => {
+ shareButton.addEventListener("click", () => {
   shareResult(shareStatus);
 });
 
@@ -590,7 +591,8 @@ function buildShareText() {
     `Beth’s Hangman #${puzzleNumber}`,
     resultLine,
     buildShareSquares(),
-    GAME_URL
+    "",
+    "olliewritesthings.com/beths-hangman/"
   ].join("\n");
 }
 
@@ -604,7 +606,7 @@ function buildShareSquares() {
 }
 
 function getPuzzleNumber(dateString) {
-  const start = new Date(`${PUZZLE_START_DATE}T00:00:00`);
+  const start = new Date("2026-06-09T00:00:00");
   const current = new Date(`${dateString}T00:00:00`);
   const daysSinceStart = Math.floor((current - start) / 86400000);
 
