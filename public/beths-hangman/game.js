@@ -237,6 +237,10 @@
 
   function recordLoadedCompletedGame() {
     if (state.status !== "playing") {
+      const stats = loadStats();
+      if (state.statsSaved && !stats.completedDates[todayKey]) {
+        state.statsSaved = false;
+      }
       recordCompletion();
       saveState();
     }
@@ -249,6 +253,8 @@
 
     const stats = loadStats();
     if (stats.completedDates[todayKey]) {
+      rebuildStatsFromResults(stats);
+      saveStats(stats);
       state.statsSaved = true;
       return;
     }
@@ -264,19 +270,9 @@
 
     stats.played += 1;
     stats.completedDates[todayKey] = result;
-    stats.recent.unshift(result);
-    stats.recent = stats.recent.slice(0, 20);
-
-    if (won) {
-      stats.wins += 1;
-      stats.currentStreak += 1;
-      stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
-      stats.distribution[String(state.wrongGuesses)] += 1;
-    } else {
-      stats.losses += 1;
-      stats.currentStreak = 0;
-      stats.distribution.X += 1;
-    }
+    stats.recentResults.unshift(result);
+    stats.recentResults = stats.recentResults.slice(0, 20);
+    rebuildStatsFromResults(stats);
 
     state.statsSaved = true;
     saveStats(stats);
@@ -367,25 +363,23 @@
       currentStreak: 0,
       bestStreak: 0,
       distribution: createEmptyDistribution(),
-      recent: [],
+      recentResults: [],
       completedDates: {}
     };
 
     try {
       const saved = JSON.parse(localStorage.getItem(STATS_KEY));
-      const distribution = { ...createEmptyDistribution(), ...(saved && saved.distribution) };
-      return {
+      const stats = {
         ...freshStats,
         ...saved,
-        played: Number(saved && saved.played) || 0,
-        wins: Number(saved && (saved.wins ?? saved.won)) || 0,
-        losses: Number(saved && saved.losses) || 0,
-        currentStreak: Number(saved && saved.currentStreak) || 0,
-        bestStreak: Number(saved && saved.bestStreak) || 0,
-        distribution,
-        recent: Array.isArray(saved && saved.recent) ? saved.recent : [],
+        recentResults: Array.isArray(saved && saved.recentResults) ? saved.recentResults : Array.isArray(saved && saved.recent) ? saved.recent : [],
         completedDates: saved && saved.completedDates && typeof saved.completedDates === "object" ? saved.completedDates : {}
       };
+
+      stats.recentResults = normalizeResultList(stats.recentResults);
+      stats.completedDates = normalizeCompletedDates(stats.completedDates, stats.recentResults);
+      rebuildStatsFromResults(stats);
+      return stats;
     } catch {
       return freshStats;
     }
@@ -399,6 +393,73 @@
 
   function createEmptyDistribution() {
     return { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, X: 0 };
+  }
+
+  function normalizeResultList(results) {
+    return results
+      .filter((result) => result && typeof result === "object")
+      .map((result) => {
+        const status = result.status === "won" ? "won" : result.status === "lost" ? "lost" : "playing";
+        const misses = status === "won" ? Math.max(0, Math.min(9, Number(result.misses) || 0)) : MAX_MISSES;
+
+        return {
+          date: result.date || "",
+          puzzleNumber: Number(result.puzzleNumber) || 0,
+          status,
+          misses,
+          label: status === "won" ? `Solved with ${misses} ${missLabel(misses)}` : "Missed"
+        };
+      })
+      .filter((result) => result.date && result.status !== "playing");
+  }
+
+  function normalizeCompletedDates(completedDates, recentResults) {
+    const normalized = {};
+
+    Object.keys(completedDates || {}).forEach((date) => {
+      const result = normalizeResultList([{ ...completedDates[date], date }])[0];
+      if (result) {
+        normalized[date] = result;
+      }
+    });
+
+    recentResults.forEach((result) => {
+      if (!normalized[result.date]) {
+        normalized[result.date] = result;
+      }
+    });
+
+    return normalized;
+  }
+
+  function rebuildStatsFromResults(stats) {
+    const results = Object.values(stats.completedDates || {})
+      .filter((result) => result && result.status !== "playing")
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+    stats.played = results.length;
+    stats.wins = results.filter((result) => result.status === "won").length;
+    stats.losses = results.filter((result) => result.status === "lost").length;
+    stats.distribution = createEmptyDistribution();
+    stats.currentStreak = 0;
+    stats.bestStreak = 0;
+
+    results
+      .slice()
+      .reverse()
+      .forEach((result) => {
+        if (result.status === "won") {
+          const key = String(Math.max(0, Math.min(9, Number(result.misses) || 0)));
+          stats.distribution[key] += 1;
+          stats.currentStreak += 1;
+          stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
+        } else {
+          stats.distribution.X += 1;
+          stats.currentStreak = 0;
+        }
+      });
+
+    stats.recentResults = results.slice(0, 20);
   }
 
   function renderStatsContent() {
@@ -449,18 +510,18 @@
   }
 
   function renderRecentResults(stats) {
-    if (!stats.recent.length) {
+    if (!stats.recentResults.length) {
       elements.recentResults.innerHTML = '<p class="share-status">No finished games yet.</p>';
       return;
     }
 
-    elements.recentResults.innerHTML = stats.recent
+    elements.recentResults.innerHTML = stats.recentResults
       .slice(0, 12)
       .map((result) => {
         const won = result.status === "won";
         const compact = won ? `✓${result.misses}` : "✕";
         const helper = result.label || (won ? `Solved with ${result.misses} ${missLabel(result.misses)}` : "Missed");
-        return `<span class="recent-result ${won ? "win" : "loss"}" title="${helper}">${compact}<span class="recent-helper">${helper}</span></span>`;
+        return `<span class="recent-result ${won ? "win" : "loss"}" title="${helper}">${compact} <span class="recent-text">${helper}</span><span class="recent-helper">${helper}</span></span>`;
       })
       .join("");
   }

@@ -21,12 +21,19 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Comic Sans MS", "Bradley Hand ITC", "Segoe Print", cursive;
+  font-family: "Trebuchet MS", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-text-size-adjust: 100%;
 }
 
 button {
   font: inherit;
+}
+
+.phone-game,
+.phone-game *,
+.stats-modal,
+.stats-modal * {
+  font-family: "Trebuchet MS", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .page-shell {
@@ -688,6 +695,13 @@ h1 {
   color: var(--red);
 }
 
+.recent-text {
+  margin-left: 0.2rem;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
 .recent-helper {
   position: absolute;
   width: 1px;
@@ -722,4 +736,9 @@ h1 {
   .stats-card {
     padding: 0.85rem;
   }
+}
+
+.stats-modal,
+.stats-modal * {
+  font-family: "Trebuchet MS", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
