@@ -16,12 +16,13 @@
     "part-right-eye",
     "part-sad-mouth"
   ];
+
   const DEV_OVERRIDE = {
     // date: "2026-06-09",
     // word: "ASTRO"
   };
 
-  const elements = {};
+  let elements = {};
   let word = "";
   let puzzleNumber = 0;
   let todayKey = "";
@@ -35,7 +36,21 @@
   }
 
   async function init() {
-    collectElements();
+    elements = {
+      wordSlots: document.querySelector("#wordSlots"),
+      misses: document.querySelector("#misses"),
+      keyboard: document.querySelector("#keyboard"),
+      message: document.querySelector("#message"),
+      answer: document.querySelector("#answer"),
+      dateLabel: document.querySelector("#dateLabel"),
+      shareButton: document.querySelector("#shareButton"),
+      shareStatus: document.querySelector("#shareStatus"),
+      statsButton: document.querySelector("#statsButton"),
+      statsModal: document.querySelector("#statsModal"),
+      statsContent: document.querySelector("#statsContent"),
+      statsCloseButton: document.querySelector("#statsCloseButton"),
+      statsShareButton: document.querySelector("#statsShareButton")
+    };
 
     if (!elements.wordSlots || !elements.keyboard) {
       return;
@@ -67,22 +82,6 @@
     }
   }
 
-  function collectElements() {
-    elements.wordSlots = document.querySelector("#wordSlots");
-    elements.misses = document.querySelector("#misses");
-    elements.keyboard = document.querySelector("#keyboard");
-    elements.message = document.querySelector("#message");
-    elements.answer = document.querySelector("#answer");
-    elements.dateLabel = document.querySelector("#dateLabel");
-    elements.shareButton = document.querySelector("#shareButton");
-    elements.shareStatus = document.querySelector("#shareStatus");
-    elements.statsButton = document.querySelector("#statsButton");
-    elements.statsModal = document.querySelector("#statsModal");
-    elements.statsContent = document.querySelector("#statsContent");
-    elements.statsCloseButton = document.querySelector("#statsCloseButton");
-    elements.statsShareButton = document.querySelector("#statsShareButton");
-  }
-
   async function loadDailyPuzzle() {
     const dateKey = DEV_OVERRIDE.date || getTodayKey();
     const words = await loadWords();
@@ -97,16 +96,19 @@
   }
 
   async function loadWords() {
-    const response = await fetch("words.json", { cache: "no-store" });
+    const wordsUrl = new URL("./words.json", window.location.href);
+    const response = await fetch(wordsUrl, { cache: "no-store" });
+
     if (!response.ok) {
-      throw new Error("Could not load words.json");
+      throw new Error(`Could not load words.json (${response.status})`);
     }
 
-    return normalizeWords(await response.json());
+    const text = await response.text();
+    return normalizeWords(JSON.parse(text.replace(/^\uFEFF/, "")));
   }
 
   function normalizeWords(data) {
-    const rawWords = Array.isArray(data) ? data : data && Array.isArray(data.words) ? data.words : [];
+    const rawWords = getRawWords(data);
 
     const words = rawWords
       .map((entry, index) => {
@@ -116,7 +118,7 @@
 
         if (entry && typeof entry === "object") {
           return {
-            word: entry.word || entry.answer || entry.value || entry.text || "",
+            word: getWordFromObject(entry),
             number: entry.number || entry.id || index + 1
           };
         }
@@ -130,6 +132,43 @@
     }
 
     return words;
+  }
+
+  function getRawWords(data) {
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    if (!data || typeof data !== "object") {
+      return [];
+    }
+
+    if (Array.isArray(data.words)) {
+      return data.words;
+    }
+
+    if (Array.isArray(data.puzzles)) {
+      return data.puzzles;
+    }
+
+    if (Array.isArray(data.items)) {
+      return data.items;
+    }
+
+    return Object.values(data);
+  }
+
+  function getWordFromObject(entry) {
+    return (
+      entry.word ||
+      entry.answer ||
+      entry.solution ||
+      entry.value ||
+      entry.text ||
+      entry.name ||
+      Object.values(entry).find((value) => typeof value === "string") ||
+      ""
+    );
   }
 
   function cleanWord(value) {
@@ -498,7 +537,7 @@
 
   function showLoadError(error) {
     if (elements.message) {
-      elements.message.textContent = "The puzzle could not load words.json. Please open the game through a local web server.";
+      elements.message.textContent = "The puzzle could not load words.json. Please check the word list and refresh.";
       elements.message.classList.add("lose");
     }
 
