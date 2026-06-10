@@ -3,24 +3,10 @@
 
   const MAX_MISSES = 10;
   const SITE_URL = "olliewritesthings.com/beths-hangman/";
+  const STATS_KEY = "beths-hangman:stats";
   const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const PART_CLASSES = [
-    "part-head",
-    "part-neck",
-    "part-left-arm",
-    "part-right-arm",
-    "part-body",
-    "part-left-leg",
-    "part-right-leg",
-    "part-left-eye",
-    "part-right-eye",
-    "part-sad-mouth"
-  ];
-
-  const DEV_OVERRIDE = {
-    // date: "2026-06-09",
-    // word: "ASTRO"
-  };
+  const PART_CLASSES = ["part-head", "part-neck", "part-left-arm", "part-right-arm", "part-body", "part-left-leg", "part-right-leg", "part-left-eye", "part-right-eye", "part-sad-mouth"];
+  const DEV_OVERRIDE = {};
 
   let elements = {};
   let word = "";
@@ -38,10 +24,6 @@
   async function init() {
     collectElements();
 
-    if (!elements.wordSlots || !elements.keyboard) {
-      return;
-    }
-
     try {
       const puzzle = await loadDailyPuzzle();
       word = puzzle.word;
@@ -50,15 +32,13 @@
       storageKey = `beths-hangman:${todayKey}`;
       state = loadState();
 
-      ensureStatsModal();
-      recordLoadedCompletedGame();
-
       if (elements.dateLabel) {
         elements.dateLabel.textContent = formatToday();
       }
 
       buildKeyboard();
       bindActions();
+      recordLoadedCompletedGame();
       render();
 
       setInterval(() => {
@@ -81,30 +61,27 @@
       dateLabel: document.querySelector("#dateLabel"),
       shareButton: document.querySelector("#shareButton"),
       shareStatus: document.querySelector("#shareStatus"),
-      statsButton: document.querySelector("#statsButton, #openStatsButton, .stats-button, [data-open-stats]") || findButtonByText("stats"),
-      statsModal: document.querySelector("#statsModal, [data-stats-modal]"),
-      statsContent: document.querySelector("#statsContent, [data-stats-content]"),
-      statsCloseButton: document.querySelector("#statsCloseButton, #closeStatsButton, [data-close-stats]"),
-      statsShareButton: document.querySelector("#statsShareButton, #shareStatsButton, [data-stats-share]")
+      statsButton: document.querySelector("#statsButton"),
+      statsModal: document.querySelector("#statsModal"),
+      statsCloseButton: document.querySelector("#statsCloseButton"),
+      statsResult: document.querySelector("#statsResult"),
+      statsTiles: document.querySelector("#statsTiles"),
+      guessDistribution: document.querySelector("#guessDistribution"),
+      recentResults: document.querySelector("#recentResults"),
+      statsShareButton: document.querySelector("#statsShareButton"),
+      statsShareStatus: document.querySelector("#statsShareStatus"),
+      resetStatsButton: document.querySelector("#resetStatsButton")
     };
-  }
-
-  function findButtonByText(text) {
-    const target = text.toLowerCase();
-    return Array.from(document.querySelectorAll("button")).find((button) =>
-      button.textContent.trim().toLowerCase() === target
-    );
   }
 
   async function loadDailyPuzzle() {
     const dateKey = DEV_OVERRIDE.date || getTodayKey();
     const words = await loadWords();
     const index = getPuzzleIndex(dateKey, words.length);
-    const entry = words[index];
 
     return {
       todayKey: dateKey,
-      word: cleanWord(DEV_OVERRIDE.word || entry.word),
+      word: cleanWord(DEV_OVERRIDE.word || words[index].word),
       puzzleNumber: getPuzzleNumber(dateKey)
     };
   }
@@ -120,7 +97,7 @@
   }
 
   function normalizeWords(data) {
-    const rawWords = getRawWords(data);
+    const rawWords = Array.isArray(data) ? data : data && Array.isArray(data.words) ? data.words : data && Array.isArray(data.puzzles) ? data.puzzles : data && Array.isArray(data.items) ? data.items : data && typeof data === "object" ? Object.values(data) : [];
     const words = rawWords
       .map((entry, index) => {
         if (typeof entry === "string") {
@@ -129,7 +106,7 @@
 
         if (entry && typeof entry === "object") {
           return {
-            word: getWordFromObject(entry),
+            word: entry.word || entry.answer || entry.solution || entry.value || entry.text || entry.name || Object.values(entry).find((value) => typeof value === "string") || "",
             number: entry.number || entry.id || index + 1
           };
         }
@@ -145,48 +122,8 @@
     return words;
   }
 
-  function getRawWords(data) {
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (!data || typeof data !== "object") {
-      return [];
-    }
-
-    if (Array.isArray(data.words)) {
-      return data.words;
-    }
-
-    if (Array.isArray(data.puzzles)) {
-      return data.puzzles;
-    }
-
-    if (Array.isArray(data.items)) {
-      return data.items;
-    }
-
-    return Object.values(data);
-  }
-
-  function getWordFromObject(entry) {
-    return (
-      entry.word ||
-      entry.answer ||
-      entry.solution ||
-      entry.value ||
-      entry.text ||
-      entry.name ||
-      Object.values(entry).find((value) => typeof value === "string") ||
-      ""
-    );
-  }
-
   function cleanWord(value) {
-    return String(value || "")
-      .trim()
-      .replace(/[^a-z]/gi, "")
-      .toUpperCase();
+    return String(value || "").trim().replace(/[^a-z]/gi, "").toUpperCase();
   }
 
   function getPuzzleIndex(dateString, wordCount) {
@@ -196,35 +133,20 @@
   function getPuzzleNumber(dateString) {
     const start = new Date("2026-06-09T00:00:00");
     const current = new Date(`${dateString}T00:00:00`);
-    const daysSinceStart = Math.floor((current - start) / 86400000);
-
-    return Math.max(1, daysSinceStart + 1);
+    return Math.max(1, Math.floor((current - start) / 86400000) + 1);
   }
 
   function getTodayKey() {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   }
 
   function formatToday() {
-    return new Intl.DateTimeFormat(undefined, {
-      weekday: "long",
-      month: "long",
-      day: "numeric"
-    }).format(new Date());
+    return new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(new Date());
   }
 
   function loadState() {
-    const freshState = {
-      date: todayKey,
-      guesses: [],
-      wrongGuesses: 0,
-      status: "playing",
-      statsSaved: false
-    };
+    const freshState = { date: todayKey, guesses: [], wrongGuesses: 0, status: "playing", statsSaved: false };
 
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey));
@@ -240,9 +162,7 @@
     } catch {
       try {
         localStorage.removeItem(storageKey);
-      } catch {
-        // Storage can be unavailable in private browsing modes.
-      }
+      } catch {}
     }
 
     return freshState;
@@ -251,9 +171,7 @@
   function saveState() {
     try {
       localStorage.setItem(storageKey, JSON.stringify(state));
-    } catch {
-      // The current page-load game still works if storage is blocked.
-    }
+    } catch {}
   }
 
   function buildKeyboard() {
@@ -271,44 +189,19 @@
   }
 
   function bindActions() {
-    if (elements.shareButton) {
-      elements.shareButton.addEventListener("click", shareResult);
-    }
-
-    if (elements.statsShareButton) {
-      elements.statsShareButton.addEventListener("click", shareResult);
-    }
-
-    if (elements.statsButton) {
-      elements.statsButton.addEventListener("click", openStatsModal);
-    }
-
-    if (elements.statsCloseButton) {
-      elements.statsCloseButton.addEventListener("click", closeStatsModal);
-    }
-
-    if (elements.statsModal) {
-      elements.statsModal.addEventListener("click", (event) => {
-        if (event.target === elements.statsModal) {
-          closeStatsModal();
-        }
-      });
-    }
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
+    elements.shareButton.addEventListener("click", () => shareResult(elements.shareStatus));
+    elements.statsShareButton.addEventListener("click", () => shareResult(elements.statsShareStatus));
+    elements.statsButton.addEventListener("click", openStatsModal);
+    elements.statsCloseButton.addEventListener("click", closeStatsModal);
+    elements.resetStatsButton.addEventListener("click", resetStats);
+    elements.statsModal.addEventListener("click", (event) => {
+      if (event.target === elements.statsModal) {
         closeStatsModal();
       }
     });
-
-    document.addEventListener("click", (event) => {
-      const button = event.target.closest("button");
-      if (!button) {
-        return;
-      }
-
-      if (button.matches("#statsButton, #openStatsButton, .stats-button, [data-open-stats]") || button.textContent.trim().toLowerCase() === "stats") {
-        openStatsModal();
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeStatsModal();
       }
     });
   }
@@ -328,31 +221,65 @@
       finishGame("won");
     } else if (state.wrongGuesses >= MAX_MISSES) {
       finishGame("lost");
+    } else {
+      saveState();
+      render();
     }
-
-    saveState();
-    render();
   }
 
   function finishGame(status) {
     state.status = status;
-
-    if (!state.statsSaved) {
-      updateStats(status === "won");
-      state.statsSaved = true;
-    }
-
-    setTimeout(openStatsModal, 120);
+    recordCompletion();
+    saveState();
+    render();
+    setTimeout(openStatsModal, 180);
   }
 
   function recordLoadedCompletedGame() {
-    if (!state || state.statsSaved || state.status === "playing") {
+    if (state.status !== "playing") {
+      recordCompletion();
+      saveState();
+    }
+  }
+
+  function recordCompletion() {
+    if (state.status === "playing" || state.statsSaved) {
       return;
     }
 
-    updateStats(state.status === "won");
+    const stats = loadStats();
+    if (stats.completedDates[todayKey]) {
+      state.statsSaved = true;
+      return;
+    }
+
+    const won = state.status === "won";
+    const result = {
+      date: todayKey,
+      puzzleNumber,
+      status: state.status,
+      misses: won ? state.wrongGuesses : MAX_MISSES,
+      label: won ? `Solved with ${state.wrongGuesses} ${missLabel(state.wrongGuesses)}` : "Missed"
+    };
+
+    stats.played += 1;
+    stats.completedDates[todayKey] = result;
+    stats.recent.unshift(result);
+    stats.recent = stats.recent.slice(0, 20);
+
+    if (won) {
+      stats.wins += 1;
+      stats.currentStreak += 1;
+      stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
+      stats.distribution[String(state.wrongGuesses)] += 1;
+    } else {
+      stats.losses += 1;
+      stats.currentStreak = 0;
+      stats.distribution.X += 1;
+    }
+
     state.statsSaved = true;
-    saveState();
+    saveStats(stats);
   }
 
   function isWordComplete() {
@@ -382,9 +309,7 @@
   }
 
   function renderMisses() {
-    if (elements.misses) {
-      elements.misses.textContent = state.guesses.filter((letter) => !word.includes(letter)).join(" ");
-    }
+    elements.misses.textContent = state.guesses.filter((letter) => !word.includes(letter)).join(" ");
   }
 
   function renderKeyboard() {
@@ -408,16 +333,9 @@
   }
 
   function renderMessage() {
-    if (!elements.message) {
-      return;
-    }
-
     elements.message.className = "message";
-
-    if (elements.answer) {
-      elements.answer.hidden = true;
-      elements.answer.textContent = "";
-    }
+    elements.answer.hidden = true;
+    elements.answer.textContent = "";
 
     if (state.status === "won") {
       elements.message.textContent = `You found it in ${state.wrongGuesses} ${missLabel(state.wrongGuesses)}. Nicely done.`;
@@ -428,10 +346,8 @@
     if (state.status === "lost") {
       elements.message.textContent = "That was the last part. Tomorrow brings another word.";
       elements.message.classList.add("lose");
-      if (elements.answer) {
-        elements.answer.textContent = `Today's word was ${word}.`;
-        elements.answer.hidden = false;
-      }
+      elements.answer.textContent = `Today's word was ${word}.`;
+      elements.answer.hidden = false;
       return;
     }
 
@@ -443,121 +359,32 @@
     return count === 1 ? "miss" : "misses";
   }
 
-  function ensureStatsModal() {
-    if (!elements.statsButton) {
-      return;
-    }
-
-    if (!elements.statsModal) {
-      const modal = document.createElement("div");
-      modal.id = "statsModal";
-      modal.className = "stats-modal";
-      modal.hidden = true;
-      modal.setAttribute("aria-hidden", "true");
-      modal.innerHTML = `
-        <div class="stats-card" role="dialog" aria-modal="true" aria-labelledby="statsTitle">
-          <h2 id="statsTitle">Stats</h2>
-          <div id="statsContent"></div>
-          <div class="stats-actions">
-            <button id="statsShareButton" type="button">Share result</button>
-            <button id="statsCloseButton" type="button">Close</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-
-    elements.statsModal = document.querySelector("#statsModal, [data-stats-modal]");
-    elements.statsContent = document.querySelector("#statsContent, [data-stats-content]");
-    elements.statsCloseButton = document.querySelector("#statsCloseButton, #closeStatsButton, [data-close-stats]");
-    elements.statsShareButton = document.querySelector("#statsShareButton, #shareStatsButton, [data-stats-share]");
-    ensureStatsStyles();
-  }
-
-  function ensureStatsStyles() {
-    if (document.querySelector("#bethsHangmanStatsStyles")) {
-      return;
-    }
-
-    const styles = document.createElement("style");
-    styles.id = "bethsHangmanStatsStyles";
-    styles.textContent = `
-      .stats-modal[hidden] { display: none; }
-      .stats-modal {
-        position: fixed;
-        inset: 0;
-        z-index: 10;
-        display: grid;
-        place-items: center;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.72);
-      }
-      .stats-card {
-        width: min(18rem, 92vw);
-        padding: 1rem;
-        background: #fff;
-        border: 4px solid #080808;
-        border-radius: 18px;
-        box-shadow: 6px 8px 0 #080808;
-        text-align: center;
-      }
-      .stats-card h2 {
-        margin: 0 0 0.75rem;
-        font-size: 1.25rem;
-      }
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.65rem;
-        margin: 0;
-      }
-      .stats-grid div {
-        border: 3px solid #080808;
-        border-radius: 10px;
-        padding: 0.45rem;
-      }
-      .stats-grid dt {
-        font-size: 0.75rem;
-      }
-      .stats-grid dd {
-        margin: 0;
-        font-size: 1.35rem;
-        font-weight: 900;
-      }
-      .stats-actions {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-top: 0.85rem;
-      }
-      .stats-actions button {
-        min-height: 40px;
-        padding: 0 0.75rem;
-        border: 3px solid #080808;
-        border-radius: 9px;
-        background: #fff;
-        font-weight: 900;
-        cursor: pointer;
-      }
-    `;
-    document.head.appendChild(styles);
-  }
-
   function loadStats() {
     const freshStats = {
       played: 0,
-      won: 0,
+      wins: 0,
+      losses: 0,
       currentStreak: 0,
-      bestStreak: 0
+      bestStreak: 0,
+      distribution: createEmptyDistribution(),
+      recent: [],
+      completedDates: {}
     };
 
     try {
-      const saved = JSON.parse(localStorage.getItem("beths-hangman:stats"));
+      const saved = JSON.parse(localStorage.getItem(STATS_KEY));
+      const distribution = { ...createEmptyDistribution(), ...(saved && saved.distribution) };
       return {
+        ...freshStats,
+        ...saved,
         played: Number(saved && saved.played) || 0,
-        won: Number(saved && saved.won) || 0,
+        wins: Number(saved && (saved.wins ?? saved.won)) || 0,
+        losses: Number(saved && saved.losses) || 0,
         currentStreak: Number(saved && saved.currentStreak) || 0,
-        bestStreak: Number(saved && saved.bestStreak) || 0
+        bestStreak: Number(saved && saved.bestStreak) || 0,
+        distribution,
+        recent: Array.isArray(saved && saved.recent) ? saved.recent : [],
+        completedDates: saved && saved.completedDates && typeof saved.completedDates === "object" ? saved.completedDates : {}
       };
     } catch {
       return freshStats;
@@ -566,65 +393,104 @@
 
   function saveStats(stats) {
     try {
-      localStorage.setItem("beths-hangman:stats", JSON.stringify(stats));
-    } catch {
-      // Stats are optional if storage is blocked.
-    }
+      localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    } catch {}
   }
 
-  function updateStats(won) {
-    const stats = loadStats();
-    stats.played += 1;
-
-    if (won) {
-      stats.won += 1;
-      stats.currentStreak += 1;
-      stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
-    } else {
-      stats.currentStreak = 0;
-    }
-
-    saveStats(stats);
+  function createEmptyDistribution() {
+    return { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, X: 0 };
   }
 
   function renderStatsContent() {
-    if (!elements.statsContent) {
+    const stats = loadStats();
+    const currentResult = getCurrentResult();
+    const winPercent = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
+
+    elements.statsResult.textContent = currentResult.label;
+    elements.statsResult.classList.toggle("win", currentResult.status === "won");
+    elements.statsTiles.innerHTML = [
+      createStatTile("Played", stats.played),
+      createStatTile("Win %", winPercent),
+      createStatTile("Streak", stats.currentStreak),
+      createStatTile("Best", stats.bestStreak)
+    ].join("");
+
+    renderDistribution(stats, currentResult);
+    renderRecentResults(stats);
+  }
+
+  function createStatTile(label, value) {
+    return `<div class="stat-tile"><span class="stat-value">${value}</span><span class="stat-label">${label}</span></div>`;
+  }
+
+  function getCurrentResult() {
+    if (state.status === "won") {
+      return { status: "won", key: String(state.wrongGuesses), label: `Solved with ${state.wrongGuesses} ${missLabel(state.wrongGuesses)}` };
+    }
+
+    if (state.status === "lost") {
+      return { status: "lost", key: "X", label: "Missed" };
+    }
+
+    return { status: "playing", key: "", label: "Finish today’s puzzle to add a result." };
+  }
+
+  function renderDistribution(stats, currentResult) {
+    const labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "X"];
+    const highest = Math.max(1, ...labels.map((label) => Number(stats.distribution[label]) || 0));
+
+    elements.guessDistribution.innerHTML = labels
+      .map((label) => {
+        const count = Number(stats.distribution[label]) || 0;
+        const width = Math.max(7, Math.round((count / highest) * 100));
+        return `<div class="distribution-row${currentResult.key === label ? " today" : ""}${label === "X" ? " missed" : ""}"><span class="distribution-label">${label}</span><div class="bar-track" aria-label="${label === "X" ? "Missed" : `${label} misses`}: ${count}"><div class="bar-fill" style="width:${width}%"></div></div><span class="distribution-count">${count}</span></div>`;
+      })
+      .join("");
+  }
+
+  function renderRecentResults(stats) {
+    if (!stats.recent.length) {
+      elements.recentResults.innerHTML = '<p class="share-status">No finished games yet.</p>';
       return;
     }
 
-    const stats = loadStats();
-    const winPercent = stats.played ? Math.round((stats.won / stats.played) * 100) : 0;
-
-    elements.statsContent.innerHTML = `
-      <dl class="stats-grid">
-        <div><dt>Played</dt><dd>${stats.played}</dd></div>
-        <div><dt>Won</dt><dd>${winPercent}%</dd></div>
-        <div><dt>Streak</dt><dd>${stats.currentStreak}</dd></div>
-        <div><dt>Best</dt><dd>${stats.bestStreak}</dd></div>
-      </dl>
-    `;
+    elements.recentResults.innerHTML = stats.recent
+      .slice(0, 12)
+      .map((result) => {
+        const won = result.status === "won";
+        const compact = won ? `✓${result.misses}` : "✕";
+        const helper = result.label || (won ? `Solved with ${result.misses} ${missLabel(result.misses)}` : "Missed");
+        return `<span class="recent-result ${won ? "win" : "loss"}" title="${helper}">${compact}<span class="recent-helper">${helper}</span></span>`;
+      })
+      .join("");
   }
 
   function openStatsModal() {
-    if (!elements.statsModal) {
-      return;
-    }
-
     renderStatsContent();
     elements.statsModal.hidden = false;
     elements.statsModal.setAttribute("aria-hidden", "false");
   }
 
   function closeStatsModal() {
-    if (!elements.statsModal) {
-      return;
-    }
-
     elements.statsModal.hidden = true;
     elements.statsModal.setAttribute("aria-hidden", "true");
   }
 
-  async function shareResult() {
+  function resetStats() {
+    if (!window.confirm("Reset all Hangman stats on this browser?")) {
+      return;
+    }
+
+    try {
+      localStorage.removeItem(STATS_KEY);
+      state.statsSaved = false;
+      saveState();
+    } catch {}
+
+    renderStatsContent();
+  }
+
+  async function shareResult(statusElement) {
     const shareText = getShareText();
 
     try {
@@ -633,9 +499,9 @@
       }
 
       await navigator.clipboard.writeText(shareText);
-      setShareStatus("Result copied to clipboard.");
+      statusElement.textContent = "Result copied to clipboard.";
     } catch {
-      setShareStatus(shareText);
+      statusElement.textContent = shareText;
     }
   }
 
@@ -643,35 +509,15 @@
     const solved = state.status === "won";
     const missesCount = solved ? state.wrongGuesses : MAX_MISSES;
     const greenCount = solved ? MAX_MISSES - missesCount : 0;
-    const squares = Array.from({ length: MAX_MISSES }, (_, index) =>
-      index < greenCount ? "🟩" : "🟥"
-    ).join("");
+    const squares = Array.from({ length: MAX_MISSES }, (_, index) => index < greenCount ? "🟩" : "🟥").join("");
+    const resultLine = solved ? `Solved with ${missesCount} ${missLabel(missesCount)}` : "Missed";
 
-    const resultLine = solved
-      ? `Solved with ${missesCount} ${missLabel(missesCount)}`
-      : "Missed";
-
-    return [
-      `Beth’s Hangman #${puzzleNumber}`,
-      resultLine,
-      squares,
-      "",
-      SITE_URL
-    ].join("\n");
-  }
-
-  function setShareStatus(text) {
-    if (elements.shareStatus) {
-      elements.shareStatus.textContent = text;
-    }
+    return [`Beth’s Hangman #${puzzleNumber}`, resultLine, squares, "", SITE_URL].join("\n");
   }
 
   function showLoadError(error) {
-    if (elements.message) {
-      elements.message.textContent = "The puzzle could not load words.json. Please check the word list and refresh.";
-      elements.message.classList.add("lose");
-    }
-
+    elements.message.textContent = "The puzzle could not load words.json. Please check the word list and refresh.";
+    elements.message.classList.add("lose");
     console.error(error);
   }
 })();
