@@ -36,21 +36,7 @@
   }
 
   async function init() {
-    elements = {
-      wordSlots: document.querySelector("#wordSlots"),
-      misses: document.querySelector("#misses"),
-      keyboard: document.querySelector("#keyboard"),
-      message: document.querySelector("#message"),
-      answer: document.querySelector("#answer"),
-      dateLabel: document.querySelector("#dateLabel"),
-      shareButton: document.querySelector("#shareButton"),
-      shareStatus: document.querySelector("#shareStatus"),
-      statsButton: document.querySelector("#statsButton"),
-      statsModal: document.querySelector("#statsModal"),
-      statsContent: document.querySelector("#statsContent"),
-      statsCloseButton: document.querySelector("#statsCloseButton"),
-      statsShareButton: document.querySelector("#statsShareButton")
-    };
+    collectElements();
 
     if (!elements.wordSlots || !elements.keyboard) {
       return;
@@ -63,6 +49,9 @@
       todayKey = puzzle.todayKey;
       storageKey = `beths-hangman:${todayKey}`;
       state = loadState();
+
+      ensureStatsModal();
+      recordLoadedCompletedGame();
 
       if (elements.dateLabel) {
         elements.dateLabel.textContent = formatToday();
@@ -82,6 +71,24 @@
     }
   }
 
+  function collectElements() {
+    elements = {
+      wordSlots: document.querySelector("#wordSlots"),
+      misses: document.querySelector("#misses"),
+      keyboard: document.querySelector("#keyboard"),
+      message: document.querySelector("#message"),
+      answer: document.querySelector("#answer"),
+      dateLabel: document.querySelector("#dateLabel"),
+      shareButton: document.querySelector("#shareButton"),
+      shareStatus: document.querySelector("#shareStatus"),
+      statsButton: document.querySelector("#statsButton, #openStatsButton, [data-open-stats]"),
+      statsModal: document.querySelector("#statsModal, [data-stats-modal]"),
+      statsContent: document.querySelector("#statsContent, [data-stats-content]"),
+      statsCloseButton: document.querySelector("#statsCloseButton, #closeStatsButton, [data-close-stats]"),
+      statsShareButton: document.querySelector("#statsShareButton, #shareStatsButton, [data-stats-share]")
+    };
+  }
+
   async function loadDailyPuzzle() {
     const dateKey = DEV_OVERRIDE.date || getTodayKey();
     const words = await loadWords();
@@ -96,9 +103,7 @@
   }
 
   async function loadWords() {
-    const wordsUrl = new URL("./words.json", window.location.href);
-    const response = await fetch(wordsUrl, { cache: "no-store" });
-
+    const response = await fetch(new URL("./words.json", window.location.href), { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`Could not load words.json (${response.status})`);
     }
@@ -109,7 +114,6 @@
 
   function normalizeWords(data) {
     const rawWords = getRawWords(data);
-
     const words = rawWords
       .map((entry, index) => {
         if (typeof entry === "string") {
@@ -179,8 +183,7 @@
   }
 
   function getPuzzleIndex(dateString, wordCount) {
-    const currentPuzzleNumber = getPuzzleNumber(dateString);
-    return (currentPuzzleNumber - 1) % wordCount;
+    return (getPuzzleNumber(dateString) - 1) % wordCount;
   }
 
   function getPuzzleNumber(dateString) {
@@ -322,6 +325,16 @@
     }
   }
 
+  function recordLoadedCompletedGame() {
+    if (!state || state.statsSaved || state.status === "playing") {
+      return;
+    }
+
+    updateStats(state.status === "won");
+    state.statsSaved = true;
+    saveState();
+  }
+
   function isWordComplete() {
     return word.split("").every((letter) => state.guesses.includes(letter));
   }
@@ -349,11 +362,9 @@
   }
 
   function renderMisses() {
-    if (!elements.misses) {
-      return;
+    if (elements.misses) {
+      elements.misses.textContent = state.guesses.filter((letter) => !word.includes(letter)).join(" ");
     }
-
-    elements.misses.textContent = state.guesses.filter((letter) => !word.includes(letter)).join(" ");
   }
 
   function renderKeyboard() {
@@ -410,6 +421,106 @@
 
   function missLabel(count) {
     return count === 1 ? "miss" : "misses";
+  }
+
+  function ensureStatsModal() {
+    if (!elements.statsButton) {
+      return;
+    }
+
+    if (!elements.statsModal) {
+      const modal = document.createElement("div");
+      modal.id = "statsModal";
+      modal.className = "stats-modal";
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+      modal.innerHTML = `
+        <div class="stats-card" role="dialog" aria-modal="true" aria-labelledby="statsTitle">
+          <h2 id="statsTitle">Stats</h2>
+          <div id="statsContent"></div>
+          <div class="stats-actions">
+            <button id="statsShareButton" type="button">Share result</button>
+            <button id="statsCloseButton" type="button">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    elements.statsModal = document.querySelector("#statsModal, [data-stats-modal]");
+    elements.statsContent = document.querySelector("#statsContent, [data-stats-content]");
+    elements.statsCloseButton = document.querySelector("#statsCloseButton, #closeStatsButton, [data-close-stats]");
+    elements.statsShareButton = document.querySelector("#statsShareButton, #shareStatsButton, [data-stats-share]");
+    ensureStatsStyles();
+  }
+
+  function ensureStatsStyles() {
+    if (document.querySelector("#bethsHangmanStatsStyles")) {
+      return;
+    }
+
+    const styles = document.createElement("style");
+    styles.id = "bethsHangmanStatsStyles";
+    styles.textContent = `
+      .stats-modal[hidden] { display: none; }
+      .stats-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.72);
+      }
+      .stats-card {
+        width: min(18rem, 92vw);
+        padding: 1rem;
+        background: #fff;
+        border: 4px solid #080808;
+        border-radius: 18px;
+        box-shadow: 6px 8px 0 #080808;
+        text-align: center;
+      }
+      .stats-card h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.25rem;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+        margin: 0;
+      }
+      .stats-grid div {
+        border: 3px solid #080808;
+        border-radius: 10px;
+        padding: 0.45rem;
+      }
+      .stats-grid dt {
+        font-size: 0.75rem;
+      }
+      .stats-grid dd {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 900;
+      }
+      .stats-actions {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.85rem;
+      }
+      .stats-actions button {
+        min-height: 40px;
+        padding: 0 0.75rem;
+        border: 3px solid #080808;
+        border-radius: 9px;
+        background: #fff;
+        font-weight: 900;
+        cursor: pointer;
+      }
+    `;
+    document.head.appendChild(styles);
   }
 
   function loadStats() {
