@@ -598,3 +598,27 @@ h1 {
     font-size: 0.65rem;
   }
 }
+.stats-share {
+  margin-bottom: 0.65rem;
+}
+
+.stats-share-status {
+  min-height: 1.2rem;
+  margin: 0 0 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.recent-result-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-right: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.recent-result-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
