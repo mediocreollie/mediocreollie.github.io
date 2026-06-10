@@ -16,28 +16,25 @@
     "part-right-eye",
     "part-sad-mouth"
   ];
+  const FALLBACK_WORDS = [
+    "OBJECT",
+    "PUZZLE",
+    "LETTER",
+    "BOTTLE",
+    "GARDEN",
+    "WINDOW",
+    "PLANET",
+    "MARKET",
+    "POCKET",
+    "BUTTON"
+  ];
 
   const DEV_OVERRIDE = {
     // date: "2026-06-09",
     // word: "ASTRO"
   };
 
-  const elements = {
-    wordSlots: document.querySelector("#wordSlots"),
-    misses: document.querySelector("#misses"),
-    keyboard: document.querySelector("#keyboard"),
-    message: document.querySelector("#message"),
-    answer: document.querySelector("#answer"),
-    dateLabel: document.querySelector("#dateLabel"),
-    shareButton: document.querySelector("#shareButton"),
-    shareStatus: document.querySelector("#shareStatus"),
-    statsButton: document.querySelector("#statsButton"),
-    statsModal: document.querySelector("#statsModal"),
-    statsContent: document.querySelector("#statsContent"),
-    statsCloseButton: document.querySelector("#statsCloseButton"),
-    statsShareButton: document.querySelector("#statsShareButton")
-  };
-
+  const elements = {};
   let word = "";
   let puzzleNumber = 0;
   let todayKey = "";
@@ -51,6 +48,8 @@
   }
 
   async function init() {
+    collectElements();
+
     if (!elements.wordSlots || !elements.keyboard) {
       return;
     }
@@ -81,23 +80,47 @@
     }
   }
 
+  function collectElements() {
+    elements.wordSlots = document.querySelector("#wordSlots");
+    elements.misses = document.querySelector("#misses");
+    elements.keyboard = document.querySelector("#keyboard");
+    elements.message = document.querySelector("#message");
+    elements.answer = document.querySelector("#answer");
+    elements.dateLabel = document.querySelector("#dateLabel");
+    elements.shareButton = document.querySelector("#shareButton");
+    elements.shareStatus = document.querySelector("#shareStatus");
+    elements.statsButton = document.querySelector("#statsButton");
+    elements.statsModal = document.querySelector("#statsModal");
+    elements.statsContent = document.querySelector("#statsContent");
+    elements.statsCloseButton = document.querySelector("#statsCloseButton");
+    elements.statsShareButton = document.querySelector("#statsShareButton");
+  }
+
   async function loadDailyPuzzle() {
-    const response = await fetch("words.json", { cache: "no-cache" });
-    if (!response.ok) {
-      throw new Error("Could not load words.json");
-    }
-
-    const data = await response.json();
-    const entries = normalizeWords(data);
     const dateKey = DEV_OVERRIDE.date || getTodayKey();
-    const index = getPuzzleIndex(dateKey, entries.length);
-    const entry = entries[index];
+    const words = await loadWords();
+    const index = getPuzzleIndex(dateKey, words.length);
+    const entry = words[index];
 
-  return {
-  todayKey: dateKey,
-  word: cleanWord(DEV_OVERRIDE.word || entry.word),
-  puzzleNumber: getPuzzleNumber(dateKey)
-};
+    return {
+      todayKey: dateKey,
+      word: cleanWord(DEV_OVERRIDE.word || entry.word),
+      puzzleNumber: getPuzzleNumber(dateKey)
+    };
+  }
+
+  async function loadWords() {
+    try {
+      const response = await fetch("words.json", { cache: "no-cache" });
+      if (!response.ok) {
+        throw new Error("Could not load words.json");
+      }
+
+      return normalizeWords(await response.json());
+    } catch (error) {
+      console.warn("Using fallback words because words.json could not be loaded.", error);
+      return normalizeWords(FALLBACK_WORDS);
+    }
   }
 
   function normalizeWords(data) {
@@ -135,17 +158,16 @@
   }
 
   function getPuzzleIndex(dateString, wordCount) {
-  const puzzleNumber = getPuzzleNumber(dateString);
-  return (puzzleNumber - 1) % wordCount;
-}
+    const currentPuzzleNumber = getPuzzleNumber(dateString);
+    return (currentPuzzleNumber - 1) % wordCount;
+  }
 
-function getPuzzleNumber(dateString) {
-  const start = new Date("2026-06-09T00:00:00");
-  const current = new Date(`${dateString}T00:00:00`);
-  const daysSinceStart = Math.floor((current - start) / 86400000);
+  function getPuzzleNumber(dateString) {
+    const start = new Date("2026-06-09T00:00:00");
+    const current = new Date(`${dateString}T00:00:00`);
+    const daysSinceStart = Math.floor((current - start) / 86400000);
 
-  return Math.max(1, daysSinceStart + 1);
-}
+    return Math.max(1, daysSinceStart + 1);
   }
 
   function getTodayKey() {
@@ -467,24 +489,23 @@ function getPuzzleNumber(dateString) {
 
   function getShareText() {
     const solved = state.status === "won";
-  const solved = state.status === "won";
-const missesCount = solved ? state.wrongGuesses : MAX_MISSES;
-const greenCount = solved ? MAX_MISSES - missesCount : 0;
-const squares = Array.from({ length: MAX_MISSES }, (_, index) =>
-  index < greenCount ? "🟩" : "🟥"
-).join("");
+    const missesCount = solved ? state.wrongGuesses : MAX_MISSES;
+    const greenCount = solved ? MAX_MISSES - missesCount : 0;
+    const squares = Array.from({ length: MAX_MISSES }, (_, index) =>
+      index < greenCount ? "🟩" : "🟥"
+    ).join("");
 
-const resultLine = solved
-  ? `Solved with ${missesCount} ${missLabel(missesCount)}`
-  : "Missed";
+    const resultLine = solved
+      ? `Solved with ${missesCount} ${missLabel(missesCount)}`
+      : "Missed";
 
-return [
-  `Beth’s Hangman #${puzzleNumber}`,
-  resultLine,
-  squares,
-  "",
-  SITE_URL
-].join("\n");
+    return [
+      `Beth’s Hangman #${puzzleNumber}`,
+      resultLine,
+      squares,
+      "",
+      SITE_URL
+    ].join("\n");
   }
 
   function setShareStatus(text) {
