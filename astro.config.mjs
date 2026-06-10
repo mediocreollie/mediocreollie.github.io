@@ -3,11 +3,12 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+import googleAnalytics from './src/integrations/googleAnalytics.mjs';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://olliewritesthings.com',
-	integrations: [mdx(), sitemap()],
+	integrations: [mdx(), sitemap(), googleAnalytics({ measurementId: 'G-0FSE8E22XL' })],
 	fonts: [
 		{
 			provider: fontProviders.local(),
