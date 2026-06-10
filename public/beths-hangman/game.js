@@ -303,6 +303,8 @@ function pluralize(wordToPluralize, count) {
 }
 
 const STATS_KEY = "hangman-stats";
+const PUZZLE_START_DATE = "2026-06-09";
+const GAME_URL = "https://olliewritesthings.com/beths-hangman/";
 let statsModalOpenedToday = false;
 
 function getStats() {
@@ -435,10 +437,19 @@ function renderStatsContent() {
   }).join("");
 
   const recentHtml = stats.recentResults.slice(0, 3).map(result => {
-    const icon = result.status === "won" ? "✓" : "✗";
-    const label = result.status === "won" ? result.misses : "X";
-    return `<span class="recent-result recent-${result.status}">${icon}${label}</span>`;
-  }).join("");
+  const icon = result.status === "won" ? "✓" : "✗";
+  const label = result.status === "won" ? result.misses : "X";
+  const text = result.status === "won"
+    ? `Solved with ${result.misses} ${pluralize("miss", result.misses)}`
+    : "Missed with 10 misses";
+
+  return `
+    <div class="recent-result-wrap">
+      <span class="recent-result recent-${result.status}" aria-label="${text}">${icon}${label}</span>
+      <span class="recent-result-text">${text}</span>
+    </div>
+  `;
+}).join("");
 
   container.innerHTML = `
     <div class="stats-header">
@@ -485,9 +496,11 @@ function renderStatsContent() {
     </div>
     ` : ""}
 
-    <div class="stats-footer">
-      <button class="stats-button stats-reset" type="button">Reset stats</button>
-    </div>
+   <div class="stats-footer">
+  <button class="share-button stats-share" type="button">Share result</button>
+  <p class="share-status stats-share-status" role="status" aria-live="polite"></p>
+  <button class="stats-button stats-reset" type="button">Reset stats</button>
+</div>
   `;
 
   const closeBtn = container.querySelector(".stats-close");
@@ -509,7 +522,14 @@ function renderStatsContent() {
     });
   }
 }
+const modalShareBtn = container.querySelector(".stats-share");
+const modalShareStatus = container.querySelector(".stats-share-status");
 
+if (modalShareBtn && modalShareStatus) {
+  modalShareBtn.addEventListener("click", () => {
+    shareResult(modalShareStatus);
+  });
+}
 document.addEventListener("DOMContentLoaded", () => {
   const statsButton = document.querySelector(".stats-button");
   if (statsButton) {
@@ -530,18 +550,77 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-shareButton.addEventListener("click", async () => {
-  const resultMark = state.status === "won" ? "Solved" : state.status === "lost" ? "Missed" : "Playing";
-  const shareText = [
-    `Beth's Hangman ${todayKey}`,
-    `${resultMark} with ${state.wrongGuesses}/${MAX_WRONG_GUESSES} wrong guesses`,
-    `Guessed letters: ${state.guesses.length ? state.guesses.join(" ") : "none yet"}`
-  ].join("\n");
+shareButton.addEventListener("click", () => {
+  shareResult(shareStatus);
+});
+
+async function shareResult(statusElement) {
+  if (!state || state.status === "playing") {
+    statusElement.textContent = "Finish today’s puzzle to share your result.";
+    return;
+  }
+
+  const shareText = buildShareText();
 
   try {
-    await navigator.clipboard.writeText(shareText);
-    shareStatus.textContent = "Result copied to clipboard.";
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(shareText);
+      statusElement.textContent = "Result copied to clipboard.";
+    } else {
+      fallbackCopyShareText(shareText, statusElement);
+    }
   } catch {
-    shareStatus.textContent = shareText;
+    fallbackCopyShareText(shareText, statusElement);
   }
-});
+}
+
+function buildShareText() {
+  const puzzleNumber = getPuzzleNumber(todayKey);
+  const resultLine = state.status === "won"
+    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
+    : "Missed with 10 misses";
+
+  return [
+    `Beth’s Hangman #${puzzleNumber}`,
+    resultLine,
+    buildShareSquares(),
+    GAME_URL
+  ].join("\n");
+}
+
+function buildShareSquares() {
+  if (state.status === "lost") {
+    return "🟥".repeat(MAX_WRONG_GUESSES);
+  }
+
+  const savedParts = MAX_WRONG_GUESSES - state.wrongGuesses;
+  return "🟩".repeat(savedParts) + "🟥".repeat(state.wrongGuesses);
+}
+
+function getPuzzleNumber(dateString) {
+  const start = new Date(`${PUZZLE_START_DATE}T00:00:00`);
+  const current = new Date(`${dateString}T00:00:00`);
+  const daysSinceStart = Math.floor((current - start) / 86400000);
+
+  return Math.max(1, daysSinceStart + 1);
+}
+
+function fallbackCopyShareText(text, statusElement) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    document.execCommand("copy");
+    statusElement.textContent = "Result copied to clipboard.";
+  } catch {
+    statusElement.textContent = text;
+  }
+
+  document.body.removeChild(textarea);
+}
