@@ -81,12 +81,19 @@
       dateLabel: document.querySelector("#dateLabel"),
       shareButton: document.querySelector("#shareButton"),
       shareStatus: document.querySelector("#shareStatus"),
-      statsButton: document.querySelector("#statsButton, #openStatsButton, [data-open-stats]"),
+      statsButton: document.querySelector("#statsButton, #openStatsButton, .stats-button, [data-open-stats]") || findButtonByText("stats"),
       statsModal: document.querySelector("#statsModal, [data-stats-modal]"),
       statsContent: document.querySelector("#statsContent, [data-stats-content]"),
       statsCloseButton: document.querySelector("#statsCloseButton, #closeStatsButton, [data-close-stats]"),
       statsShareButton: document.querySelector("#statsShareButton, #shareStatsButton, [data-stats-share]")
     };
+  }
+
+  function findButtonByText(text) {
+    const target = text.toLowerCase();
+    return Array.from(document.querySelectorAll("button")).find((button) =>
+      button.textContent.trim().toLowerCase() === target
+    );
   }
 
   async function loadDailyPuzzle() {
@@ -293,6 +300,17 @@
         closeStatsModal();
       }
     });
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) {
+        return;
+      }
+
+      if (button.matches("#statsButton, #openStatsButton, .stats-button, [data-open-stats]") || button.textContent.trim().toLowerCase() === "stats") {
+        openStatsModal();
+      }
+    });
   }
 
   function guessLetter(letter) {
@@ -323,6 +341,8 @@
       updateStats(status === "won");
       state.statsSaved = true;
     }
+
+    setTimeout(openStatsModal, 120);
   }
 
   function recordLoadedCompletedGame() {
