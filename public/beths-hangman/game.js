@@ -16,19 +16,6 @@
     "part-right-eye",
     "part-sad-mouth"
   ];
-  const FALLBACK_WORDS = [
-    "OBJECT",
-    "PUZZLE",
-    "LETTER",
-    "BOTTLE",
-    "GARDEN",
-    "WINDOW",
-    "PLANET",
-    "MARKET",
-    "POCKET",
-    "BUTTON"
-  ];
-
   const DEV_OVERRIDE = {
     // date: "2026-06-09",
     // word: "ASTRO"
@@ -110,17 +97,12 @@
   }
 
   async function loadWords() {
-    try {
-      const response = await fetch("words.json", { cache: "no-cache" });
-      if (!response.ok) {
-        throw new Error("Could not load words.json");
-      }
-
-      return normalizeWords(await response.json());
-    } catch (error) {
-      console.warn("Using fallback words because words.json could not be loaded.", error);
-      return normalizeWords(FALLBACK_WORDS);
+    const response = await fetch("words.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("Could not load words.json");
     }
+
+    return normalizeWords(await response.json());
   }
 
   function normalizeWords(data) {
@@ -516,7 +498,7 @@
 
   function showLoadError(error) {
     if (elements.message) {
-      elements.message.textContent = "The puzzle could not load. Please refresh the page.";
+      elements.message.textContent = "The puzzle could not load words.json. Please open the game through a local web server.";
       elements.message.classList.add("lose");
     }
 
