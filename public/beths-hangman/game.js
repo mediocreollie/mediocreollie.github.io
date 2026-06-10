@@ -279,6 +279,8 @@ function renderMessage() {
   if (state.status === "won") {
     message.textContent = `You found it in ${state.wrongGuesses} wrong ${pluralize("guess", state.wrongGuesses)}. Nicely done.`;
     message.classList.add("win");
+    saveResult(todayKey, "won", state.wrongGuesses);
+    setTimeout(() => openStatsModal(), 100);
     return;
   }
 
@@ -287,6 +289,8 @@ function renderMessage() {
     message.classList.add("lose");
     answer.textContent = `Today's word was ${word}.`;
     answer.hidden = false;
+    saveResult(todayKey, "lost", state.wrongGuesses);
+    setTimeout(() => openStatsModal(), 100);
     return;
   }
 
@@ -297,6 +301,234 @@ function renderMessage() {
 function pluralize(wordToPluralize, count) {
   return count === 1 ? wordToPluralize : `${wordToPluralize}es`;
 }
+
+const STATS_KEY = "hangman-stats";
+let statsModalOpenedToday = false;
+
+function getStats() {
+  const defaultStats = {
+    played: 0,
+    wins: 0,
+    losses: 0,
+    currentStreak: 0,
+    bestStreak: 0,
+    totalMisses: 0,
+    guessDistribution: {
+      0: 0, 1: 0, 2: 0, 3: 0, 4: 0,
+      5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0
+    },
+    recentResults: []
+  };
+
+  try {
+    const saved = localStorage.getItem(STATS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        ...defaultStats,
+        ...parsed,
+        guessDistribution: { ...defaultStats.guessDistribution, ...parsed.guessDistribution }
+      };
+    }
+  } catch (error) {
+    console.warn("Could not load stats from localStorage", error);
+  }
+
+  return defaultStats;
+}
+
+function saveStats(stats) {
+  try {
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  } catch (error) {
+    console.warn("Could not save stats to localStorage", error);
+  }
+}
+
+function saveResult(date, status, misses) {
+  const stats = getStats();
+  
+  const existingIndex = stats.recentResults.findIndex(r => r.date === date);
+  if (existingIndex !== -1) {
+    return;
+  }
+
+  const result = { date, status, misses };
+  stats.recentResults.unshift(result);
+  stats.recentResults = stats.recentResults.slice(0, 10);
+
+  stats.played += 1;
+  if (status === "won") {
+    stats.wins += 1;
+    stats.totalMisses += misses;
+    stats.guessDistribution[misses] = (stats.guessDistribution[misses] || 0) + 1;
+  } else {
+    stats.losses += 1;
+    stats.guessDistribution[10] = (stats.guessDistribution[10] || 0) + 1;
+  }
+
+  updateStreaks(stats, status, date);
+  saveStats(stats);
+}
+
+function updateStreaks(stats, status, date) {
+  if (status === "won") {
+    stats.currentStreak = (stats.currentStreak || 0) + 1;
+    if (stats.currentStreak > (stats.bestStreak || 0)) {
+      stats.bestStreak = stats.currentStreak;
+    }
+  } else {
+    stats.currentStreak = 0;
+  }
+}
+
+function openStatsModal() {
+  if (statsModalOpenedToday) return;
+  statsModalOpenedToday = true;
+
+  const modal = document.querySelector(".stats-modal-overlay");
+  if (!modal) return;
+
+  renderStatsContent();
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeStatsModal() {
+  const modal = document.querySelector(".stats-modal-overlay");
+  if (!modal) return;
+
+  modal.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function renderStatsContent() {
+  const stats = getStats();
+  const container = document.querySelector(".stats-content");
+  if (!container) return;
+
+  const winPercent = stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0;
+  const avgMisses = stats.wins > 0 ? (stats.totalMisses / stats.wins).toFixed(1) : 0;
+
+  const resultMessage = state.status === "won"
+    ? `Solved with ${state.wrongGuesses} ${pluralize("miss", state.wrongGuesses)}`
+    : `Missed with 10 misses`;
+
+  let maxCount = Math.max(...Object.values(stats.guessDistribution), 1);
+
+  const distributionHtml = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(misses => {
+    const count = stats.guessDistribution[misses] || 0;
+    const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+    const label = misses === 10 ? "X" : misses;
+    const isToday = stats.recentResults[0] && stats.recentResults[0].date === todayKey && stats.recentResults[0].misses === misses;
+    const highlightClass = isToday ? " highlight-today" : "";
+
+    return `
+      <div class="dist-row${highlightClass}">
+        <span class="dist-label">${label}</span>
+        <div class="dist-bar-container">
+          <div class="dist-bar" style="width: ${percentage}%"></div>
+        </div>
+        <span class="dist-count">${count}</span>
+      </div>
+    `;
+  }).join("");
+
+  const recentHtml = stats.recentResults.slice(0, 3).map(result => {
+    const icon = result.status === "won" ? "✓" : "✗";
+    const label = result.status === "won" ? result.misses : "X";
+    return `<span class="recent-result recent-${result.status}">${icon}${label}</span>`;
+  }).join("");
+
+  container.innerHTML = `
+    <div class="stats-header">
+      <h2>Stats</h2>
+      <button class="stats-close" type="button" aria-label="Close stats">✕</button>
+    </div>
+
+    <div class="stats-result-message">
+      ${resultMessage}
+    </div>
+
+    <div class="stats-tiles">
+      <div class="stat-tile">
+        <div class="stat-value">${stats.played}</div>
+        <div class="stat-label">Played</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value">${winPercent}%</div>
+        <div class="stat-label">Win %</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value">${stats.currentStreak}</div>
+        <div class="stat-label">Streak</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value">${stats.bestStreak}</div>
+        <div class="stat-label">Best</div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>Guess Distribution</h3>
+      <div class="distribution">
+        ${distributionHtml}
+      </div>
+    </div>
+
+    ${recentHtml ? `
+    <div class="stats-section">
+      <h3>Recent</h3>
+      <div class="recent-results">
+        ${recentHtml}
+      </div>
+    </div>
+    ` : ""}
+
+    <div class="stats-footer">
+      <button class="stats-button stats-reset" type="button">Reset stats</button>
+    </div>
+  `;
+
+  const closeBtn = container.querySelector(".stats-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeStatsModal);
+  }
+
+  const resetBtn = container.querySelector(".stats-reset");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (confirm("Are you sure? This will permanently delete all your stats.")) {
+        try {
+          localStorage.removeItem(STATS_KEY);
+          location.reload();
+        } catch (error) {
+          console.warn("Could not reset stats", error);
+        }
+      }
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const statsButton = document.querySelector(".stats-button");
+  if (statsButton) {
+    statsButton.addEventListener("click", (e) => {
+      if (!e.target.classList.contains("stats-reset")) {
+        openStatsModal();
+      }
+    });
+  }
+
+  const modal = document.querySelector(".stats-modal-overlay");
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeStatsModal();
+      }
+    });
+  }
+});
 
 shareButton.addEventListener("click", async () => {
   const resultMark = state.status === "won" ? "Solved" : state.status === "lost" ? "Missed" : "Playing";
