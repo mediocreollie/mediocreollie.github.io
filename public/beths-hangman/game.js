@@ -81,19 +81,54 @@ const DEV_OVERRIDE = {
 };
 
 const todayKey = DEV_OVERRIDE.date || getTodayKey();
-const word = (DEV_OVERRIDE.word || getDailyWord(todayKey)).toUpperCase();
+let word = "";
 const storageKey = `daily-hangman:${todayKey}`;
-let state = loadState();
+let state;
 
 dateLabel.textContent = formatToday();
 buildKeyboard();
-render();
+initGame();
 
 setInterval(() => {
   if (!DEV_OVERRIDE.date && getTodayKey() !== todayKey) {
     window.location.reload();
   }
 }, 60000);
+
+async function initGame() {
+  const selectedWord = DEV_OVERRIDE.word
+    ? DEV_OVERRIDE.word
+    : await fetchDailyWord(todayKey);
+
+  word = (selectedWord || getDailyWord(todayKey)).toUpperCase();
+  state = loadState();
+  render();
+}
+
+async function fetchDailyWord(dateString) {
+  try {
+    const response = await fetch('./words.json');
+    if (!response.ok) {
+      console.warn('Could not load words.json; using the internal word list.');
+      return null;
+    }
+
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      console.warn('words.json is not a valid array; using the internal word list.');
+      return null;
+    }
+
+    const entry = data.find(
+      (item) => item && item.date === dateString && typeof item.word === 'string'
+    );
+
+    return entry ? entry.word : null;
+  } catch (error) {
+    console.warn('Could not load words.json; using the internal word list.', error);
+    return null;
+  }
+}
 
 function getTodayKey() {
   const now = new Date();
