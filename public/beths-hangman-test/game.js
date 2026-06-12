@@ -13,6 +13,7 @@
   let todayKey = "";
   let puzzleNumber = 1;
   let state = null;
+  let controlsEnabled = false;
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
@@ -22,26 +23,55 @@
 
   async function init() {
     collectElements();
+    controlsEnabled = shouldShowControls();
+    setControlsVisible(controlsEnabled);
+
     todayKey = getTodayKey();
     puzzleNumber = getPuzzleNumber(todayKey);
 
-    const saved = loadSavedGame();
-    word = saved && saved.word ? saved.word : await getStartingWord();
-    state = saved || freshState(word);
-    word = state.word;
+    try {
+      const saved = loadSavedGame();
+      const urlWord = cleanWord(new URLSearchParams(window.location.search).get("word"));
+      word = urlWord || (saved && saved.word) || await getStartingWord();
+      state = urlWord ? freshState(word) : saved || freshState(word);
+      word = state.word;
 
-    elements.demoWord.value = word;
-    elements.dateLabel.textContent = formatToday();
-    buildKeyboard();
-    bindActions();
-    render();
+      applyUrlState();
+      updateDemoWordField();
+      setText(elements.dateLabel, formatToday());
+      buildKeyboard();
+      bindActions();
+      saveGame();
+      render();
+    } catch (error) {
+      showLoadError(error);
+    }
   }
 
   function collectElements() {
-    const ids = ["wordSlots", "misses", "keyboard", "message", "answer", "dateLabel", "shareButton", "shareStatus", "statsButton", "statsModal", "statsCloseButton", "statsResult", "statsTiles", "guessDistribution", "recentResults", "statsShareButton", "statsShareStatus", "resetStatsButton", "demoPanel", "demoWord", "demoMisses", "demoMissesValue", "applyWord", "resetGame", "forceWin", "forceLose", "showStats", "clearStats", "recordMode", "editModeButton"];
-    ids.forEach((id) => {
+    ["wordSlots", "misses", "keyboard", "message", "answer", "dateLabel", "shareButton", "shareStatus", "statsButton", "statsModal", "statsCloseButton", "statsResult", "statsTiles", "guessDistribution", "recentResults", "statsShareButton", "statsShareStatus", "resetStatsButton", "demoPanel", "demoWord", "demoMisses", "demoMissesValue", "applyWord", "resetGame", "forceWin", "forceLose", "showStats", "clearStats", "recordMode", "editModeButton"].forEach((id) => {
       elements[id] = document.getElementById(id);
     });
+  }
+
+  function shouldShowControls() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("controls") === "1" || params.get("demo") === "1" || params.get("edit") === "1";
+  }
+
+  function setControlsVisible(visible) {
+    controlsEnabled = visible;
+    document.body.classList.toggle("controls-enabled", visible);
+    document.body.classList.toggle("recording-mode", !visible);
+
+    if (elements.demoPanel) {
+      elements.demoPanel.hidden = !visible;
+      elements.demoPanel.open = visible;
+    }
+
+    if (elements.editModeButton) {
+      elements.editModeButton.hidden = visible || !shouldShowControls();
+    }
   }
 
   async function getStartingWord() {
@@ -81,7 +111,7 @@
 
   function loadSavedGame() {
     try {
-      const saved = JSON.parse(localStorage.getItem(GAME_KEY));
+      const saved = JSON.parse(storageGet(GAME_KEY));
       if (!saved || !Array.isArray(saved.guesses)) {
         return null;
       }
@@ -96,16 +126,37 @@
         statsSaved: Boolean(saved.statsSaved)
       };
     } catch {
-      localStorage.removeItem(GAME_KEY);
+      storageRemove(GAME_KEY);
       return null;
     }
   }
 
   function saveGame() {
-    localStorage.setItem(GAME_KEY, JSON.stringify(state));
+    storageSet(GAME_KEY, JSON.stringify(state));
+  }
+
+  function applyUrlState() {
+    const params = new URLSearchParams(window.location.search);
+    const misses = params.get("misses");
+
+    if (misses !== null) {
+      setMissesWithoutRender(misses);
+    }
+
+    if (params.get("win") === "1") {
+      solveWithoutRender();
+    }
+
+    if (params.get("lose") === "1") {
+      loseWithoutRender();
+    }
   }
 
   function buildKeyboard() {
+    if (!elements.keyboard) {
+      return;
+    }
+
     elements.keyboard.innerHTML = "";
     LETTERS.forEach((letter) => {
       const button = document.createElement("button");
@@ -119,26 +170,26 @@
   }
 
   function bindActions() {
-    elements.shareButton.addEventListener("click", () => shareResult(elements.shareStatus));
-    elements.statsShareButton.addEventListener("click", () => shareResult(elements.statsShareStatus));
-    elements.statsButton.addEventListener("click", openStatsModal);
-    elements.showStats.addEventListener("click", openStatsModal);
-    elements.statsCloseButton.addEventListener("click", closeStatsModal);
-    elements.resetStatsButton.addEventListener("click", () => resetStats(true));
-    elements.clearStats.addEventListener("click", () => resetStats(false));
-    elements.applyWord.addEventListener("click", applyWord);
-    elements.resetGame.addEventListener("click", resetGame);
-    elements.forceWin.addEventListener("click", forceWin);
-    elements.forceLose.addEventListener("click", forceLose);
-    elements.recordMode.addEventListener("click", enterRecordingMode);
-    elements.editModeButton.addEventListener("click", exitRecordingMode);
-    elements.demoMisses.addEventListener("input", () => setDemoMisses(elements.demoMisses.value));
-    elements.demoWord.addEventListener("keydown", (event) => {
+    on(elements.shareButton, "click", () => shareResult(elements.shareStatus));
+    on(elements.statsShareButton, "click", () => shareResult(elements.statsShareStatus));
+    on(elements.statsButton, "click", openStatsModal);
+    on(elements.showStats, "click", openStatsModal);
+    on(elements.statsCloseButton, "click", closeStatsModal);
+    on(elements.resetStatsButton, "click", () => resetStats(true));
+    on(elements.clearStats, "click", () => resetStats(false));
+    on(elements.applyWord, "click", applyWord);
+    on(elements.resetGame, "click", resetGame);
+    on(elements.forceWin, "click", forceWin);
+    on(elements.forceLose, "click", forceLose);
+    on(elements.recordMode, "click", () => setControlsVisible(false));
+    on(elements.editModeButton, "click", () => setControlsVisible(true));
+    on(elements.demoMisses, "input", () => setDemoMisses(elements.demoMisses.value));
+    on(elements.demoWord, "keydown", (event) => {
       if (event.key === "Enter") {
         applyWord();
       }
     });
-    elements.statsModal.addEventListener("click", (event) => {
+    on(elements.statsModal, "click", (event) => {
       if (event.target === elements.statsModal) {
         closeStatsModal();
       }
@@ -146,9 +197,17 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         closeStatsModal();
-        exitRecordingMode();
+        if (shouldShowControls()) {
+          setControlsVisible(false);
+        }
       }
     });
+  }
+
+  function on(element, eventName, handler) {
+    if (element) {
+      element.addEventListener(eventName, handler);
+    }
   }
 
   function guessLetter(letter) {
@@ -182,6 +241,10 @@
   }
 
   function render() {
+    if (!state) {
+      return;
+    }
+
     renderWord();
     renderMisses();
     renderKeyboard();
@@ -192,6 +255,10 @@
   }
 
   function renderWord() {
+    if (!elements.wordSlots) {
+      return;
+    }
+
     elements.wordSlots.innerHTML = "";
     word.split("").forEach((letter) => {
       const slot = document.createElement("span");
@@ -203,10 +270,14 @@
   }
 
   function renderMisses() {
-    elements.misses.textContent = state.guesses.filter((letter) => !word.includes(letter)).join(" ");
+    setText(elements.misses, state.guesses.filter((letter) => !word.includes(letter)).join(" "));
   }
 
   function renderKeyboard() {
+    if (!elements.keyboard) {
+      return;
+    }
+
     elements.keyboard.querySelectorAll(".key").forEach((button) => {
       const letter = button.textContent;
       const guessed = state.guesses.includes(letter);
@@ -226,9 +297,15 @@
   }
 
   function renderMessage() {
+    if (!elements.message) {
+      return;
+    }
+
     elements.message.className = "message";
-    elements.answer.hidden = true;
-    elements.answer.textContent = "";
+    if (elements.answer) {
+      elements.answer.hidden = true;
+      elements.answer.textContent = "";
+    }
 
     if (state.status === "won") {
       elements.message.textContent = `You found it in ${state.wrongGuesses} ${missLabel(state.wrongGuesses)}. Nicely done.`;
@@ -239,8 +316,10 @@
     if (state.status === "lost") {
       elements.message.textContent = "That was the last part. Tomorrow brings another word.";
       elements.message.classList.add("lose");
-      elements.answer.textContent = `Today's word was ${word}.`;
-      elements.answer.hidden = false;
+      if (elements.answer) {
+        elements.answer.textContent = `Today's word was ${word}.`;
+        elements.answer.hidden = false;
+      }
       return;
     }
 
@@ -249,10 +328,11 @@
   }
 
   function applyWord() {
-    word = cleanWord(elements.demoWord.value) || "BAKERY";
+    word = cleanWord(elements.demoWord && elements.demoWord.value) || "BAKERY";
     state = freshState(word);
     saveGame();
     closeStatsModal();
+    updateDemoWordField();
     render();
   }
 
@@ -264,6 +344,12 @@
   }
 
   function setDemoMisses(value) {
+    setMissesWithoutRender(value);
+    saveGame();
+    render();
+  }
+
+  function setMissesWithoutRender(value) {
     const count = clampMisses(value);
     const correctGuesses = state.guesses.filter((letter) => word.includes(letter));
     const wrongGuesses = availableWrongLetters().slice(0, count);
@@ -276,45 +362,47 @@
     if (state.status !== "playing") {
       recordCompletion();
     }
-
-    saveGame();
-    render();
   }
 
   function forceWin() {
-    state.guesses = [...new Set([...state.guesses, ...word.split("")])];
-    state.status = "won";
-    state.statsSaved = false;
+    solveWithoutRender();
     finishGame("won", false);
   }
 
+  function solveWithoutRender() {
+    state.guesses = [...new Set([...state.guesses, ...word.split("")])];
+    state.status = "won";
+    state.statsSaved = false;
+    state.wrongGuesses = clampMisses(state.wrongGuesses);
+  }
+
   function forceLose() {
+    loseWithoutRender();
+    finishGame("lost", false);
+  }
+
+  function loseWithoutRender() {
     state.guesses = [...new Set([...state.guesses.filter((letter) => word.includes(letter)), ...availableWrongLetters().slice(0, MAX_MISSES)])];
     state.wrongGuesses = MAX_MISSES;
     state.status = "lost";
     state.statsSaved = false;
-    finishGame("lost", false);
   }
 
   function availableWrongLetters() {
     return LETTERS.filter((letter) => !word.includes(letter));
   }
 
-  function enterRecordingMode() {
-    document.body.classList.add("recording-mode");
-    elements.demoPanel.hidden = true;
-    elements.editModeButton.hidden = false;
-  }
-
-  function exitRecordingMode() {
-    document.body.classList.remove("recording-mode");
-    elements.demoPanel.hidden = false;
-    elements.editModeButton.hidden = true;
-  }
-
   function syncDemoControls() {
-    elements.demoMisses.value = String(state.wrongGuesses);
-    elements.demoMissesValue.textContent = String(state.wrongGuesses);
+    if (elements.demoMisses) {
+      elements.demoMisses.value = String(state.wrongGuesses);
+    }
+    setText(elements.demoMissesValue, String(state.wrongGuesses));
+  }
+
+  function updateDemoWordField() {
+    if (elements.demoWord) {
+      elements.demoWord.value = word;
+    }
   }
 
   function loadStats() {
@@ -330,7 +418,7 @@
     };
 
     try {
-      const saved = JSON.parse(localStorage.getItem(STATS_KEY));
+      const saved = JSON.parse(storageGet(STATS_KEY));
       const stats = { ...freshStats, ...saved };
       stats.recentResults = Array.isArray(stats.recentResults) ? stats.recentResults : [];
       stats.completedDates = stats.completedDates && typeof stats.completedDates === "object" ? stats.completedDates : {};
@@ -342,7 +430,7 @@
   }
 
   function saveStats(stats) {
-    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    storageSet(STATS_KEY, JSON.stringify(stats));
   }
 
   function recordCompletion() {
@@ -401,6 +489,10 @@
   }
 
   function renderStatsContent() {
+    if (!elements.statsResult || !elements.statsTiles || !elements.guessDistribution || !elements.recentResults) {
+      return;
+    }
+
     const stats = loadStats();
     const current = getCurrentResult();
     const winPercent = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
@@ -460,20 +552,24 @@
 
   function openStatsModal() {
     renderStatsContent();
-    elements.statsModal.hidden = false;
-    elements.statsModal.setAttribute("aria-hidden", "false");
+    if (elements.statsModal) {
+      elements.statsModal.hidden = false;
+      elements.statsModal.setAttribute("aria-hidden", "false");
+    }
   }
 
   function closeStatsModal() {
-    elements.statsModal.hidden = true;
-    elements.statsModal.setAttribute("aria-hidden", "true");
+    if (elements.statsModal) {
+      elements.statsModal.hidden = true;
+      elements.statsModal.setAttribute("aria-hidden", "true");
+    }
   }
 
   function resetStats(confirmFirst) {
     if (confirmFirst && !window.confirm("Reset all demo Hangman stats on this browser?")) {
       return;
     }
-    localStorage.removeItem(STATS_KEY);
+    storageRemove(STATS_KEY);
     state.statsSaved = false;
     saveGame();
     renderStatsContent();
@@ -482,10 +578,13 @@
   async function shareResult(statusElement) {
     const shareText = getShareText();
     try {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        throw new Error("Clipboard API unavailable");
+      }
       await navigator.clipboard.writeText(shareText);
-      statusElement.textContent = "Result copied to clipboard.";
+      setText(statusElement, "Result copied to clipboard.");
     } catch {
-      statusElement.textContent = shareText;
+      setText(statusElement, shareText);
     }
   }
 
@@ -532,5 +631,39 @@
 
   function formatToday() {
     return new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(new Date());
+  }
+
+  function setText(element, text) {
+    if (element) {
+      element.textContent = text;
+    }
+  }
+
+  function storageGet(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  function storageSet(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {}
+  }
+
+  function storageRemove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  }
+
+  function showLoadError(error) {
+    setText(elements.message, "The demo puzzle could not load. Please refresh and try again.");
+    if (elements.message) {
+      elements.message.classList.add("lose");
+    }
+    console.error(error);
   }
 })();
