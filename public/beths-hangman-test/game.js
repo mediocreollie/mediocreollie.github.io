@@ -6,14 +6,24 @@
   const STATS_KEY = "beths-hangman-test:stats";
   const SITE_URL = "olliewritesthings.com/beths-hangman-test/";
   const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const PART_CLASSES = ["part-head", "part-neck", "part-left-arm", "part-right-arm", "part-body", "part-left-leg", "part-right-leg", "part-left-eye", "part-right-eye", "part-sad-mouth"];
+  const PART_CLASSES = [
+    "part-head",
+    "part-neck",
+    "part-left-arm",
+    "part-right-arm",
+    "part-body",
+    "part-left-leg",
+    "part-right-leg",
+    "part-left-eye",
+    "part-right-eye",
+    "part-sad-mouth"
+  ];
 
   let elements = {};
   let word = "BAKERY";
   let todayKey = "";
   let puzzleNumber = 1;
   let state = null;
-  let controlsEnabled = false;
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
@@ -23,8 +33,7 @@
 
   async function init() {
     collectElements();
-    controlsEnabled = shouldShowControls();
-    setControlsVisible(controlsEnabled);
+    setControlsVisible(true);
 
     todayKey = getTodayKey();
     puzzleNumber = getPuzzleNumber(todayKey);
@@ -49,18 +58,43 @@
   }
 
   function collectElements() {
-    ["wordSlots", "misses", "keyboard", "message", "answer", "dateLabel", "shareButton", "shareStatus", "statsButton", "statsModal", "statsCloseButton", "statsResult", "statsTiles", "guessDistribution", "recentResults", "statsShareButton", "statsShareStatus", "resetStatsButton", "demoPanel", "demoWord", "demoMisses", "demoMissesValue", "applyWord", "resetGame", "forceWin", "forceLose", "showStats", "clearStats", "recordMode", "editModeButton"].forEach((id) => {
+    [
+      "wordSlots",
+      "misses",
+      "keyboard",
+      "message",
+      "answer",
+      "dateLabel",
+      "shareButton",
+      "shareStatus",
+      "statsButton",
+      "statsModal",
+      "statsCloseButton",
+      "statsResult",
+      "statsTiles",
+      "guessDistribution",
+      "recentResults",
+      "statsShareButton",
+      "statsShareStatus",
+      "resetStatsButton",
+      "demoPanel",
+      "demoWord",
+      "demoMisses",
+      "demoMissesValue",
+      "applyWord",
+      "resetGame",
+      "forceWin",
+      "forceLose",
+      "showStats",
+      "clearStats",
+      "recordMode",
+      "editModeButton"
+    ].forEach((id) => {
       elements[id] = document.getElementById(id);
     });
   }
 
-  function shouldShowControls() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("controls") === "1" || params.get("demo") === "1" || params.get("edit") === "1";
-  }
-
   function setControlsVisible(visible) {
-    controlsEnabled = visible;
     document.body.classList.toggle("controls-enabled", visible);
     document.body.classList.toggle("recording-mode", !visible);
 
@@ -70,7 +104,7 @@
     }
 
     if (elements.editModeButton) {
-      elements.editModeButton.hidden = visible || !shouldShowControls();
+      elements.editModeButton.hidden = visible;
     }
   }
 
@@ -194,12 +228,18 @@
         closeStatsModal();
       }
     });
+
     document.addEventListener("keydown", (event) => {
+      const target = event.target;
+      const isTyping = target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
+
       if (event.key === "Escape") {
         closeStatsModal();
-        if (shouldShowControls()) {
-          setControlsVisible(false);
-        }
+        setControlsVisible(true);
+      }
+
+      if (!isTyping && event.key.toLowerCase() === "e") {
+        setControlsVisible(true);
       }
     });
   }
