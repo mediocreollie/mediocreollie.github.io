@@ -1,1 +1,977 @@
-.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Turn any transparent PNG into a Minecraft-style spinning dropped-item GIF, right in your browser. No uploads, no accounts.">
+<title>Drop Item — Minecraft GIF Maker</title>
+<style>
+/* ── Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Tokens ── */
+:root {
+  --bg:        #0f0f12;
+  --surface:   #1a1a22;
+  --surface2:  #202030;
+  --border:    #2a2a38;
+  --accent:    #6ee7b7;
+  --accent2:   #a78bfa;
+  --text:      #e8e8f0;
+  --muted:     #6b6b85;
+  --danger:    #f87171;
+  --radius:    10px;
+  --panel-pad: 20px;
+}
+
+/* ── Base ── */
+body {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 16px 80px;
+}
+
+/* ── Header ── */
+header {
+  text-align: center;
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: clamp(30px, 6vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, var(--text) 30%, var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ── Privacy notice ── */
+.privacy-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(110, 231, 183, 0.06);
+  border: 1px solid rgba(110, 231, 183, 0.18);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 28px;
+  max-width: 860px;
+  width: 100%;
+}
+.privacy-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.privacy-notice p {
+  font-size: 12px;
+  color: var(--accent);
+  line-height: 1.55;
+  opacity: 0.9;
+}
+.privacy-notice strong { font-weight: 700; }
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 860px;
+  align-items: start;
+}
+
+/* Stack on narrow screens */
+@media (max-width: 660px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panel ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--panel-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.panel-title {
+  font-size: 10px;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+/* ── Drop zone ── */
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 28px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+.dropzone:hover,
+.dropzone.drag-over {
+  border-color: var(--accent);
+  background: rgba(110, 231, 183, 0.04);
+}
+.dropzone input[type=file] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.dropzone-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  display: block;
+}
+.dropzone p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.dropzone strong { color: var(--text); }
+.dropzone .hint {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.75;
+  display: block;
+  margin-top: 4px;
+}
+
+/* ── Control rows ── */
+.control-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.control-row label {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.control-row label span {
+  font-family: 'Space Mono', monospace;
+  color: var(--accent);
+  font-size: 11px;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+input[type=range]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Toggle ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text);
+}
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+.toggle input:checked + .toggle-slider { background: rgba(110, 231, 183, 0.25); }
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(16px);
+  background: var(--accent);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.export-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #0f0f12;
+  font-weight: 700;
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+}
+.export-btn:hover:not(:disabled) { opacity: 0.88; }
+
+/* ── Progress ── */
+.progress-wrap { width: 100%; }
+.progress-label {
+  font-size: 11px;
+  font-family: 'Space Mono', monospace;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.1s;
+  width: 0%;
+}
+
+/* ── Preview panel ── */
+.preview-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.canvas-shell {
+  /* checkerboard for transparency */
+  background:
+    repeating-conic-gradient(#1e1e28 0% 25%, #252535 0% 50%)
+    0 0 / 20px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  width: 100%;
+  /* keep square */
+  aspect-ratio: 1 / 1;
+  max-width: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.canvas-shell canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}
+.empty-state .big-icon { font-size: 44px; line-height: 1; }
+
+/* ── Info chips ── */
+.chip-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: 'Space Mono', monospace;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+/* ── Footer ── */
+footer {
+  margin-top: 52px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+footer a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+footer a:hover { color: var(--text); }
+
+/* ── Responsive tweaks ── */
+@media (max-width: 480px) {
+  body { padding: 24px 12px 60px; }
+  header { margin-bottom: 24px; }
+  .privacy-notice { padding: 10px 12px; }
+  .panel { padding: 16px; gap: 14px; }
+  .canvas-shell { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="eyebrow">✦ Minecraft-style</div>
+  <h1>Drop Item</h1>
+  <p class="subtitle">Turn a transparent PNG into an animated spinning GIF — entirely in your browser.</p>
+</header>
+
+<!-- ══════════════ PRIVACY NOTICE ══════════════ -->
+<div class="privacy-notice" role="note" aria-label="Privacy information">
+  <span class="privacy-icon" aria-hidden="true">🔒</span>
+  <p>
+    <strong>Your images never leave your device.</strong>
+    All processing happens locally in your browser using the Canvas API.
+    No image data is uploaded to any server, and no account is required.
+  </p>
+</div>
+
+<!-- ══════════════ MAIN LAYOUT ══════════════ -->
+<main class="layout" id="main-layout">
+
+  <!-- ── Left: Controls ── -->
+  <div class="panel" aria-label="Settings">
+
+    <div class="panel-title">Upload</div>
+
+    <div class="dropzone" id="dropzone" role="button" aria-label="Upload image">
+      <input type="file" id="file-input" accept="image/png,image/webp,image/gif" aria-label="Choose image file">
+      <span class="dropzone-icon" aria-hidden="true">🖼️</span>
+      <p>
+        <strong>Drop an image here</strong><br>
+        or click to browse
+        <span class="hint">PNG with transparency works best</span>
+      </p>
+    </div>
+
+    <div class="divider"></div>
+    <div class="panel-title">Animation</div>
+
+    <div class="control-row">
+      <label for="speed">Spin Speed <span id="speed-val">8 fps</span></label>
+      <input type="range" id="speed" min="4" max="24" value="8" step="1">
+    </div>
+
+    <div class="control-row">
+      <label for="bob">Bob Height <span id="bob-val">12 px</span></label>
+      <input type="range" id="bob" min="0" max="32" value="12" step="1">
+    </div>
+
+    <div class="control-row">
+      <label for="size">Item Size <span id="size-val">70%</span></label>
+      <input type="range" id="size" min="30" max="95" value="70" step="1">
+    </div>
+
+    <div class="divider"></div>
+    <div class="panel-title">Effects</div>
+
+    <div class="toggle-row">
+      <label for="shadow-toggle">Shadow</label>
+      <label class="toggle">
+        <input type="checkbox" id="shadow-toggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="control-row">
+      <label for="shadow-opacity">Shadow Opacity <span id="shadow-val">60%</span></label>
+      <input type="range" id="shadow-opacity" min="0" max="100" value="60" step="5">
+    </div>
+
+    <div class="toggle-row">
+      <label for="pixel-toggle">Pixelate</label>
+      <label class="toggle">
+        <input type="checkbox" id="pixel-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="control-row" id="pixel-size-row" style="opacity:0.4;pointer-events:none">
+      <label for="pixel-size">Block Size <span id="pixel-val">4 px</span></label>
+      <input type="range" id="pixel-size" min="2" max="16" value="4" step="1">
+    </div>
+
+    <div class="divider"></div>
+    <div class="panel-title">Export</div>
+
+    <div class="control-row">
+      <label for="canvas-size">Canvas Size <span id="canvas-val">256 px</span></label>
+      <input type="range" id="canvas-size" min="64" max="512" value="256" step="64">
+    </div>
+
+    <div class="control-row">
+      <label for="frames">Total Frames <span id="frames-val">16</span></label>
+      <input type="range" id="frames" min="8" max="48" value="16" step="4">
+    </div>
+
+    <button class="btn export-btn" id="export-btn" disabled aria-label="Export animated GIF">
+      ⬇ Export GIF
+    </button>
+
+    <div class="progress-wrap" id="progress-wrap" style="display:none" aria-live="polite">
+      <div class="progress-label" id="progress-label">Encoding…</div>
+      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+  </div><!-- /panel -->
+
+  <!-- ── Right: Preview ── -->
+  <div class="panel preview-panel" aria-label="Preview">
+
+    <div class="panel-title" style="align-self:stretch">Live Preview</div>
+
+    <div class="canvas-shell" id="canvas-shell">
+      <div class="empty-state" id="empty-state" aria-live="polite">
+        <span class="big-icon" aria-hidden="true">🎮</span>
+        <p>Upload an image to preview the animation</p>
+      </div>
+      <canvas id="preview-canvas" width="256" height="256"
+              style="display:none" aria-label="Animated preview"></canvas>
+    </div>
+
+    <div class="chip-row" id="info-chips" style="display:none" aria-live="polite">
+      <span class="info-chip" id="chip-size">256×256</span>
+      <span class="info-chip" id="chip-frames">16 frames</span>
+      <span class="info-chip" id="chip-fps">8 fps</span>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);text-align:center;max-width:300px;line-height:1.65">
+      Preview updates live as you adjust settings. The exported GIF uses the full frame count and chosen canvas size.
+    </p>
+
+  </div><!-- /panel -->
+
+</main>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <p>All processing happens locally — nothing is sent anywhere.</p>
+</footer>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+'use strict';
+
+// ============================================================
+// GIF ENCODER  — pure JS, GIF89a, LZW compression
+// ============================================================
+class GIFEncoder {
+  constructor(width, height) {
+    this.width   = width;
+    this.height  = height;
+    this.frames  = [];
+    this.delay   = 100;
+    this.repeat  = 0;
+  }
+
+  setDelay(ms) { this.delay = ms; }
+  setRepeat(n) { this.repeat = n; }
+
+  addFrame(canvas) {
+    const ctx  = canvas.getContext('2d');
+    const data = ctx.getImageData(0, 0, this.width, this.height);
+    const { palette, indexed } = this._quantize(data);
+    this.frames.push({ palette, indexed, delay: this.delay });
+  }
+
+  _quantize(imageData) {
+    const data = imageData.data;
+    const n    = imageData.width * imageData.height;
+    const colorMap = new Map();
+    colorMap.set('0,0,0,0', 0); // slot 0 = transparent
+    let nextIdx = 1;
+
+    const pixels  = new Array(n);
+
+    for (let i = 0; i < n; i++) {
+      const r = data[i*4], g = data[i*4+1], b = data[i*4+2], a = data[i*4+3];
+      if (a < 128) { pixels[i] = null; continue; }
+      // quantise to 6-step cube
+      const rq = Math.round(r / 51) * 51;
+      const gq = Math.round(g / 51) * 51;
+      const bq = Math.round(b / 51) * 51;
+      const key = `${rq},${gq},${bq},255`;
+      pixels[i] = [rq, gq, bq, key];
+      if (!colorMap.has(key) && nextIdx < 256) colorMap.set(key, nextIdx++);
+    }
+
+    const indexed = new Uint8Array(n);
+    for (let i = 0; i < n; i++) {
+      if (!pixels[i]) { indexed[i] = 0; continue; }
+      const [rq, gq, bq, key] = pixels[i];
+      let idx = colorMap.get(key);
+      if (idx === undefined) {
+        let best = Infinity, bestIdx = 1;
+        for (const [k, ci] of colorMap) {
+          if (ci === 0) continue;
+          const [pr, pg, pb] = k.split(',').map(Number);
+          const d = (pr-rq)**2 + (pg-gq)**2 + (pb-bq)**2;
+          if (d < best) { best = d; bestIdx = ci; }
+        }
+        idx = bestIdx;
+      }
+      indexed[i] = idx;
+    }
+
+    const palette = new Uint8Array(256 * 3);
+    for (const [key, idx] of colorMap) {
+      if (idx === 0) continue;
+      const [r, g, b] = key.split(',').map(Number);
+      palette[idx*3]   = r;
+      palette[idx*3+1] = g;
+      palette[idx*3+2] = b;
+    }
+    return { palette, indexed };
+  }
+
+  render() {
+    const chunks   = [];
+    const pushByte  = b  => chunks.push(new Uint8Array([b]));
+    const pushBytes = a  => chunks.push(a instanceof Uint8Array ? a : new Uint8Array(a));
+    const pushStr   = s  => pushBytes(new TextEncoder().encode(s));
+    const pushShort = n  => pushBytes([n & 0xff, (n >> 8) & 0xff]);
+
+    // ── Header ──
+    pushStr('GIF89a');
+    pushShort(this.width);
+    pushShort(this.height);
+    pushByte(0xF7);   // global CT, 256 colours
+    pushByte(0);      // bg colour index
+    pushByte(0);      // aspect ratio
+    pushBytes(this.frames[0].palette); // global colour table
+
+    // ── Netscape loop extension ──
+    pushStr('\x21\xFF\x0B');
+    pushStr('NETSCAPE2.0');
+    pushByte(3); pushByte(1);
+    pushShort(this.repeat);
+    pushByte(0);
+
+    // ── Frames ──
+    for (const frame of this.frames) {
+      const delayCS = Math.round(frame.delay / 10);
+
+      // Graphic Control Extension
+      pushBytes([0x21, 0xF9, 0x04]);
+      pushByte(0x05);         // dispose=1, transparent flag
+      pushShort(delayCS);
+      pushByte(0);            // transparent colour index
+      pushByte(0);
+
+      // Image Descriptor
+      pushByte(0x2C);
+      pushShort(0); pushShort(0);
+      pushShort(this.width); pushShort(this.height);
+      pushByte(0x07);         // local CT, 256 colours
+      pushBytes(frame.palette);
+
+      // LZW image data
+      const lzw = this._lzwEncode(frame.indexed, 8);
+      pushByte(8);
+      for (let off = 0; off < lzw.length; ) {
+        const blk = Math.min(255, lzw.length - off);
+        pushByte(blk);
+        pushBytes(lzw.subarray(off, off + blk));
+        off += blk;
+      }
+      pushByte(0);
+    }
+
+    pushByte(0x3B); // trailer
+
+    const total = chunks.reduce((s, c) => s + c.length, 0);
+    const out   = new Uint8Array(total);
+    let pos = 0;
+    for (const c of chunks) { out.set(c, pos); pos += c.length; }
+    return out;
+  }
+
+  _lzwEncode(pixels, minCodeSize) {
+    const clearCode = 1 << minCodeSize;
+    const eoi       = clearCode + 1;
+    let nextCode    = eoi + 1;
+    let codeSize    = minCodeSize + 1;
+    let maxCode     = 1 << codeSize;
+
+    const out = [];
+    let bitBuf = 0, bitCnt = 0;
+
+    const write = code => {
+      bitBuf |= code << bitCnt;
+      bitCnt += codeSize;
+      while (bitCnt >= 8) { out.push(bitBuf & 0xFF); bitBuf >>= 8; bitCnt -= 8; }
+    };
+
+    let table = new Map();
+    const init = () => {
+      table    = new Map();
+      for (let i = 0; i < clearCode; i++) table.set(String(i), i);
+      nextCode = eoi + 1;
+      codeSize = minCodeSize + 1;
+      maxCode  = 1 << codeSize;
+    };
+
+    init();
+    write(clearCode);
+
+    let prev = String(pixels[0]);
+    for (let i = 1; i < pixels.length; i++) {
+      const cur = String(pixels[i]);
+      const key = prev + ',' + cur;
+      if (table.has(key)) { prev = key; continue; }
+      write(table.get(prev));
+      if (nextCode < 4096) {
+        table.set(key, nextCode++);
+        if (nextCode > maxCode && codeSize < 12) { codeSize++; maxCode <<= 1; }
+      } else {
+        write(clearCode);
+        init();
+      }
+      prev = cur;
+    }
+    write(table.get(prev));
+    write(eoi);
+    if (bitCnt > 0) out.push(bitBuf & 0xFF);
+    return new Uint8Array(out);
+  }
+}
+
+// ============================================================
+// ANIMATION ENGINE
+// ============================================================
+let sourceImage = null;
+let rafHandle   = null;
+
+const preview = document.getElementById('preview-canvas');
+const pCtx    = preview.getContext('2d');
+
+function getSettings() {
+  return {
+    speed:       parseInt(document.getElementById('speed').value),
+    bob:         parseInt(document.getElementById('bob').value),
+    size:        parseInt(document.getElementById('size').value) / 100,
+    shadow:      document.getElementById('shadow-toggle').checked,
+    shadowOp:    parseInt(document.getElementById('shadow-opacity').value) / 100,
+    pixel:       document.getElementById('pixel-toggle').checked,
+    pixelSize:   parseInt(document.getElementById('pixel-size').value),
+    canvasSz:    parseInt(document.getElementById('canvas-size').value),
+    totalFrames: parseInt(document.getElementById('frames').value),
+  };
+}
+
+function drawFrame(ctx, img, t, total, opts, size) {
+  const { bob, shadow, shadowOp, pixel, pixelSize } = opts;
+  const phase  = (t / total) * Math.PI * 2;
+  const scaleX = Math.cos(phase);               // squash/stretch + flip
+  const bobY   = Math.sin(phase * 0.5) * bob;   // vertical float
+
+  const W = size, H = size;
+  ctx.clearRect(0, 0, W, H);
+
+  // fit image inside a square centred region
+  const aspect = img.width / img.height;
+  const maxW   = W * opts.size;
+  const maxH   = H * opts.size;
+  let drawW, drawH;
+  if (aspect >= 1) { drawW = maxW; drawH = maxW / aspect; }
+  else             { drawH = maxH; drawW = maxH * aspect; }
+
+  const cx    = W / 2;
+  const baseCy = H * 0.55;
+
+  // ── Shadow ──
+  if (shadow) {
+    const sx = Math.abs(scaleX) * 0.9 + 0.1;
+    const sw = drawW * sx * 0.7;
+    const sh = sw * 0.3;
+    const sy = baseCy + drawH * 0.52 - bobY * 0.3;
+    ctx.save();
+    const g = ctx.createRadialGradient(cx, sy, 0, cx, sy, sw * 0.6);
+    g.addColorStop(0, `rgba(0,0,0,${shadowOp})`);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(cx, sy, sw * 0.6, sh, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Item ──
+  const itemCy = baseCy - bobY;
+  ctx.save();
+  ctx.translate(cx, itemCy);
+  ctx.scale(scaleX, 1);
+
+  if (pixel) {
+    const pw = Math.max(1, Math.round(drawW / pixelSize));
+    const ph = Math.max(1, Math.round(drawH / pixelSize));
+    const off = document.createElement('canvas');
+    off.width  = pw;
+    off.height = ph;
+    const oCtx = off.getContext('2d');
+    oCtx.imageSmoothingEnabled = false;
+    oCtx.drawImage(img, 0, 0, pw, ph);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(off, -drawW/2, -drawH/2, drawW, drawH);
+  } else {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, -drawW/2, -drawH/2, drawW, drawH);
+  }
+  ctx.restore();
+}
+
+function startAnimation() {
+  if (!sourceImage) return;
+  cancelAnimationFrame(rafHandle);
+
+  const opts = getSettings();
+  preview.width  = 256;
+  preview.height = 256;
+
+  const msPerFrame = 1000 / opts.speed;
+  let last = 0, tick = 0;
+
+  function loop(ts) {
+    if (ts - last >= msPerFrame) {
+      last = ts;
+      drawFrame(pCtx, sourceImage, tick, opts.totalFrames, opts, 256);
+      tick = (tick + 1) % opts.totalFrames;
+    }
+    rafHandle = requestAnimationFrame(loop);
+  }
+  rafHandle = requestAnimationFrame(loop);
+}
+
+// ============================================================
+// GIF EXPORT
+// ============================================================
+async function exportGIF() {
+  if (!sourceImage) return;
+  const opts = getSettings();
+  const { canvasSz, totalFrames, speed } = opts;
+
+  const exportBtn    = document.getElementById('export-btn');
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressFill = document.getElementById('progress-fill');
+  const progressLabel= document.getElementById('progress-label');
+  const progressBar  = progressWrap.querySelector('[role=progressbar]');
+
+  exportBtn.disabled       = true;
+  progressWrap.style.display = 'block';
+
+  const encoder = new GIFEncoder(canvasSz, canvasSz);
+  encoder.setRepeat(0);
+  encoder.setDelay(Math.round(1000 / speed));
+
+  const off  = document.createElement('canvas');
+  off.width  = canvasSz;
+  off.height = canvasSz;
+  const oCtx = off.getContext('2d');
+
+  for (let t = 0; t < totalFrames; t++) {
+    await new Promise(r => setTimeout(r, 0)); // yield to browser
+    drawFrame(oCtx, sourceImage, t, totalFrames, opts, canvasSz);
+    encoder.addFrame(off);
+    const pct = Math.round(((t + 1) / totalFrames) * 100);
+    progressFill.style.width = pct + '%';
+    if (progressBar) progressBar.setAttribute('aria-valuenow', pct);
+    progressLabel.textContent = `Encoding frame ${t+1} / ${totalFrames}…`;
+  }
+
+  progressLabel.textContent = 'Building GIF…';
+  await new Promise(r => setTimeout(r, 10));
+
+  const bytes = encoder.render();
+  const blob  = new Blob([bytes], { type: 'image/gif' });
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href     = url;
+  a.download = 'drop-item.gif';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+  exportBtn.disabled        = false;
+  progressWrap.style.display = 'none';
+  progressFill.style.width   = '0%';
+}
+
+// ============================================================
+// IMAGE LOADING
+// ============================================================
+function loadImage(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img  = new Image();
+    img.onload = () => {
+      sourceImage = img;
+      document.getElementById('empty-state').style.display   = 'none';
+      preview.style.display = 'block';
+      document.getElementById('export-btn').disabled  = false;
+      document.getElementById('info-chips').style.display = 'flex';
+      startAnimation();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============================================================
+// UI BINDINGS
+// ============================================================
+function syncDisplays() {
+  const s = getSettings();
+  document.getElementById('speed-val').textContent   = s.speed + ' fps';
+  document.getElementById('bob-val').textContent     = s.bob + ' px';
+  document.getElementById('size-val').textContent    = Math.round(s.size * 100) + '%';
+  document.getElementById('shadow-val').textContent  = Math.round(s.shadowOp * 100) + '%';
+  document.getElementById('pixel-val').textContent   = s.pixelSize + ' px';
+  document.getElementById('canvas-val').textContent  = s.canvasSz + ' px';
+  document.getElementById('frames-val').textContent  = s.totalFrames;
+  document.getElementById('chip-size').textContent   = `${s.canvasSz}×${s.canvasSz}`;
+  document.getElementById('chip-frames').textContent = `${s.totalFrames} frames`;
+  document.getElementById('chip-fps').textContent    = `${s.speed} fps`;
+}
+
+// File input
+document.getElementById('file-input').addEventListener('change', e => loadImage(e.target.files[0]));
+
+// Drag and drop
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+dz.addEventListener('drop',      e  => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  loadImage(e.dataTransfer.files[0]);
+});
+
+// Pixel-size row enable/disable
+document.getElementById('pixel-toggle').addEventListener('change', e => {
+  const row = document.getElementById('pixel-size-row');
+  row.style.opacity       = e.target.checked ? '1'    : '0.4';
+  row.style.pointerEvents = e.target.checked ? 'auto' : 'none';
+  if (sourceImage) startAnimation();
+});
+
+// All sliders + toggles
+document.querySelectorAll('input[type=range], input[type=checkbox]').forEach(el => {
+  el.addEventListener('input', () => { syncDisplays(); if (sourceImage) startAnimation(); });
+});
+
+// Export
+document.getElementById('export-btn').addEventListener('click', exportGIF);
+
+// Init
+syncDisplays();
+</script>
+</body>
+</html>
