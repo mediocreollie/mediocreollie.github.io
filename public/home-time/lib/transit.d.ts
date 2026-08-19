@@ -1,0 +1,13 @@
+export const ADELAIDE_TIMEZONE: string;
+export function parseGtfsTime(value: string): number;
+export function zonedLocalToDate(local: Record<string, number>, timeZone?: string): Date;
+export function dateKeyInZone(date: Date, timeZone?: string): string;
+export function addCalendarDays(key: string, days: number): string;
+export function gtfsDateTime(key: string, time: string, timeZone?: string): Date;
+export function serviceRuns(service: any, key: string, timeZone?: string): boolean;
+export function isTripUseful(stopTimes: any[], boarding: Set<string>, drops: Set<string>): boolean;
+export function applyPrediction(date: Date, realtimeStop?: any): { date: Date; source: "LIVE" | "SCHEDULED" };
+export function catchability(departure: Date, now: Date, walkMinutes: number, safetyBuffer?: number): any;
+export function walkClass(minutes: number): string | null;
+export function chooseBestDrop(trip: any, serviceDateKey: string, realtimeStops?: any[], timeZone?: string): any;
+export function buildOptions(config: any, realtime: any, now?: Date): any[];
