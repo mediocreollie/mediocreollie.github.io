@@ -11,9 +11,9 @@ import {
   parseGtfsTime,
   walkClass,
   zonedLocalToDate,
-} from "../lib/transit.mjs";
+} from "../src/lib/transit.mjs";
 
-const config = JSON.parse(fs.readFileSync(new URL("../data/transit-config.json", import.meta.url)));
+const config = JSON.parse(fs.readFileSync(new URL("../src/data/transit-config.json", import.meta.url)));
 
 test("HOME is public stop ID 16355", () => {
   assert.equal(config.home.publicId, "16355");

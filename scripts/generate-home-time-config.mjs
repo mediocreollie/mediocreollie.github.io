@@ -10,8 +10,8 @@ import { parse as parseSync } from "csv-parse/sync";
 const ROOT = process.cwd();
 const RAW = path.join(ROOT, "data", "raw");
 const GTFS = path.join(RAW, "gtfs");
-const OUTPUT = path.join(ROOT, "data", "transit-config.json");
-const REPORT = path.join(ROOT, "docs", "network-discovery.md");
+const OUTPUT = path.join(ROOT, "src", "data", "transit-config.json");
+const REPORT = path.join(ROOT, "docs", "home-time-network-discovery.md");
 const REFRESH = process.argv.includes("--refresh");
 const STATIC_URL = "https://gtfs.adelaidemetro.com.au/v1/static/latest/google_transit.zip";
 const VERSION_URL = "https://gtfs.adelaidemetro.com.au/v1/static/latest/version.txt";
@@ -336,7 +336,7 @@ const config = {
   timezone: "Australia/Adelaide",
   safetyBufferMinutes: 3,
   maxFinalWalkMinutes: MAX_FINAL_WALK,
-  dataSources: { static: STATIC_URL, realtime: "/api/realtime", walking: "OpenStreetMap pedestrian network snapshot" },
+  dataSources: { static: STATIC_URL, realtime: "PUBLIC_HOME_TIME_REALTIME_URL", walking: "OpenStreetMap pedestrian network snapshot" },
   home: { ...formatStop(home, 0, "drop"), label: "Henley Beach", publicId: HOME_PUBLIC_ID, gtfsStopId: home.stop_id },
   origin: { ...formatStop(origin, 0, "board"), label: "Adelaide Railway Station" },
   routes: usefulRoutes,

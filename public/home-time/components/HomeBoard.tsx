@@ -40,12 +40,12 @@ export default function HomeBoard({ initialNow }: { initialNow: string }) {
   const [refreshing, setRefreshing] = useState(false);
   const [now, setNow] = useState(() => new Date(initialNow));
   const [sort, setSort] = useState<"home" | "departure">("home");
-  const [online, setOnline] = useState(true);
+  const [online, setOnline] = useState(() => typeof navigator === "undefined" || navigator.onLine);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      const response = await fetch("/api/realtime", { cache: "no-store" });
+      const response = await fetch(`${import.meta.env.BASE_URL}api/realtime`, { cache: "no-store" });
       const result = await response.json() as Realtime;
       if (!response.ok || !result.ok) throw new Error("Realtime unavailable");
       setRealtime(result);
@@ -58,8 +58,6 @@ export default function HomeBoard({ initialNow }: { initialNow: string }) {
   }, []);
 
   useEffect(() => {
-    setNow(new Date());
-    setOnline(navigator.onLine);
     const updateNetwork = () => setOnline(navigator.onLine);
     window.addEventListener("online", updateNetwork);
     window.addEventListener("offline", updateNetwork);
@@ -68,7 +66,10 @@ export default function HomeBoard({ initialNow }: { initialNow: string }) {
     const poll = window.setInterval(() => {
       if (document.visibilityState === "visible") refresh();
     }, 60_000);
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+    if ("serviceWorker" in navigator) {
+      const baseUrl = import.meta.env.BASE_URL;
+      navigator.serviceWorker.register(`${baseUrl}sw.js`, { scope: baseUrl }).catch(() => undefined);
+    }
     return () => {
       window.removeEventListener("online", updateNetwork);
       window.removeEventListener("offline", updateNetwork);

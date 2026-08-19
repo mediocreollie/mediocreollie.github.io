@@ -81,6 +81,22 @@ To enable full TinaCMS functionality, see [TINACMS_SETUP.md](./TINACMS_SETUP.md)
 - **GitHub Pages** - Deployment & hosting
 - **MDX** - Enhanced Markdown with components
 
+## 🚌 Get Me Home
+
+The Adelaide transport checker is a native Astro route at [`/home-time/`](src/pages/home-time.astro), built into `dist/home-time/index.html` with the rest of this site. It shows one-leg bus and Grange train options from Adelaide Railway Station toward Stop 29B Seaview Rd (East side), stop ID `16355`.
+
+Its committed GTFS-derived configuration is in [`src/data/transit-config.json`](src/data/transit-config.json). Walking is capped at 30 minutes, with Grange Railway Station manually calibrated to 15 minutes. The reusable time, schedule, direction, catchability, realtime replacement, and fallback logic is in [`src/lib/transit.mjs`](src/lib/transit.mjs).
+
+Run the focused transport tests with:
+
+```bash
+npm run test:home-time
+```
+
+Refresh static GTFS and walking data with `npm run home-time:refresh`. Raw downloads are written to ignored `data/raw/`; review the generated config and discovery report before committing them.
+
+The Astro site is static and works without a server. For live Adelaide Metro predictions, set `PUBLIC_HOME_TIME_REALTIME_URL` when building to the URL of the standalone Cloudflare Worker in [`workers/home-time-realtime`](workers/home-time-realtime). The Worker deployment is manual through [its workflow](.github/workflows/deploy-home-time-realtime.yml) and requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` GitHub Actions secrets. If the variable is unset or the Worker is unavailable, the page stays usable with scheduled data.
+
 ## 📦 Available Commands
 
 | Command | Purpose |

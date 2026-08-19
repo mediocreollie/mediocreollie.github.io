@@ -9,14 +9,19 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:home-time": "node --test tests/home-time.test.mjs",
+    "home-time:refresh": "node scripts/generate-home-time-config.mjs --refresh"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
     "@tinacms/cli": "^2.2.4",
+    "adm-zip": "^0.5.16",
     "astro": "^6.1.9",
+    "csv-parse": "^6.1.0",
+    "gtfs-realtime-bindings": "^1.0.0",
     "sharp": "^0.34.3",
     "tinacms": "^3.7.4"
   },

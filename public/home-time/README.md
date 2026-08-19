@@ -61,15 +61,17 @@ npm run gtfs:refresh
 
 This downloads the latest official timetable, refreshes the two bounded OpenStreetMap extracts, rebuilds the compact configuration, and rewrites the discovery report. A normal `node scripts/generate-transit-config.mjs` reuses the local raw snapshots.
 
-## Realtime proxy and free hosting
+## Realtime proxy and deployment
 
 The official protobuf endpoint returned HTTPS successfully but did **not** return an `Access-Control-Allow-Origin` header in the 18 August 2026 test. A direct static GitHub Pages build therefore cannot reliably fetch live data from browser JavaScript.
 
-The included same-origin `/api/realtime` route is the smallest required server layer. It stores no data and needs no secrets, account, database, or paid API. The project is configured for Cloudflare-compatible free hosting through Sites. To deploy another way, use any free host that supports the built worker output and same-origin server route; do not deploy only the static files if live predictions are required.
+The included same-origin `/api/realtime` route is the smallest required server layer. It stores no data and needs no Adelaide Metro key, database, or paid API. GitHub Pages is not suitable because it serves static files and cannot run this route. The included GitHub Actions workflow deploys the complete app to Cloudflare Workers through its free tier.
 
-## Uploading to GitHub
+On every push to `main` that changes `public/home-time`, the workflow installs dependencies, runs the tests, builds the app, and deploys `dist/server/wrangler.json`. It also supports manual dispatch. The repository must have `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` configured as GitHub Actions secrets.
 
-For browser drag-and-drop instructions, adding a link to an existing GitHub Pages site, and the optional free Cloudflare deployment workflow, see [`GITHUB-UPLOAD.md`](GITHUB-UPLOAD.md).
+## Repository layout
+
+This app intentionally lives in `public/home-time` inside the parent Astro site. Run all commands below from that directory. `data/transit-config.json` is the committed browser dataset; raw GTFS and OpenStreetMap downloads are ignored and regenerated when needed.
 
 ## Tests
 

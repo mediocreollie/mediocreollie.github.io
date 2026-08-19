@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Get Me Home · Adelaide",
     short_name: "Get Me Home",
     description: "Useful one-seat Adelaide Metro options toward Henley Beach.",
-    start_url: "/",
+    start_url: "./",
     display: "standalone",
     background_color: "#f1f3ee",
     theme_color: "#176b4b",

@@ -1,0 +1,55 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import '../styles/home-time.css';
+
+const realtimeEndpoint = import.meta.env.PUBLIC_HOME_TIME_REALTIME_URL || '';
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <BaseHead
+      title="Get Me Home · Adelaide"
+      description="Useful one-seat Adelaide Metro options from Adelaide Railway Station toward Henley Beach."
+    />
+    <meta name="theme-color" content="#176b4b" />
+  </head>
+  <body>
+    <main id="home-time-app" class="app-shell" data-realtime-endpoint={realtimeEndpoint}>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">ADELAIDE RAILWAY STATION <span aria-hidden="true">→</span> HENLEY BEACH</p>
+          <h1>GET ME HOME</h1>
+        </div>
+        <button class="refresh" type="button" aria-label="Refresh departures">
+          <span aria-hidden="true">↻</span>
+        </button>
+      </header>
+      <section class="feed-banner warning" aria-live="polite">
+        <div><span class="feed-dot"></span><strong>Using today's timetable</strong></div>
+        <span>Scheduled departures</span>
+      </section>
+      <section class="utility-row" aria-label="Departure controls">
+        <div class="result-count"><strong>0</strong><span>catchable now</span></div>
+        <div class="sort-control" aria-label="Sort departures">
+          <button type="button" class="active" data-sort="home">Fastest home</button>
+          <button type="button" data-sort="departure">Next departures</button>
+        </div>
+      </section>
+      <section class="departures" aria-label="Useful departures"></section>
+      <details class="diagnostics">
+        <summary>Service status &amp; diagnostics</summary>
+        <dl class="diagnostics-grid"></dl>
+        <p>All options are one service only. Every final walk is 30 minutes or less.</p>
+      </details>
+      <footer>
+        <p>Times are estimates. Leave a little extra time to reach your stop.</p>
+        <p>Adelaide Metro · Department for Infrastructure and Transport, South Australia</p>
+        <p>Walking data © OpenStreetMap contributors</p>
+      </footer>
+    </main>
+    <script>
+      import '../scripts/home-time.js';
+    </script>
+  </body>
+</html>

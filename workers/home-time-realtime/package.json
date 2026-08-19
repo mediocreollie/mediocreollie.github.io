@@ -1,0 +1,11 @@
+{
+  "name": "home-time-realtime",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "gtfs-realtime-bindings": "^1.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.124.0"
+  }
+}
