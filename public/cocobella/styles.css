@@ -1,0 +1,147 @@
+:root {
+  --bg: #f7f7f2;
+  --panel: #ffffff;
+  --ink: #17222b;
+  --muted: #586a73;
+  --accent: #2d7d46;
+  --accent-strong: #1f5a34;
+  --border: #dfe5e3;
+  --shadow: rgba(18, 28, 32, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.header {
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.summary-card,
+.store-card,
+.chart-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px var(--shadow);
+}
+
+.summary-card {
+  padding: 18px 20px;
+}
+
+.label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.stores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.store-card {
+  padding: 18px 18px 14px;
+}
+
+.store-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.price-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.price {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-weight: 700;
+}
+
+.status {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status.available {
+  background: rgba(45, 125, 70, 0.12);
+  color: var(--accent-strong);
+}
+
+.status.unavailable {
+  background: rgba(145, 145, 145, 0.12);
+  color: var(--muted);
+}
+
+.store-card .meta {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.chart-panel {
+  padding: 20px;
+}
+
+.chart-panel h2 {
+  margin-top: 0;
+}
+
+#history-chart {
+  width: 100%;
+  height: 220px;
+  display: block;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8faf7 0%, #edf5f1 100%);
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cocobella Tracker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <p class="eyebrow">Cocobella</p>
+        <h1>Grocery price tracker</h1>
+      </header>
+
+      <section class="summary" id="summary">
+        <div class="summary-card">
+          <span class="label">Cheapest store</span>
+          <strong id="cheapest-store">Loading…</strong>
+        </div>
+        <div class="summary-card">
+          <span class="label">Last updated</span>
+          <strong id="updated-at">Loading…</strong>
+        </div>
+      </section>
+
+      <section class="stores" id="stores" aria-live="polite"></section>
+
+      <section class="chart-panel">
+        <h2>Price history</h2>
+        <svg id="history-chart" viewBox="0 0 680 220" role="img" aria-label="Price history chart"></svg>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
