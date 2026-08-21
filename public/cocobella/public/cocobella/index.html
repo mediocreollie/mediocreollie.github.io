@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Store-verified Adelaide prices for Cocobella Coconut Water Straight Up 1L.">
+  <title>Cocobella Price Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">Adelaide · one product · three stores</p>
+      <h1>Cocobella Price Tracker</h1>
+      <p class="product-name">Cocobella Coconut Water Straight Up 1L</p>
+    </header>
+
+    <section id="cheapest" class="winner" aria-live="polite" aria-busy="true">
+      <p class="winner-label">Cheapest today</p>
+      <h2>Checking prices…</h2>
+    </section>
+
+    <section aria-labelledby="prices-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Current prices</p>
+          <h2 id="prices-heading">Where should I buy it?</h2>
+        </div>
+        <p id="updated" class="updated">Loading latest check…</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Store</th><th scope="col">Current price</th><th scope="col">Status</th></tr>
+          </thead>
+          <tbody id="store-rows">
+            <tr><td colspan="3">Loading prices…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fine-print">Only verified, store-specific prices are compared. Manual shelf checks are labelled. Conditional multi-buy offers are shown separately and do not replace the single-unit price.</p>
+    </section>
+
+    <section aria-labelledby="history-heading" class="history-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Price history</p>
+          <h2 id="history-heading">Promotion cycles</h2>
+        </div>
+        <div id="legend" class="legend" aria-label="Chart legend"></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="history-chart" role="img" aria-label="Price history chart for Cocobella Coconut Water Straight Up 1L"></canvas>
+        <p id="chart-empty" class="empty-message" hidden>History will appear after verified observations accumulate.</p>
+      </div>
+      <div id="history-stats" class="stats-grid"></div>
+      <p class="fine-print">Missing checks are gaps, never $0. Trend labels appear only after enough verified history exists.</p>
+    </section>
+
+    <footer>
+      <p>Automated daily using public retailer information. A missing price is shown as unavailable rather than guessed.</p>
+    </footer>
+  </main>
+</body>
+</html>

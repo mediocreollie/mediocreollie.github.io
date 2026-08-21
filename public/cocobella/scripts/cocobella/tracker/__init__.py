@@ -1,0 +1,2 @@
+"""Cocobella price tracker package."""
+
