@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-08-26T19:47:03Z",
+  "generated_at": "2026-08-27T07:51:57Z",
   "stores": {
     "coles": {
       "name": "Coles Rundle Place",
       "price": 5.5,
       "status": "available",
-      "updated_at": "2026-08-26T19:47:03Z"
+      "updated_at": "2026-08-27T07:51:57Z"
     },
     "woolworths": {
       "name": "Woolworths Rundle Mall",
       "price": 3.3,
       "status": "available",
-      "updated_at": "2026-08-26T19:47:03Z"
+      "updated_at": "2026-08-27T07:51:57Z"
     },
     "foodland": {
       "name": "Foodland Henley Square",
       "price": null,
       "status": "unavailable",
-      "updated_at": "2026-08-26T19:47:03Z"
+      "updated_at": "2026-08-27T07:51:57Z"
     }
   },
   "cheapest_store": "woolworths",
@@ -25,62 +25,58 @@
   "history": {
     "coles": [
       {
-        "date": "2026-08-20T12:00:00Z",
+        "date": "2026-08-21T12:00:00Z",
         "price": 5.5
       },
       {
-        "date": "2026-08-21T12:00:00Z",
+        "date": "2026-08-22T12:00:00Z",
         "price": 5.65
       },
       {
-        "date": "2026-08-22T12:00:00Z",
+        "date": "2026-08-23T12:00:00Z",
         "price": 5.4
       },
       {
-        "date": "2026-08-23T12:00:00Z",
+        "date": "2026-08-24T12:00:00Z",
         "price": 5.55
       },
       {
-        "date": "2026-08-24T12:00:00Z",
+        "date": "2026-08-25T12:00:00Z",
         "price": 5.35
       },
       {
-        "date": "2026-08-25T12:00:00Z",
+        "date": "2026-08-26T12:00:00Z",
         "price": 5.5
       }
     ],
     "woolworths": [
       {
-        "date": "2026-08-20T12:00:00Z",
+        "date": "2026-08-21T12:00:00Z",
         "price": 3.4
       },
       {
-        "date": "2026-08-21T12:00:00Z",
+        "date": "2026-08-22T12:00:00Z",
         "price": 3.25
       },
       {
-        "date": "2026-08-22T12:00:00Z",
+        "date": "2026-08-23T12:00:00Z",
         "price": 3.3
       },
       {
-        "date": "2026-08-23T12:00:00Z",
+        "date": "2026-08-24T12:00:00Z",
         "price": 3.2
       },
       {
-        "date": "2026-08-24T12:00:00Z",
+        "date": "2026-08-25T12:00:00Z",
         "price": 3.5
       },
       {
-        "date": "2026-08-25T12:00:00Z",
+        "date": "2026-08-26T12:00:00Z",
         "price": 3.3
       }
     ],
     "foodland": [
       {
-        "date": "2026-08-20T12:00:00Z",
-        "price": null
-      },
-      {
         "date": "2026-08-21T12:00:00Z",
         "price": null
       },
@@ -98,6 +94,10 @@
       },
       {
         "date": "2026-08-25T12:00:00Z",
+        "price": null
+      },
+      {
+        "date": "2026-08-26T12:00:00Z",
         "price": null
       }
     ]
