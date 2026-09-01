@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-09-01T03:54:20Z",
+  "generated_at": "2026-09-01T11:12:48Z",
   "stores": {
     "coles": {
       "name": "Coles Rundle Place",
       "price": 5.5,
       "status": "available",
-      "updated_at": "2026-09-01T03:54:20Z"
+      "updated_at": "2026-09-01T11:12:48Z"
     },
     "woolworths": {
       "name": "Woolworths Rundle Mall",
       "price": 3.3,
       "status": "available",
-      "updated_at": "2026-09-01T03:54:20Z"
+      "updated_at": "2026-09-01T11:12:48Z"
     },
     "foodland": {
       "name": "Foodland Henley Square",
       "price": null,
       "status": "unavailable",
-      "updated_at": "2026-09-01T03:54:20Z"
+      "updated_at": "2026-09-01T11:12:48Z"
     }
   },
   "cheapest_store": "woolworths",
