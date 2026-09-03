@@ -2,7 +2,8 @@ name: Update Cocobella prices
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    # 20:15 UTC is 05:45 Adelaide standard time, 06:45 during daylight saving.
+    - cron: '15 20 * * *'
   workflow_dispatch:
 
 permissions:
@@ -24,6 +25,9 @@ jobs:
 
       - name: Collect and update price data
         run: python scripts/cocobella/update_prices.py
+
+      - name: Validate tracker tests
+        run: python -m unittest discover -s tests/cocobella -p 'test_*.py'
 
       - name: Commit and push updated Cocobella data
         run: |
