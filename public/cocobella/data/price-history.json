@@ -1,6 +1,12 @@
 {
   "history": {
-    "coles": [],
+    "coles": [
+      {
+        "date": "2026-09-11T13:25:37Z",
+        "price": 5.5,
+        "verified": true
+      }
+    ],
     "woolworths": [],
     "foodland": []
   }

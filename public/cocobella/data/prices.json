@@ -1,33 +1,46 @@
 {
-  "generated_at": null,
+  "generated_at": "2026-09-11T13:25:40Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
       "name": "Coles Rundle Place",
       "store_id": "4964",
-      "price": null,
-      "status": "awaiting_live_check",
-      "verified": false
+      "price": 5.5,
+      "status": "available",
+      "verified": true,
+      "checked_at": "2026-09-11T13:25:37Z",
+      "updated_at": "2026-09-11T13:25:37Z",
+      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
       "name": "Woolworths Rundle Mall",
       "store_id": "5317",
       "price": null,
-      "status": "awaiting_live_check",
-      "verified": false
+      "status": "unavailable",
+      "verified": false,
+      "checked_at": "2026-09-11T13:25:37Z",
+      "error": "HTTP Error 403: Forbidden"
     },
     "foodland": {
       "name": "Foodland Henley Square",
       "store_id": "henley-square",
       "price": null,
       "status": "unavailable",
-      "verified": false
+      "verified": false,
+      "checked_at": "2026-09-11T13:25:37Z",
+      "error": "No reliable public product-price source"
     }
   },
-  "cheapest_store": null,
-  "recommended_store": null,
+  "cheapest_store": "coles",
+  "recommended_store": "coles",
   "history": {
-    "coles": [],
+    "coles": [
+      {
+        "date": "2026-09-11T13:25:37Z",
+        "price": 5.5,
+        "verified": true
+      }
+    ],
     "woolworths": [],
     "foodland": []
   }
