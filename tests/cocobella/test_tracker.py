@@ -24,6 +24,10 @@ class TrackerTests(unittest.TestCase):
         page = '<main><h1>Cocobella Coconut Water Straight Up 1L</h1><p>$4.50</p><p>Code: 1251527</p></main>'
         self.assertEqual(MODULE.extract_price_near_product(page, MODULE.PRODUCT_NAME, "1251527"), 4.5)
 
+    def test_coles_title_separator_is_normalized(self):
+        page = '<main><h1>Cocobella Coconut Water Straight Up | 1L</h1><p>$5.50</p><p>Code: 1251527</p></main>'
+        self.assertEqual(MODULE.extract_price_near_product(page, MODULE.PRODUCT_NAME, "1251527"), 5.5)
+
     def test_wrong_variant_is_rejected(self):
         page = '<main><h1>Cocobella Coffee Coconut Water 1L</h1><p>$2.75</p><p>Code: 1251527</p></main>'
         with self.assertRaises(ValueError):
