@@ -1,105 +1,47 @@
 {
-  "generated_at": "2026-09-11T10:43:44Z",
+  "generated_at": "2026-09-11T13:25:40Z",
+  "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
       "name": "Coles Rundle Place",
+      "store_id": "4964",
       "price": 5.5,
       "status": "available",
-      "updated_at": "2026-09-11T10:43:44Z"
+      "verified": true,
+      "checked_at": "2026-09-11T13:25:37Z",
+      "updated_at": "2026-09-11T13:25:37Z",
+      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
       "name": "Woolworths Rundle Mall",
-      "price": 3.3,
-      "status": "available",
-      "updated_at": "2026-09-11T10:43:44Z"
+      "store_id": "5317",
+      "price": null,
+      "status": "unavailable",
+      "verified": false,
+      "checked_at": "2026-09-11T13:25:37Z",
+      "error": "HTTP Error 403: Forbidden"
     },
     "foodland": {
       "name": "Foodland Henley Square",
+      "store_id": "henley-square",
       "price": null,
       "status": "unavailable",
-      "updated_at": "2026-09-11T10:43:44Z"
+      "verified": false,
+      "checked_at": "2026-09-11T13:25:37Z",
+      "error": "No reliable public product-price source"
     }
   },
-  "cheapest_store": "woolworths",
-  "recommended_store": "woolworths",
+  "cheapest_store": "coles",
+  "recommended_store": "coles",
   "history": {
     "coles": [
       {
-        "date": "2026-09-05T12:00:00Z",
-        "price": 5.5
-      },
-      {
-        "date": "2026-09-06T12:00:00Z",
-        "price": 5.65
-      },
-      {
-        "date": "2026-09-07T12:00:00Z",
-        "price": 5.4
-      },
-      {
-        "date": "2026-09-08T12:00:00Z",
-        "price": 5.55
-      },
-      {
-        "date": "2026-09-09T12:00:00Z",
-        "price": 5.35
-      },
-      {
-        "date": "2026-09-10T12:00:00Z",
-        "price": 5.5
+        "date": "2026-09-11T13:25:37Z",
+        "price": 5.5,
+        "verified": true
       }
     ],
-    "woolworths": [
-      {
-        "date": "2026-09-05T12:00:00Z",
-        "price": 3.4
-      },
-      {
-        "date": "2026-09-06T12:00:00Z",
-        "price": 3.25
-      },
-      {
-        "date": "2026-09-07T12:00:00Z",
-        "price": 3.3
-      },
-      {
-        "date": "2026-09-08T12:00:00Z",
-        "price": 3.2
-      },
-      {
-        "date": "2026-09-09T12:00:00Z",
-        "price": 3.5
-      },
-      {
-        "date": "2026-09-10T12:00:00Z",
-        "price": 3.3
-      }
-    ],
-    "foodland": [
-      {
-        "date": "2026-09-05T12:00:00Z",
-        "price": null
-      },
-      {
-        "date": "2026-09-06T12:00:00Z",
-        "price": null
-      },
-      {
-        "date": "2026-09-07T12:00:00Z",
-        "price": null
-      },
-      {
-        "date": "2026-09-08T12:00:00Z",
-        "price": null
-      },
-      {
-        "date": "2026-09-09T12:00:00Z",
-        "price": null
-      },
-      {
-        "date": "2026-09-10T12:00:00Z",
-        "price": null
-      }
-    ]
+    "woolworths": [],
+    "foodland": []
   }
 }
