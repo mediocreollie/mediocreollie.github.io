@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T22:36:35Z",
+  "generated_at": "2026-09-12T22:19:55Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,8 +8,8 @@
       "price": 5.5,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-11T22:36:33Z",
-      "updated_at": "2026-09-11T22:36:33Z",
+      "checked_at": "2026-09-12T22:19:53Z",
+      "updated_at": "2026-09-12T22:19:53Z",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
@@ -18,7 +18,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-11T22:36:33Z",
+      "checked_at": "2026-09-12T22:19:53Z",
       "error": "HTTP Error 403: Forbidden"
     },
     "foodland": {
@@ -27,7 +27,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-11T22:36:33Z",
+      "checked_at": "2026-09-12T22:19:53Z",
       "error": "No reliable public product-price source"
     }
   },
@@ -37,6 +37,11 @@
     "coles": [
       {
         "date": "2026-09-11T22:36:33Z",
+        "price": 5.5,
+        "verified": true
+      },
+      {
+        "date": "2026-09-12T22:19:53Z",
         "price": 5.5,
         "verified": true
       }
