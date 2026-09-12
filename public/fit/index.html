@@ -231,7 +231,7 @@ document.getElementById("compareForm").onsubmit=e=>{
 function loadOcrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>resolve(window.Tesseract);s.onerror=()=>reject(new Error("The image reader could not load."));document.head.appendChild(s)})}
 function parseMeasurements(text){
  const clean=text.replace(/,/g,".");const labels={chest:["chest","bust"],waist:["waist"],hip:["hips?","seat"],shoulder:["shoulders?","shoulder width"],length:["body length","garment length","length"],sleeve:["sleeve","arm length","inseam","inside leg"]},found={};
- Object.entries(labels).forEach(([key,names])=>{for(const name of names){const m=clean.match(new RegExp("(?:^|\\\\n|\\\\s)"+name+"\\\\s*(?:\\\\([^)]*\\\\))?\\\\s*[:\\\\-]?\\\\s*(\\\\d{2,3}(?:\\\\.\\\\d)?)","i"));if(m){let n=parseFloat(m[1]);if(current().unit==="in"&&n>70)n=Math.round(n/2.54*10)/10;found[key]=n;break}}});return found
+ Object.entries(labels).forEach(([key,names])=>{for(const name of names){const m=clean.match(new RegExp("(?:^|\\n|\\s)"+name+"\\s*(?:\\([^)]*\\))?\\s*[:\\-]?\\s*(\\d{2,3}(?:\\.\\d)?)","i"));if(m){let n=parseFloat(m[1]);if(current().unit==="in"&&n>70)n=Math.round(n/2.54*10)/10;found[key]=n;break}}});return found
 }
 async function readSizeImage(file){
  const preview=document.getElementById("uploadPreview"),img=document.getElementById("uploadImage"),status=document.getElementById("ocrStatus");img.src=URL.createObjectURL(file);preview.classList.add("show");status.innerHTML="<strong>Reading screenshot…</strong><br>This can take 10 to 30 seconds the first time.";
