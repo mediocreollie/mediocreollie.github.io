@@ -78,15 +78,34 @@ def fetch_rendered_text(url: str) -> str:
         browser = playwright.chromium.launch(headless=True)
         context = browser.new_context(user_agent=USER_AGENT, locale="en-AU")
         page = context.new_page()
-        page.goto(url, wait_until="domcontentloaded", timeout=60000)
+        diagnostics = ROOT / "artifacts" / "woolworths"
+        diagnostics.mkdir(parents=True, exist_ok=True)
+        response_status = None
+        failure = None
         try:
+            response = page.goto(url, wait_until="domcontentloaded", timeout=60000)
+            response_status = response.status if response else None
+            if response_status in (401, 403, 429):
+                raise RuntimeError(f"Woolworths returned HTTP {response_status}")
             page.locator("h1", has_text=PRODUCT_NAME).wait_for(timeout=20000)
-            page.locator("text=/Price \\$[0-9]+(?:\\.[0-9]{2})?/").first.wait_for(timeout=20000)
-        except Exception:
-            # Preserve the rendered response so product validation can fail safely.
-            pass
-        content = page.content()
-        browser.close()
+        except Exception as exc:
+            failure = str(exc)
+        try:
+            # Public-page diagnostics only: never persist cookies or request headers.
+            body = page.locator("body").inner_text(timeout=5000)
+            metadata = {"http_status": response_status, "title": page.title(),
+                        "product_present": PRODUCT_NAME.lower() in body.lower(),
+                        "failure": failure}
+            (diagnostics / "summary.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+            (diagnostics / "visible-text.txt").write_text(body, encoding="utf-8")
+            page.screenshot(path=str(diagnostics / "page.png"), full_page=True, timeout=10000)
+            print("Woolworths browser diagnostic: " + json.dumps(metadata))
+            print("Woolworths visible text: " + body[:6000])
+            content = page.content()
+        finally:
+            browser.close()
+        if response_status in (401, 403, 429):
+            raise RuntimeError(f"Woolworths returned HTTP {response_status}; see diagnostic artifact")
         return content
 
 
