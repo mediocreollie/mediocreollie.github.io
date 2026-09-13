@@ -79,8 +79,12 @@ def fetch_rendered_text(url: str) -> str:
         context = browser.new_context(user_agent=USER_AGENT, locale="en-AU")
         page = context.new_page()
         page.goto(url, wait_until="domcontentloaded", timeout=60000)
-        page.locator("h1", has_text=PRODUCT_NAME).wait_for(timeout=30000)
-        page.locator("text=/Price \\$[0-9]+(?:\\.[0-9]{2})?/").first.wait_for(timeout=30000)
+        try:
+            page.locator("h1", has_text=PRODUCT_NAME).wait_for(timeout=20000)
+            page.locator("text=/Price \\$[0-9]+(?:\\.[0-9]{2})?/").first.wait_for(timeout=20000)
+        except Exception:
+            # Preserve the rendered response so product validation can fail safely.
+            pass
         content = page.content()
         browser.close()
         return content
@@ -110,7 +114,7 @@ def collect_woolworths(checked_at: str) -> dict[str, Any]:
         return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
                 "checked_at": checked_at, "updated_at": checked_at, "source": WOOLWORTHS_URL,
                 "price_scope": "Woolworths online price; confirm Rundle Mall shelf price", "store_specific": False}
-    except (HTTPError, URLError, TimeoutError, ValueError, RuntimeError) as exc:
+    except Exception as exc:
         return unavailable(name, store_id, str(exc), checked_at)
 
 
