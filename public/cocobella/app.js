@@ -29,7 +29,7 @@ function renderStores() {
             <div class="price">${formatPrice(store.price)}</div>
             <span class="status ${isAvailable ? 'available' : 'unavailable'}">${isAvailable ? 'Available' : 'Unavailable'}</span>
           </div>
-          <div class="meta">${isAvailable ? 'Current listing' : 'No current stock price available'}</div>
+          <div class="meta">${isAvailable ? (store.price_scope || 'Current listing') : 'No current stock price available'}</div>
         </article>
       `;
     })
