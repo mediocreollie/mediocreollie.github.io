@@ -18,6 +18,7 @@ HISTORY_PATH = DATA_DIR / "price-history.json"
 PRODUCT_NAME = "Cocobella Coconut Water Straight Up 1L"
 COLES_URL = "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
 WOOLWORTHS_URL = "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up"
+FOODLAND_URL = "https://products.foodlandsa.com.au/lines/c-bella-ccnut-wtr-str-up-1l"
 USER_AGENT = "Mozilla/5.0 (compatible; CocobellaPriceTracker/1.0; +https://olliewritesthings.com/cocobella/)"
 
 
@@ -49,14 +50,13 @@ def fetch_text(url: str, *, cookies: str = "") -> str:
 def visible_text(page: str) -> str:
     page = re.sub(r"<script\b[^>]*>.*?</script>", " ", page, flags=re.I | re.S)
     page = re.sub(r"<style\b[^>]*>.*?</style>", " ", page, flags=re.I | re.S)
-    text = html.unescape(re.sub(r"<[^>]+>", " ", page)).replace("|", " ")
-    return re.sub(r"\s+", " ", text).strip()
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", page))).strip()
 
 
-def extract_price_near_product(page: str, product_name: str, product_id: str) -> float:
+def extract_price_near_product(page: str, product_name: str, product_id: str | None = None) -> float:
     text = visible_text(page)
-    if product_id not in page or product_name.lower() not in text.lower():
-        raise ValueError("The expected product and product ID were not both present")
+    if product_name.lower() not in text.lower() or (product_id and product_id not in page):
+        raise ValueError("The expected product identity was not present")
     product_at = text.lower().find(product_name.lower())
     match = re.search(r"\$(\d{1,3}(?:\.\d{2})?)", text[product_at : product_at + 700])
     if not match:
@@ -65,6 +65,24 @@ def extract_price_near_product(page: str, product_name: str, product_id: str) ->
     if not 1 <= price <= 20:
         raise ValueError(f"Implausible price {price}")
     return price
+
+
+def fetch_rendered_text(url: str) -> str:
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError as exc:
+        raise RuntimeError("Playwright is required for the Woolworths collector") from exc
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        context = browser.new_context(user_agent=USER_AGENT, locale="en-AU")
+        page = context.new_page()
+        page.goto(url, wait_until="domcontentloaded", timeout=60000)
+        page.locator("h1", has_text=PRODUCT_NAME).wait_for(timeout=30000)
+        page.locator("text=/Price \\$[0-9]+(?:\\.[0-9]{2})?/").first.wait_for(timeout=30000)
+        content = page.content()
+        browser.close()
+        return content
 
 
 def unavailable(name: str, store_id: str, error: str, checked_at: str) -> dict[str, Any]:
@@ -86,10 +104,23 @@ def collect_coles(checked_at: str) -> dict[str, Any]:
 def collect_woolworths(checked_at: str) -> dict[str, Any]:
     name, store_id = "Woolworths Rundle Mall", "5317"
     try:
-        page = fetch_text(WOOLWORTHS_URL, cookies="fulfilment-store-id=5317; storeId=5317")
+        page = fetch_rendered_text(WOOLWORTHS_URL)
         price = extract_price_near_product(page, PRODUCT_NAME, "724514")
         return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": WOOLWORTHS_URL}
+                "checked_at": checked_at, "updated_at": checked_at, "source": WOOLWORTHS_URL,
+                "price_scope": "Woolworths online price; confirm Rundle Mall shelf price", "store_specific": False}
+    except (HTTPError, URLError, TimeoutError, ValueError, RuntimeError) as exc:
+        return unavailable(name, store_id, str(exc), checked_at)
+
+
+def collect_foodland(checked_at: str) -> dict[str, Any]:
+    name, store_id = "Foodland Henley Square", "henley-square"
+    try:
+        page = fetch_text(FOODLAND_URL)
+        price = extract_price_near_product(page, PRODUCT_NAME)
+        return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
+                "checked_at": checked_at, "updated_at": checked_at, "source": FOODLAND_URL,
+                "price_scope": "Foodland SA advertised price; confirm Henley Square shelf price", "store_specific": False}
     except (HTTPError, URLError, TimeoutError, ValueError) as exc:
         return unavailable(name, store_id, str(exc), checked_at)
 
@@ -97,7 +128,7 @@ def collect_woolworths(checked_at: str) -> dict[str, Any]:
 def build_snapshot() -> dict[str, dict[str, Any]]:
     checked_at = now_iso()
     return {"coles": collect_coles(checked_at), "woolworths": collect_woolworths(checked_at),
-            "foodland": unavailable("Foodland Henley Square", "henley-square", "No reliable public product-price source", checked_at)}
+            "foodland": collect_foodland(checked_at)}
 
 
 def read_history() -> dict[str, list[dict[str, Any]]]:
@@ -136,10 +167,7 @@ def main() -> int:
     verified = [key for key, value in snapshot.items() if is_available(value)]
     print("Verified live prices: " + (", ".join(verified) if verified else "none"))
     for key, value in snapshot.items():
-        message = f"{key}: {format_price(value.get('price'))} ({value.get('status')})"
-        if value.get("error"):
-            message += f" - {value['error']}"
-        print(message)
+        print(f"{key}: {format_price(value.get('price'))} ({value.get('status')})")
     return 0 if verified else 1
 
 
