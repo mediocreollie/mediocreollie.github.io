@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-12T22:19:55Z",
+  "generated_at": "2026-09-13T01:28:28Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,8 +8,8 @@
       "price": 5.5,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-12T22:19:53Z",
-      "updated_at": "2026-09-12T22:19:53Z",
+      "checked_at": "2026-09-13T01:28:05Z",
+      "updated_at": "2026-09-13T01:28:05Z",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
@@ -18,21 +18,24 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-12T22:19:53Z",
-      "error": "HTTP Error 403: Forbidden"
+      "checked_at": "2026-09-13T01:28:05Z",
+      "error": "The expected product identity was not present"
     },
     "foodland": {
       "name": "Foodland Henley Square",
       "store_id": "henley-square",
-      "price": null,
-      "status": "unavailable",
-      "verified": false,
-      "checked_at": "2026-09-12T22:19:53Z",
-      "error": "No reliable public product-price source"
+      "price": 4.95,
+      "status": "available",
+      "verified": true,
+      "checked_at": "2026-09-13T01:28:05Z",
+      "updated_at": "2026-09-13T01:28:05Z",
+      "source": "https://products.foodlandsa.com.au/lines/c-bella-ccnut-wtr-str-up-1l",
+      "price_scope": "Foodland SA advertised price; confirm Henley Square shelf price",
+      "store_specific": false
     }
   },
-  "cheapest_store": "coles",
-  "recommended_store": "coles",
+  "cheapest_store": "foodland",
+  "recommended_store": "foodland",
   "history": {
     "coles": [
       {
@@ -44,9 +47,20 @@
         "date": "2026-09-12T22:19:53Z",
         "price": 5.5,
         "verified": true
+      },
+      {
+        "date": "2026-09-13T01:28:05Z",
+        "price": 5.5,
+        "verified": true
       }
     ],
     "woolworths": [],
-    "foodland": []
+    "foodland": [
+      {
+        "date": "2026-09-13T01:28:05Z",
+        "price": 4.95,
+        "verified": true
+      }
+    ]
   }
 }
