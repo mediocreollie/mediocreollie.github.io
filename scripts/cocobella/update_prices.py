@@ -50,7 +50,8 @@ def fetch_text(url: str, *, cookies: str = "") -> str:
 def visible_text(page: str) -> str:
     page = re.sub(r"<script\b[^>]*>.*?</script>", " ", page, flags=re.I | re.S)
     page = re.sub(r"<style\b[^>]*>.*?</style>", " ", page, flags=re.I | re.S)
-    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", page))).strip()
+    text = html.unescape(re.sub(r"<[^>]+>", " ", page)).replace("|", " ")
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def extract_price_near_product(page: str, product_name: str, product_id: str | None = None) -> float:
