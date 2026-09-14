@@ -15,12 +15,22 @@
         "date": "2026-09-13T22:26:09Z",
         "price": 5.5,
         "verified": true
+      },
+      {
+        "date": "2026-09-14T23:09:35Z",
+        "price": 5.5,
+        "verified": true
       }
     ],
     "woolworths": [],
     "foodland": [
       {
         "date": "2026-09-13T22:26:09Z",
+        "price": 4.95,
+        "verified": true
+      },
+      {
+        "date": "2026-09-14T23:09:35Z",
         "price": 4.95,
         "verified": true
       }
