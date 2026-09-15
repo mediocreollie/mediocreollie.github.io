@@ -1,5 +1,6 @@
 ---
 import { getEntry } from 'astro:content';
+import { aboutProjects } from '../data/aboutProjects';
 
 const about = await getEntry('pages', 'about');
 const data = about?.data || {};
@@ -24,13 +25,15 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 	<div class="tabs-content">
 		{(tabs.length > 0 ? tabs : defaultTabs.map((t) => ({ label: t, heading: t }))).map((t, i) => {
 			const id = t.label.toLowerCase().replace(/\s+/g, '-');
+			const fallbackProjects = aboutProjects[t.label] || [];
+			const projects = t.projects && t.projects.length > 0 ? t.projects : fallbackProjects;
 			return (
 				<div class={i === 0 ? 'tab-pane active' : 'tab-pane'} id={id}>
 					{t.heading && <h3>{t.heading}</h3>}
 					{t.intro && <p>{t.intro}</p>}
-					{t.projects && t.projects.length > 0 ? (
+					{projects.length > 0 ? (
 						<div class="projects-grid">
-							{t.projects.map((project) => (
+							{projects.map((project) => (
 								<article class="project-card">
 									{project.eyebrow && <div class="project-eyebrow">{project.eyebrow}</div>}
 									<h4 class="project-title">{project.title}</h4>
@@ -57,7 +60,7 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 							))}
 						</div>
 					) : (
-						 t.body && <div set:html={t.body} />
+						t.body && <div set:html={t.body} />
 					)}
 				</div>
 			);
@@ -234,7 +237,6 @@ const defaultTabs = ['All', 'Marketing', 'Operations', 'Product', 'AI', 'Commerc
 </style>
 
 <script>
-	// Minimal tab interaction: delegate clicks and toggle active classes
 	document.addEventListener('click', (e) => {
 		const btn = (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('.tab-button');
 		if (!btn) return;
