@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-09-14T23:09:59Z",
+  "generated_at": "2026-09-15T22:55:30Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
       "name": "Coles Rundle Place",
       "store_id": "4964",
-      "price": 5.5,
+      "price": 3.85,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-14T23:09:35Z",
-      "updated_at": "2026-09-14T23:09:35Z",
+      "checked_at": "2026-09-15T22:55:06Z",
+      "updated_at": "2026-09-15T22:55:06Z",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
@@ -18,7 +18,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-14T23:09:35Z",
+      "checked_at": "2026-09-15T22:55:06Z",
       "error": "The expected product identity was not present"
     },
     "foodland": {
@@ -27,15 +27,15 @@
       "price": 4.95,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-14T23:09:35Z",
-      "updated_at": "2026-09-14T23:09:35Z",
+      "checked_at": "2026-09-15T22:55:06Z",
+      "updated_at": "2026-09-15T22:55:06Z",
       "source": "https://products.foodlandsa.com.au/lines/c-bella-ccnut-wtr-str-up-1l",
       "price_scope": "Foodland SA advertised price; confirm Henley Square shelf price",
       "store_specific": false
     }
   },
-  "cheapest_store": "foodland",
-  "recommended_store": "foodland",
+  "cheapest_store": "coles",
+  "recommended_store": "coles",
   "history": {
     "coles": [
       {
@@ -57,6 +57,11 @@
         "date": "2026-09-14T23:09:35Z",
         "price": 5.5,
         "verified": true
+      },
+      {
+        "date": "2026-09-15T22:55:06Z",
+        "price": 3.85,
+        "verified": true
       }
     ],
     "woolworths": [],
@@ -68,6 +73,11 @@
       },
       {
         "date": "2026-09-14T23:09:35Z",
+        "price": 4.95,
+        "verified": true
+      },
+      {
+        "date": "2026-09-15T22:55:06Z",
         "price": 4.95,
         "verified": true
       }
