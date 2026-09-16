@@ -8,6 +8,7 @@
   <meta name="description" content="Save your measurements and favourite clothes, then compare them with online size guides.">
   <style>
     :root{--ink:#1e2927;--muted:#64716e;--paper:#f7f5ef;--card:#fff;--line:#dce2df;--green:#173f3a;--mint:#dff0e9;--lime:#d9ef77;--amber:#f4d79b;--red:#f1b6ad;--shadow:0 14px 40px rgba(28,49,45,.09);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    [hidden]{display:none!important}
     *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink)} button,input,select,textarea{font:inherit} button{cursor:pointer}
     .app{min-height:100vh}.topbar{background:var(--green);color:#fff;padding:18px clamp(18px,4vw,54px);display:flex;align-items:center;justify-content:space-between;gap:16px}
     .brand{display:flex;align-items:center;gap:12px}.mark{width:38px;height:38px;border:2px solid var(--lime);border-radius:50%;display:grid;place-items:center;font-weight:900;color:var(--lime)}.brand h1{font-size:19px;margin:0}.brand p{margin:2px 0 0;color:#bed1cc;font-size:12px}
@@ -35,7 +36,17 @@
     <div class="brand"><div class="mark">FR</div><div><h1>Fit Reference</h1><p>Your personal guide to clothes that fit</p></div></div>
     <div class="profile-switch"><select id="profileSelect" aria-label="Current profile"></select><button class="icon-btn" id="addProfileTop" title="Add profile">＋</button></div>
   </header>
-  <div class="shell">
+  <section class="card" style="margin:16px" aria-label="Account">
+<form id="authForm" class="fields">
+<div class="field"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required></div>
+<div class="field"><label for="authPassword">Password (at least 8 characters)</label><input id="authPassword" type="password" minlength="8" autocomplete="current-password" required></div>
+<div class="actions"><button class="button" type="submit">Sign in</button><button class="button secondary" type="submit" name="signup" value="signup">Create account</button></div>
+</form>
+<div id="accountControls" hidden><p id="accountEmail"></p><div class="actions"><button id="cloudRetry" class="button secondary">Retry saving</button><button id="cloudReload" class="button secondary">Load latest cloud copy</button><button id="importGuest" class="button secondary">Import profiles from this browser</button><button id="signOut" class="button secondary">Sign out</button></div></div>
+<p id="cloudStatus" role="status" aria-live="polite">Connecting accounts…</p>
+<p class="help">Guest profiles are visible to anyone using this browser. Signed-in profiles are saved to your account. Reload before editing on another device.</p>
+</section>
+<div class="shell">
     <aside class="sidebar">
       <nav>
         <button data-view="dashboard" class="active">⌂ Overview</button>
@@ -43,7 +54,7 @@
         <button data-view="wardrobe">♡ Fit favourites</button>
         <button data-view="compare">↔ Compare a size</button>
       </nav>
-      <div class="side-note"><strong>First version</strong><br>Your information stays on this device. Accounts and shared profiles can be added in the next phase.</div>
+      <div class="side-note"><strong>First version</strong><br>Use an account to save across devices, or keep guest profiles in this browser.</div>
     </aside>
     <main>
       <section class="view active" id="dashboard">
@@ -57,7 +68,7 @@
 
       <section class="view" id="measurements">
         <div class="page-head"><div><span class="eyebrow">Your baseline</span><h2>Body measurements</h2><p>Measure close to the body over light clothing. Keep the tape level and comfortably snug.</p></div><button class="button" id="editMeasurements">Edit measurements</button></div>
-        <div class="card"><div class="measure-list" id="measureList"></div><div class="privacy">🔒 <span>These measurements are stored only in this browser. They are not uploaded anywhere.</span></div></div>
+        <div class="card"><div class="measure-list" id="measureList"></div><div class="privacy">🔒 <span>Guest measurements stay in this browser. When signed in, measurements are saved to your account.</span></div></div>
         <div class="card" style="margin-top:18px"><h3>How to measure</h3><p class="sub">A simple, consistent measurement is more useful than trying to make it look smaller.</p><div class="grid three">
           <div><strong>Chest or bust</strong><p class="sub">Around the fullest part, with the tape level across your back.</p></div>
           <div><strong>Waist</strong><p class="sub">Around your natural waist, usually above the belly button.</p></div>
@@ -140,7 +151,7 @@ const measureDefs=[
 const defaultData={active:"p1",profiles:[{id:"p1",name:"My profile",unit:"cm",measurements:{},garments:[],comparisons:[]}]};
 let data=load();
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&Array.isArray(v.profiles)&&v.profiles.length?v:structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function save(){ if(window.fitCloud) window.fitCloud.save(); else {try{localStorage.setItem(KEY,JSON.stringify(data))}catch{toast("Browser storage unavailable. Changes are not saved.")}} }
 function current(){return data.profiles.find(p=>p.id===data.active)||data.profiles[0]}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function val(id){return document.getElementById(id).value}
@@ -255,5 +266,6 @@ uploadZone.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f&&f.t
 
 render();
 </script>
+<script src="./account.js"></script>
 </body>
 </html>
