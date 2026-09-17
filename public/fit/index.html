@@ -87,28 +87,36 @@
             <div class="fields">
               <div class="field"><label for="brand">Brand</label><input id="brand" required placeholder="e.g. Uniqlo"></div>
               <div class="field"><label for="itemName">Item</label><input id="itemName" required placeholder="e.g. Oxford shirt"></div>
-              <div class="field"><label for="category">Category</label><select id="category"><option>Top</option><option>Shirt</option><option>Jacket</option><option>Trousers</option><option>Dress</option><option>Skirt</option><option>Other</option></select></div>
+              <div class="field"><label for="category">Category</label><select id="category"><option value="tee">T-shirt</option><option value="trousers">Trousers / jeans</option></select></div>
               <div class="field"><label for="sizeName">Size</label><input id="sizeName" required placeholder="e.g. M or 12"></div>
               <div class="field full"><label for="productUrl">Product or size-guide link</label><input id="productUrl" type="url" placeholder="https://..."></div>
               <div class="field full"><label for="reference">Compare against</label><select id="reference"></select></div>
             </div>
-            <h3>Listed measurements <span class="unitLabel">(cm)</span></h3>
+            <h3>Chart meaning</h3>
             <div class="fields">
-              <div class="field"><label for="cChest">Chest / bust</label><input id="cChest" type="number" min="0" step=".1" inputmode="decimal"></div>
-              <div class="field"><label for="cWaist">Waist</label><input id="cWaist" type="number" min="0" step=".1" inputmode="decimal"></div>
-              <div class="field"><label for="cHip">Hip</label><input id="cHip" type="number" min="0" step=".1" inputmode="decimal"></div>
-              <div class="field"><label for="cShoulder">Shoulder</label><input id="cShoulder" type="number" min="0" step=".1" inputmode="decimal"></div>
-              <div class="field"><label for="cLength">Length</label><input id="cLength" type="number" min="0" step=".1" inputmode="decimal"></div>
-              <div class="field"><label for="cSleeve">Sleeve / inseam</label><input id="cSleeve" type="number" min="0" step=".1" inputmode="decimal"></div>
+              <div class="field"><label for="chartType">What does the chart measure?</label><select id="chartType" required><option value="">Choose chart type</option><option value="garment">The garment itself</option><option value="body">The body a size is intended for</option></select></div>
+              <div class="field"><label for="chartUnit">Chart units</label><select id="chartUnit" required><option value="">Choose units</option><option value="cm">Centimetres</option><option value="in">Inches</option></select></div>
+              <div class="field full"><label for="girthMethod">Chest, waist and hip measurements</label><select id="girthMethod" required><option value="">Confirm method</option><option value="around">Around the body or garment</option><option value="flat">Flat garment widths (we double these)</option></select></div>
+            </div>
+            <h3>Listed measurements</h3><p class="sub">Use the chart units selected above. Body charts can use ranges such as 96-102. Leave missing values blank. Compare the same measurement method on both items.</p>
+            <div class="fields">
+              <div class="field"><label for="cChest">Chest / bust</label><input id="cChest" type="text" inputmode="decimal"></div>
+              <div class="field"><label for="cWaist">Waist</label><input id="cWaist" type="text" inputmode="decimal"></div>
+              <div class="field"><label for="cHip">Hip</label><input id="cHip" type="text" inputmode="decimal"></div>
+              <div class="field"><label for="cShoulder">Shoulder</label><input id="cShoulder" type="text" inputmode="decimal"></div>
+              <div class="field"><label for="cLength">Length</label><input id="cLength" type="text" inputmode="decimal"></div>
+              <div class="field"><label for="cSleeve">Sleeve length</label><input id="cSleeve" type="text" inputmode="decimal"></div>
+              <div class="field"><label for="cInseam">Inseam / inside leg</label><input id="cInseam" type="text" inputmode="decimal"></div>
               <div class="field full"><label for="fitPreference">Preferred fit</label><select id="fitPreference"><option value="regular">Regular</option><option value="slim">Close / slim</option><option value="relaxed">Relaxed / oversized</option></select></div>
             </div>
 
+            <label class="measurement-confirm"><input id="confirmChart" type="checkbox" required> I checked the units, chart type and matching measurement methods against the source.</label><p id="compareError" role="alert"></p>
             <button class="button" type="submit">Check this size</button>
           </form>
           <div>
             <div class="card reference-help"><h3>Your reference</h3><p>Use a favourite garment or your body measurements. You can add either now and return to this check.</p><div class="actions"><button type="button" class="button secondary" data-go="measurements">Update my fit</button><button type="button" class="button secondary" data-go="wardrobe">My clothes</button></div></div>
             <div class="card" id="result"><div class="empty"><strong>No comparison yet</strong>Enter a size guide and choose “Check this size”.</div></div>
-            <div class="card" style="margin-top:18px" id="visualCard"><div class="fit-visual"><div class="figure"><svg viewBox="0 0 160 300" role="img" aria-label="Illustrative body and garment fit preview"><circle class="body-shape" cx="80" cy="27" r="21"/><path class="body-shape" d="M56 53 Q80 45 104 53 L119 142 108 197 101 284 82 284 80 205 78 284 59 284 52 197 41 142Z"/><path class="garment-shape" id="shirtShape" d="M53 55 L30 78 43 103 54 91 57 158 Q80 166 103 158 L106 91 117 103 130 78 107 55 96 49 Q80 62 64 49Z"/><circle id="zoneChest" cx="80" cy="95" r="6" fill="#9eb0aa"/><circle id="zoneWaist" cx="80" cy="143" r="6" fill="#9eb0aa"/><circle id="zoneLength" cx="80" cy="158" r="6" fill="#9eb0aa"/></svg></div><div class="visual-copy"><span class="eyebrow">Illustrative preview</span><h3 id="visualTitle">Your fit will appear here</h3><p id="visualText">After comparing an item, this diagram will highlight where measurements appear close or different.</p><ul class="visual-notes" id="visualNotes"><li>Start by entering or uploading a size guide.</li></ul><div class="legend"><span><i style="background:#4c927d"></i>Close</span><span><i style="background:#d69a38"></i>Check</span><span><i style="background:#b84e43"></i>Mismatch</span></div></div></div></div>
+            <div class="card" style="margin-top:18px" id="visualCard"><div class="fit-visual"><div class="figure"><svg viewBox="0 0 160 300" role="img" aria-label="Illustrative body and garment fit preview"><circle class="body-shape" cx="80" cy="27" r="21"/><path class="body-shape" d="M56 53 Q80 45 104 53 L119 142 108 197 101 284 82 284 80 205 78 284 59 284 52 197 41 142Z"/><path class="garment-shape" id="shirtShape" d="M53 55 L30 78 43 103 54 91 57 158 Q80 166 103 158 L106 91 117 103 130 78 107 55 96 49 Q80 62 64 49Z"/><circle id="zoneChest" cx="80" cy="95" r="6" fill="#9eb0aa"/><circle id="zoneWaist" cx="80" cy="143" r="6" fill="#9eb0aa"/><circle id="zoneLength" cx="80" cy="158" r="6" fill="#9eb0aa"/></svg></div><div class="visual-copy"><span class="eyebrow">Measurement guide</span><h3 id="visualTitle">Your fit will appear here</h3><p id="visualText">Schematic only. Fabric drape and fit are unknown.</p><ul class="visual-notes" id="visualNotes"><li>Start by entering or uploading a size guide.</li></ul></div></div></div>
             <div class="card" style="margin-top:18px"><h3>A useful distinction</h3><p class="sub"><strong>Body measurements</strong> in a size guide describe the person a size is intended for. <strong>Garment measurements</strong> describe the clothing itself and include wearing ease. When possible, compare like with like.</p></div>
           </div>
         </div>
@@ -136,10 +144,11 @@
     <div class="field"><label for="gHip">Hip</label><input id="gHip" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gShoulder">Shoulder</label><input id="gShoulder" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gLength">Length</label><input id="gLength" type="number" min="0" step=".1"></div>
-    <div class="field"><label for="gSleeve">Sleeve / inseam</label><input id="gSleeve" type="number" min="0" step=".1"></div>
-  </div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveGarment">Save favourite</button></div></form></dialog>
+    <div class="field"><label for="gSleeve">Sleeve length (tops only)</label><input id="gSleeve" type="number" min="0" step=".1"></div>
+  <div class="field"><label for="gInseam">Inseam (trousers only)</label><input id="gInseam" type="number" min="0" step=".1"></div></div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveGarment">Save favourite</button></div></form></dialog>
 <div class="toast" id="toast"></div>
 
+<script src="./measurements.js"></script>
 <script>
 const KEY="fit-reference-v1";
 const measureDefs=[
@@ -149,6 +158,7 @@ const measureDefs=[
 ];
 const defaultData={active:"p1",profiles:[{id:"p1",name:"My profile",unit:"cm",measurements:{},garments:[],comparisons:[]}]};
 let data=load();
+let inputEpoch=0;
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&Array.isArray(v.profiles)&&v.profiles.length?v:structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
 function save(){ if(window.fitCloud) window.fitCloud.save(); else {try{localStorage.setItem(KEY,JSON.stringify(data))}catch{toast("Browser storage unavailable. Changes are not saved.")}} }
 function current(){return data.profiles.find(p=>p.id===data.active)||data.profiles[0]}
@@ -160,6 +170,8 @@ function format(n,kind="length"){if(n==null||n==="")return "Not added";const p=c
 function converted(n,from,to){if(n==null)return null;if(from===to)return n;return from==="cm"?Math.round(n/2.54*10)/10:Math.round(n*2.54*10)/10}
 
 function render(){
+  inputEpoch++;
+  document.getElementById("confirmChart").checked=false;clearComparison();
   const p=current();
   document.getElementById("profileSelect").innerHTML=data.profiles.map(x=>`<option value="${x.id}" ${x.id===p.id?"selected":""}>${esc(x.name)}</option>`).join("");
   document.querySelectorAll(".unitLabel").forEach(x=>x.textContent="("+p.unit+")");
@@ -217,41 +229,65 @@ document.getElementById("saveMeasures").onclick=()=>{
 document.getElementById("addGarment").onclick=()=>{document.getElementById("garmentForm").reset();document.getElementById("garmentDialog").showModal()};
 document.getElementById("saveGarment").onclick=e=>{
   if(!val("gName").trim()){e.preventDefault();return}
-  current().garments.push({id:"g"+Date.now(),name:val("gName").trim(),brand:val("gBrand").trim(),category:val("gCategory"),size:val("gSize").trim(),fit:val("gFit"),measurements:{chest:num("gChest"),waist:num("gWaist"),hip:num("gHip"),shoulder:num("gShoulder"),length:num("gLength"),sleeve:num("gSleeve")}});save();render();toast("Favourite saved");
+  current().garments.push({id:"g"+Date.now(),name:val("gName").trim(),brand:val("gBrand").trim(),category:val("gCategory"),size:val("gSize").trim(),fit:val("gFit"),unit:current().unit,measurementVersion:2,measurements:{chest:num("gChest"),waist:num("gWaist"),hip:num("gHip"),shoulder:num("gShoulder"),length:num("gLength"),sleeve:num("gSleeve"),inseam:num("gInseam")}});save();render();toast("Favourite saved");
 };
+const dimensionNames={chest:"Chest",waist:"Waist",hip:"Hip",shoulder:"Shoulder width",length:"Body length",sleeve:"Sleeve length",inseam:"Inseam"};
+function measurementText(n,unit){return (Math.round((unit==="in"?n/2.54:n)*10)/10)+" "+unit;}
+function clearComparison(){
+ document.getElementById("result").textContent="Check this size to see the measurement differences.";
+ document.getElementById("visualTitle").textContent="Measurement guide";
+ document.getElementById("visualText").textContent="Schematic only. Fabric drape and fit are unknown.";
+ document.getElementById("visualNotes").textContent="";
+ document.getElementById("compareError").textContent="";
+}
+function syncDimensions(){
+ const keys=FitMeasurements.dimensions[val("category")];
+ document.querySelector(".figure").hidden=val("category")==="trousers";
+ Object.keys(dimensionNames).forEach(k=>document.getElementById("c"+k[0].toUpperCase()+k.slice(1)).closest(".field").hidden=!keys.includes(k));
+ document.getElementById("confirmChart").checked=false;clearComparison();
+}
+document.getElementById("category").addEventListener("change",syncDimensions);
+document.getElementById("compareForm").addEventListener("input",e=>{
+ if(e.target.id!=="confirmChart")document.getElementById("confirmChart").checked=false;
+ clearComparison();
+});
 document.getElementById("compareForm").onsubmit=e=>{
-  e.preventDefault();const p=current(),ref=val("reference"),target={chest:num("cChest"),waist:num("cWaist"),hip:num("cHip"),shoulder:num("cShoulder"),length:num("cLength"),sleeve:num("cSleeve")};
-  let base,baseName,isBody=ref==="body";
-  if(isBody){base=p.measurements;baseName="your body"}else{const g=p.garments.find(x=>x.id===ref);base=g?.measurements||{};baseName=g?.name||"your favourite"}
-  const keys=["chest","waist","hip","shoulder","length","sleeve"],rows=[];let total=0,used=0;
-  keys.forEach(k=>{if(target[k]!=null&&base[k]!=null){let b=base[k];const delta=target[k]-b;let ideal=isBody?(val("fitPreference")==="slim"?3:val("fitPreference")==="relaxed"?12:7):0;let tolerance=isBody?12:8;let quality=Math.max(0,100-Math.abs(delta-ideal)/tolerance*100);total+=quality;used++;rows.push({key:k,label:k[0].toUpperCase()+k.slice(1),delta,quality})}});
-  if(!used){document.getElementById("result").innerHTML=`<div class="empty"><strong>Not enough matching information</strong>Add at least one measurement that also exists in ${esc(baseName)}.</div>`;return}
-  const score=Math.round(total/used);const verdict=score>=82?"Strong match":score>=64?"Worth considering":score>=45?"Check the returns policy":"Likely a poor match";
-  const fit=val("fitPreference");
-  const copy=score>=82?`This size is close to ${esc(baseName)} across the measurements available.`:score>=64?`This could work, but review the differences below and consider the fabric and cut.`:`Several measurements differ from your reference. Another size or cut may suit you better.`;
-  document.getElementById("result").innerHTML=`<div class="score-card"><div class="score-ring" style="--score:${score}%"><div><strong>${score}</strong><span>fit match</span></div></div><div><span class="eyebrow">${esc(val("brand"))} · size ${esc(val("sizeName"))}</span><h3 class="verdict">${verdict}</h3><p class="sub">${copy}</p></div></div><div style="margin-top:22px">${rows.map(r=>`<div class="comparison-row"><strong>${r.label}</strong><div class="bar"><i style="width:${Math.round(r.quality)}%"></i></div><span class="delta ${r.quality>75?"good":r.quality>45?"close":"off"}">${r.delta>0?"+":""}${Math.round(r.delta*10)/10} ${p.unit}</span></div>`).join("")}</div><div class="privacy">ⓘ <span>This is a practical comparison, not a guarantee. Fabric stretch, cut, ease and how a brand measures garments all affect the final fit.</span></div>`;
-  updateVisual(rows,score,verdict);
-  p.comparisons.push({id:"c"+Date.now(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category:val("category"),size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:fit,measurements:target,score,verdict});save();renderHistory();toast("Comparison saved");
+ e.preventDefault();clearComparison();
+ try{
+  const p=current(),ref=val("reference"),isBody=ref==="body",g=p.garments.find(x=>x.id===ref);
+  if(!isBody&&!g)throw Error("Choose an available reference garment.");
+  if(!val("girthMethod"))throw Error("Confirm whether the chart uses widths or measurements around.");
+  if(val("chartType")==="body"&&val("girthMethod")==="flat")throw Error("Body size charts use measurements around the body, not flat garment widths.");
+  const category=val("category"),values=Object.fromEntries(FitMeasurements.dimensions[category].map(k=>[k,val("c"+k[0].toUpperCase()+k.slice(1))]));
+  if(g&&((category==="trousers"&&g.category!=="Trousers")||(category==="tee"&&!["Top","Shirt","T-shirt"].includes(g.category))))throw Error("Choose a reference from the same garment category.");
+  const reference={kind:isBody?"body":"garment",name:isBody?p.name:g.name,unit:g?.unit||p.unit,values:structuredClone(isBody?p.measurements:g.measurements)};
+  if(g&&!g.measurementVersion&&category==="trousers")delete reference.values.sleeve;
+  const comparison=FitMeasurements.compare({category,chartType:val("chartType"),unit:val("chartUnit"),flat:val("girthMethod")==="flat",values,reference,confirmed:document.getElementById("confirmChart").checked});
+  const unit=p.unit,range=v=>v?measurementText(v.low,unit)+(v.high!==v.low?" to "+measurementText(v.high,unit):""):"Not supplied";
+  const description=r=>r.status==="unknown"?"Not assessed":r.status==="within"?"Within the listed body range":r.status==="below"||r.status==="above"?measurementText(Math.abs(r.difference),unit)+" "+r.status+" the listed body range":r.status==="ease"?measurementText(Math.abs(r.difference),unit)+(r.difference>=0?" more room around than your body":" smaller around than your body"):r.difference===0?"Same measurement":measurementText(Math.abs(r.difference),unit)+(r.difference>0?" larger":" smaller")+" than your reference";
+  document.getElementById("result").innerHTML=`<h3>Measurement differences</h3><p>Compared with ${esc(reference.name)}. Displayed in ${esc(unit)}.</p><div class="measurement-results">${comparison.rows.map(r=>`<div class="measurement-result"><strong>${dimensionNames[r.key]}</strong><p>${esc(description(r))}</p><small>Chart: ${esc(range(r.target))} · Reference: ${esc(range(r.reference))}</small></div>`).join("")}</div><p class="sub">${isBody&&val("chartType")==="garment"?"The difference around your body is wearing ease, not a comfort recommendation. ":""}Cut, stretch and measurement method can change how clothing feels. Missing measurements are not estimated.</p>`;
+  document.getElementById("visualTitle").textContent="Measured differences only";
+  document.getElementById("visualNotes").innerHTML=comparison.rows.map(r=>`<li><strong>${dimensionNames[r.key]}:</strong> ${esc(description(r))}</li>`).join("");
+  p.comparisons.push({id:crypto.randomUUID(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category,size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:val("fitPreference"),measurementVersion:2,measurements:values,sourceUnit:val("chartUnit"),chartType:val("chartType"),girthMethod:val("girthMethod"),referenceSnapshot:reference,result:comparison,verdict:"Measurement differences"});
+  save();renderHistory();toast("Comparison recorded. Check the save status above.");
+ }catch(err){document.getElementById("compareError").textContent=err.message;}
 };
 
 function loadOcrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>resolve(window.Tesseract);s.onerror=()=>reject(new Error("The image reader could not load."));document.head.appendChild(s)})}
 function parseMeasurements(text){
- const clean=text.replace(/,/g,".");const labels={chest:["chest","bust"],waist:["waist"],hip:["hips?","seat"],shoulder:["shoulders?","shoulder width"],length:["body length","garment length","length"],sleeve:["sleeve","arm length","inseam","inside leg"]},found={};
- Object.entries(labels).forEach(([key,names])=>{for(const name of names){const m=clean.match(new RegExp("(?:^|\\n|\\s)"+name+"\\s*(?:\\([^)]*\\))?\\s*[:\\-]?\\s*(\\d{2,3}(?:\\.\\d)?)","i"));if(m){let n=parseFloat(m[1]);if(current().unit==="in"&&n>70)n=Math.round(n/2.54*10)/10;found[key]=n;break}}});return found
+ const clean=text.replace(/,/g,".");const labels={chest:["chest","bust"],waist:["waist"],hip:["hips?","seat"],shoulder:["shoulders?","shoulder width"],length:["body length","garment length","length"],sleeve:["sleeve","arm length"],inseam:["inseam","inside leg"]},found={};
+ Object.entries(labels).forEach(([key,names])=>{for(const name of names){const m=clean.match(new RegExp("(?:^|\\n|\\s)"+name+"\\s*(?:\\([^)]*\\))?\\s*[:\\-]?\\s*(\\d{2,3}(?:\\.\\d)?)","i"));if(m){let n=parseFloat(m[1]);found[key]=n;break}}});return found
 }
 async function readSizeImage(file){
+ const token=++inputEpoch;
+ document.getElementById("confirmChart").checked=false;clearComparison();
  const preview=document.getElementById("uploadPreview"),img=document.getElementById("uploadImage"),status=document.getElementById("ocrStatus");img.src=URL.createObjectURL(file);preview.classList.add("show");status.innerHTML="<strong>Reading screenshot…</strong><br>This can take 10 to 30 seconds the first time.";
- try{const T=await loadOcrLibrary(),result=await T.recognize(file,"eng",{logger:m=>{if(m.status==="recognizing text")status.innerHTML="<strong>Reading screenshot… "+Math.round((m.progress||0)*100)+"%</strong><br>Keep this page open."}}),found=parseMeasurements(result.data.text||""),entries=Object.entries(found);
+ try{const T=await loadOcrLibrary(),result=await T.recognize(file,"eng",{logger:m=>{if(token===inputEpoch&&m.status==="recognizing text")status.innerHTML="<strong>Reading screenshot… "+Math.round((m.progress||0)*100)+"%</strong><br>Keep this page open."}}),found=parseMeasurements(result.data.text||""),entries=Object.entries(found);
+ if(token!==inputEpoch)return;
+ document.getElementById("confirmChart").checked=false;clearComparison();
  entries.forEach(([k,n])=>{const el=document.getElementById("c"+k[0].toUpperCase()+k.slice(1));if(el)el.value=n});
- status.innerHTML=entries.length?"<strong>Found "+entries.length+" measurement"+(entries.length===1?"":"s")+".</strong><br>Please check every filled number against the image.<div class=detected>"+entries.map(([k,n])=>esc(k)+": "+n+" "+current().unit).join(" · ")+"</div>":"<strong>No labelled measurements were recognised.</strong><br>Try a tighter crop, or enter the numbers manually."
- }catch(err){status.innerHTML="<strong>Automatic reading did not work.</strong><br>"+esc(err.message||"Please enter the measurements manually.")}
-}
-function updateVisual(rows,score,verdict){
- document.getElementById("visualTitle").textContent=verdict;document.getElementById("visualText").textContent="A proportional guide based on the measurements supplied, not a photograph or virtual try-on.";
- const lookup=Object.fromEntries(rows.map(r=>[r.key,r])),colour=q=>q>75?"#4c927d":q>45?"#d69a38":"#b84e43";
- [["zoneChest","chest"],["zoneWaist","waist"],["zoneLength","length"]].forEach(([id,key])=>document.getElementById(id).setAttribute("fill",lookup[key]?colour(lookup[key].quality):"#9eb0aa"));
- const scale=score>80?1:score>60?1.035:1.07,s=document.getElementById("shirtShape");s.style.transform="scaleX("+scale+")";s.style.transformOrigin="80px 110px";
- document.getElementById("visualNotes").innerHTML=rows.slice(0,4).map(r=>"<li><strong>"+r.label+":</strong> "+(r.quality>75?"close to the target fit":r.quality>45?"worth checking":"likely to feel noticeably different")+"</li>").join("")
+ status.innerHTML=entries.length?"<strong>Found "+entries.length+" measurement"+(entries.length===1?"":"s")+".</strong><br>Please check every filled number against the image.<div class=detected>"+entries.map(([k,n])=>esc(k)+": "+n+" "+"(chart units)").join(" · ")+"</div>":"<strong>No labelled measurements were recognised.</strong><br>Try a tighter crop, or enter the numbers manually."
+ }catch(err){if(token!==inputEpoch)return;status.innerHTML="<strong>Automatic reading did not work.</strong><br>"+esc(err.message||"Please enter the measurements manually.")}
 }
 const sizeImage=document.getElementById("sizeImage"),uploadZone=document.getElementById("uploadZone");
 document.getElementById("chooseImage").onclick=()=>sizeImage.click();
@@ -261,6 +297,7 @@ sizeImage.addEventListener("change",()=>{if(sizeImage.files[0])readSizeImage(siz
 ["dragleave","drop"].forEach(n=>uploadZone.addEventListener(n,e=>{e.preventDefault();uploadZone.classList.remove("drag")}));
 uploadZone.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))readSizeImage(f)});
 
+syncDimensions();
 render();
 </script>
 <script src="./account.js"></script>

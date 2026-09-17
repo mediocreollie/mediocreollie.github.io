@@ -4,7 +4,7 @@ Based on the Project Plan, Design Brief and Functional Brief dated 16 September 
 
 ## Task 1: Navigation and visual foundation
 
-Status: implemented on the task branch, awaiting review and release.
+Status: merged through PR #9 on 17 September 2026. GitHub Pages deployment tracked in run 35175343159.
 
 - Make Check item the opening view, with My fit and Saved as the other primary destinations.
 - Bring existing screenshot input above manual entry.
@@ -16,6 +16,8 @@ Status: implemented on the task branch, awaiting review and release.
 Acceptance: primary navigation works, draft fields survive view changes, guest records still load, account controls keep their IDs and behaviour, layout fits mobile and desktop, file chooser is keyboard accessible.
 
 ## Task 2: Measurement contract and honest results
+
+Status: implemented in a separate task branch. Nine focused Node checks pass; browser review pending.
 
 Depends on task 1. Separate body charts from garment dimensions; define units, flat width/circumference, sleeve and inseam. Replace the legacy percentage score and score-driven illustration with signed measurement differences and explicit unknowns. Version the data with a backwards-compatible migration before changing stored records. Verify manual fixtures before OCR uses the new contract.
 
