@@ -78,3 +78,25 @@ JavaScript syntax, DOM IDs/references and git whitespace checks pass. These are 
 English first; unfamiliar text can be mapped manually. No automatic translation, page scraping or product-code lookup. Crop using the device photo editor and re-upload; in-app cropping is deferred. Original images are not stored in Supabase. Task 4 is editable owned garments, explicit comparison saving and reopening historical snapshots.
 
 Worker API reference: https://github.com/naptha/tesseract.js/blob/master/docs/api.md (reviewed 17 September 2026).
+
+## 17 September 2026: Task 4a
+
+### Changed
+
+- My clothes now offers Edit and Use as reference for supported T-shirt/top and trouser categories.
+- Editing updates the existing garment ID instead of adding another item. Brand, size, category, measurements and fit feedback are editable; original units and unrelated metadata remain intact.
+- Added Too tight, Too loose and Not sure yet alongside existing fit descriptions, plus free-text fit notes. Notes are escaped when displayed.
+- Reference selection opens Check item with the matching category and item selected. Items recorded as too tight or too loose trigger a warning rather than silently acting as an ideal fit.
+- Existing comparison records and their reference snapshots remain untouched by garment edits.
+- Legacy trouser sleeve/inseam values are retained separately and labelled as ambiguous, never copied automatically into an inseam field.
+- Garment Cancel/Close bypass required-field validation. Saves validate all measurements before mutating data and reject edits if the active profile changed or the item was removed.
+
+### Verification
+
+`node --test tests/fit-*.test.mjs`: 27 checks pass, including seven new garment fixtures for edit identity/units/metadata, snapshot preservation, atomic validation, deleted-item handling, new-item units, legacy trouser ambiguity and supported reference categories. Inline script syntax, static element references, unique IDs and whitespace checks pass.
+
+Browser interaction and live-account saving remain unverified. Task 4a is a separate draft change stacked on Task 3 PR #11, which remains unmerged. Neither task is deployed by this change.
+
+### Next
+
+Task 4b: explicit Save comparison and reopening original snapshots. Task 4c: mark a checked item as bought, record observed fit and add it to My clothes. No database migration is required for Task 4a; fields are additive and account payload validation is unchanged.

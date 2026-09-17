@@ -141,15 +141,15 @@
 
 <dialog id="measureDialog"><form method="dialog" class="modal" id="measureForm"><div class="modal-head"><div><span class="eyebrow">Body profile</span><h3>Edit measurements</h3></div><button class="close" value="cancel" aria-label="Close">×</button></div><div class="fields" id="measureFields"></div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveMeasures">Save measurements</button></div></form></dialog>
 
-<dialog id="garmentDialog"><form method="dialog" class="modal" id="garmentForm"><div class="modal-head"><div><span class="eyebrow">Known good fit</span><h3>Add favourite</h3></div><button class="close" value="cancel" aria-label="Close">×</button></div>
+<dialog id="garmentDialog"><form method="dialog" class="modal" id="garmentForm"><div class="modal-head"><div><span class="eyebrow">Known good fit</span><h3 id="garmentHeading">Add clothing</h3></div><button class="close" value="cancel" aria-label="Close">×</button></div>
   <div class="fields">
     <div class="field"><label for="gName">Item name</label><input id="gName" required placeholder="Blue Oxford shirt"></div>
     <div class="field"><label for="gBrand">Brand</label><input id="gBrand" placeholder="Optional"></div>
     <div class="field"><label for="gCategory">Category</label><select id="gCategory"><option>Top</option><option>Shirt</option><option>Jacket</option><option>Trousers</option><option>Dress</option><option>Skirt</option><option>Other</option></select></div>
     <div class="field"><label for="gSize">Label size</label><input id="gSize" placeholder="M, 12, 32..."></div>
-    <div class="field full"><label for="gFit">How does it fit?</label><select id="gFit"><option>Just right</option><option>Relaxed</option><option>Close fitting</option></select></div>
+    <div class="field full"><label for="gFit">How does it fit?</label><select id="gFit"><option>Just right</option><option>Too tight</option><option>Too loose</option><option>Not sure yet</option><option>Relaxed</option><option>Close fitting</option></select></div>
   </div>
-  <h3>Garment measurements <span class="unitLabel">(cm)</span></h3><p class="sub">Lay the item flat. For chest, waist and hip, measure across then double it.</p>
+  <div class="field"><label for="gNotes">Fit notes</label><textarea id="gNotes" maxlength="1000" placeholder="e.g. Good shoulders, slightly short"></textarea></div><p id="garmentLegacyNote" class="help"></p><h3>Garment measurements <span id="garmentUnit">(cm)</span></h3><p class="sub">Lay the item flat. For chest, waist and hip, measure across then double it.</p>
   <div class="fields">
     <div class="field"><label for="gChest">Chest / bust</label><input id="gChest" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gWaist">Waist</label><input id="gWaist" type="number" min="0" step=".1"></div>
@@ -157,10 +157,11 @@
     <div class="field"><label for="gShoulder">Shoulder</label><input id="gShoulder" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gLength">Length</label><input id="gLength" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gSleeve">Sleeve length (tops only)</label><input id="gSleeve" type="number" min="0" step=".1"></div>
-  <div class="field"><label for="gInseam">Inseam (trousers only)</label><input id="gInseam" type="number" min="0" step=".1"></div></div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveGarment">Save favourite</button></div></form></dialog>
+  <p id="garmentError" role="alert"></p><div class="field"><label for="gInseam">Inseam (trousers only)</label><input id="gInseam" type="number" min="0" step=".1"></div></div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveGarment">Save clothing</button></div></form></dialog>
 <div class="toast" id="toast"></div>
 
 <script src="./measurements.js"></script>
+<script src="./garments.js"></script>
 <script>
 const KEY="fit-reference-v1";
 const measureDefs=[
@@ -201,7 +202,7 @@ function renderMeasurements(){
 function renderGarments(){
   const p=current(),el=document.getElementById("garmentList");
   if(!p.garments.length){el.innerHTML=`<div class="empty"><strong>No favourites yet</strong>Start with one item that fits exactly how you like.</div>`;return}
-  el.innerHTML=p.garments.map(g=>`<div class="item"><div><h4>${esc(g.name)}</h4><p>${esc(g.brand||"Unbranded")} · ${esc(g.category)} · Size ${esc(g.size||"not recorded")}</p><div style="margin-top:8px"><span class="tag">${esc(g.fit)}</span><span class="tag">${Object.values(g.measurements).filter(Boolean).length} measurements</span></div></div><button class="button danger small" data-delete-garment="${g.id}">Remove</button></div>`).join("");
+  el.innerHTML=p.garments.map(g=>`<div class="item"><div><h4>${esc(g.name)}</h4><p>${esc(g.brand||"Unbranded")} · ${esc(g.category)} · Size ${esc(g.size||"not recorded")}</p><div style="margin-top:8px"><span class="tag">${esc(g.fit)}</span><span class="tag">${Object.values(g.measurements).filter(Boolean).length} measurements · ${esc(g.unit||p.unit)}</span></div>${g.notes?`<p class="fit-notes">${esc(g.notes)}</p>`:""}</div><div class="actions"><button class="button secondary small" data-edit-garment="${esc(g.id)}">Edit</button>${FitGarments.category(g)?`<button class="button small" data-use-garment="${esc(g.id)}">Use as reference</button>`:""}<button class="button danger small" data-delete-garment="${esc(g.id)}">Remove</button></div></div>`).join("");
 }
 function renderReferences(){
   const p=current(),ref=document.getElementById("reference");
@@ -239,11 +240,38 @@ document.getElementById("editMeasurements").onclick=()=>{
 document.getElementById("saveMeasures").onclick=()=>{
   const p=current();measureDefs.forEach(([key])=>{const n=parseFloat(document.getElementById("m_"+key).value);p.measurements[key]=Number.isFinite(n)?n:null});save();render();toast("Measurements saved");
 };
-document.getElementById("addGarment").onclick=()=>{document.getElementById("garmentForm").reset();document.getElementById("garmentDialog").showModal()};
-document.getElementById("saveGarment").onclick=e=>{
-  if(!val("gName").trim()){e.preventDefault();return}
-  current().garments.push({id:"g"+Date.now(),name:val("gName").trim(),brand:val("gBrand").trim(),category:val("gCategory"),size:val("gSize").trim(),fit:val("gFit"),unit:current().unit,measurementVersion:2,measurements:{chest:num("gChest"),waist:num("gWaist"),hip:num("gHip"),shoulder:num("gShoulder"),length:num("gLength"),sleeve:num("gSleeve"),inseam:num("gInseam")}});save();render();toast("Favourite saved");
-};
+let garmentDraft=null;
+function openGarment(id=null){
+ const p=current(),g=id?p.garments.find(x=>x.id===id):null;if(id&&!g)return;
+ garmentDraft={id,profileId:p.id};
+ const form=document.getElementById("garmentForm");form.reset();
+ document.getElementById("garmentHeading").textContent=id?"Edit clothing":"Add clothing";
+ document.getElementById("garmentError").textContent="";
+ document.getElementById("garmentUnit").textContent="("+(g?.unit||p.unit)+")";
+ const ambiguous=g&&!g.measurementVersion&&g.category==="Trousers"&&g.measurements.sleeve!=null;
+ document.getElementById("garmentLegacyNote").textContent=ambiguous?"This older item combined sleeve and inseam. Its original value is retained, but enter a measured inseam below before using it for trousers.":"";
+ for(const [field,key] of [["gName","name"],["gBrand","brand"],["gCategory","category"],["gSize","size"],["gFit","fit"],["gNotes","notes"]])if(g)document.getElementById(field).value=g[key]||"";
+ FitGarments.keys.forEach(k=>document.getElementById("g"+k[0].toUpperCase()+k.slice(1)).value=ambiguous&&k==="sleeve"?"":g?.measurements[k]??"");
+ document.getElementById("garmentDialog").showModal();
+}
+document.getElementById("addGarment").onclick=()=>openGarment();
+document.getElementById("garmentForm").addEventListener("submit",e=>{
+ if(e.submitter?.value==="cancel")return;
+ e.preventDefault();
+ try{
+  if(!garmentDraft||current().id!==garmentDraft.profileId)throw Error("The active profile changed. Close this form and reopen the item.");
+  const fields={name:val("gName").trim(),brand:val("gBrand").trim(),category:val("gCategory"),size:val("gSize").trim(),fit:val("gFit"),notes:val("gNotes").trim(),measurements:Object.fromEntries(FitGarments.keys.map(k=>[k,val("g"+k[0].toUpperCase()+k.slice(1))]))};
+  FitGarments.update(current(),garmentDraft.id,fields,crypto.randomUUID());save();render();document.getElementById("garmentDialog").close();garmentDraft=null;toast("Clothing updated. Check the save status above.");
+ }catch(err){document.getElementById("garmentError").textContent=err.message;}
+});
+document.getElementById("garmentForm").querySelectorAll('[value="cancel"]').forEach(button=>{button.type="button";button.onclick=()=>document.getElementById("garmentDialog").close();});
+document.addEventListener("click",e=>{
+ const edit=e.target.closest("[data-edit-garment]")?.dataset.editGarment;if(edit)openGarment(edit);
+ const use=e.target.closest("[data-use-garment]")?.dataset.useGarment;if(!use)return;
+ const g=current().garments.find(x=>x.id===use);if(!g)return;
+ if(["Too tight","Too loose"].includes(g.fit)&&!confirm("This item is marked "+g.fit.toLowerCase()+". Use its measurements as your reference anyway?"))return;
+ document.getElementById("category").value=FitGarments.category(g);syncDimensions();document.getElementById("reference").value=g.id;showView("compare");
+});
 const dimensionNames={chest:"Chest",waist:"Waist",hip:"Hip",shoulder:"Shoulder width",length:"Body length",sleeve:"Sleeve length",inseam:"Inseam"};
 function measurementText(n,unit){return (Math.round((unit==="in"?n/2.54:n)*10)/10)+" "+unit;}
 function clearComparison(){
@@ -274,6 +302,7 @@ document.getElementById("compareForm").onsubmit=e=>{
   if(val("chartType")==="body"&&val("girthMethod")==="flat")throw Error("Body size charts use measurements around the body, not flat garment widths.");
   const category=val("category"),values=Object.fromEntries(FitMeasurements.dimensions[category].map(k=>[k,val("c"+k[0].toUpperCase()+k.slice(1))]));
   if(g&&((category==="trousers"&&g.category!=="Trousers")||(category==="tee"&&!["Top","Shirt","T-shirt"].includes(g.category))))throw Error("Choose a reference from the same garment category.");
+  if(g&&["Too tight","Too loose"].includes(g.fit)&&!confirm("Your reference is marked "+g.fit.toLowerCase()+". Continue comparing against it?"))return;
   const reference={kind:isBody?"body":"garment",name:isBody?p.name:g.name,unit:g?.unit||p.unit,values:structuredClone(isBody?p.measurements:g.measurements)};
   if(g&&!g.measurementVersion&&category==="trousers")delete reference.values.sleeve;
   const comparison=FitMeasurements.compare({category,chartType:val("chartType"),unit:val("chartUnit"),flat:val("girthMethod")==="flat",values,reference,confirmed:document.getElementById("confirmChart").checked});

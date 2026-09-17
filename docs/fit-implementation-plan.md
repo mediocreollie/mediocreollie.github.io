@@ -42,3 +42,11 @@ The current app is `public/fit/index.html` with inline UI logic and `account.js`
 ## Release discipline
 
 Use a dedicated branch and pull request for each task. Verify locally and record remaining gaps. Review before merging into the GitHub Pages deployment branch. Do not bundle unrelated mini-app changes or database migrations into a UI task.
+
+## Task 4 delivery slices
+
+- **4a, edit and reuse clothing:** implemented in a separate draft branch based on Task 3. Edit existing garment records, record observed fit/notes and select a reference. Twenty-seven focused checks pass; browser verification outstanding.
+- **4b, save and reopen comparisons:** next. Explicit save button, original snapshot view and a separate compare-again action using current measurements.
+- **4c, record purchase outcome:** later. Mark an item as bought, record actual fit and add it to owned clothes without presenting retailer body-chart values as measured garment dimensions.
+
+Keep these slices separate for review. Task 3 PR #11 must land before the Task 4a branch is retargeted to main and released.

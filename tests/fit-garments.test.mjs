@@ -1,0 +1,14 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import '../public/fit/measurements.js';
+import '../public/fit/garments.js';
+const G=globalThis.FitGarments;
+const fields=()=>({name:'Edited tee',brand:'Example',category:'Top',size:'M',fit:'Too tight',notes:'Tight shoulders',measurements:{chest:'102',waist:'',hip:'',shoulder:'44',length:'70',sleeve:'20',inseam:''}});
+const profile=()=>({unit:'cm',garments:[{id:'g1',name:'Old tee',unit:'in',category:'Top',measurements:{chest:40},customField:'keep'}],comparisons:[{referenceSnapshot:{values:{chest:40}},score:80}]});
+test('editing replaces the existing item and preserves its identity, unit and unrelated metadata',()=>{const p=profile();const g=G.update(p,'g1',fields(),'ignored');assert.equal(p.garments.length,1);assert.equal(g.id,'g1');assert.equal(g.unit,'in');assert.equal(g.customField,'keep');assert.equal(g.fit,'Too tight');assert.equal(g.notes,'Tight shoulders');assert.equal(g.measurements.waist,null)});
+test('editing never changes historical snapshots or legacy checks',()=>{const p=profile(),before=structuredClone(p.comparisons);G.update(p,'g1',fields(),'ignored');assert.deepEqual(p.comparisons,before)});
+test('invalid measurements fail atomically and do not alter saved clothing',()=>{const p=profile(),before=structuredClone(p),f=fields();f.measurements.chest='-5';assert.throws(()=>G.update(p,'g1',f,'ignored'));assert.deepEqual(p,before)});
+test('deleted items cannot be recreated accidentally by saving a stale editor',()=>{const p=profile();assert.throws(()=>G.update(p,'gone',fields(),'ignored'),/no longer/);assert.equal(p.garments.length,1)});
+test('new items record profile units while existing units remain stable',()=>{const p=profile();const g=G.update(p,null,fields(),'new');assert.equal(g.unit,'cm');assert.equal(p.garments.length,2)});
+test('ambiguous old trouser value is retained without becoming an inseam',()=>{const p={unit:'cm',garments:[{id:'g1',category:'Trousers',measurements:{sleeve:78}}]};const f=fields();f.category='Trousers';f.measurements.sleeve='';const g=G.update(p,'g1',f,'ignored');assert.equal(g.legacySleeveOrInseam,78);assert.equal(g.measurements.inseam,null)});
+test('only supported categories can become a new comparison reference',()=>{assert.equal(G.category({category:'Trousers'}),'trousers');assert.equal(G.category({category:'Top'}),'tee');assert.equal(G.category({category:'Dress'}),null)});
