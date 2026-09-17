@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#173f3a">
+  <meta name="theme-color" content="#f7f6f2">
   <title>Fit Reference</title>
   <meta name="description" content="Save your measurements and favourite clothes, then compare them with online size guides.">
   <style>
@@ -29,45 +29,39 @@
     @media(max-width:850px){.shell{grid-template-columns:1fr}.sidebar{min-height:auto;border-right:0;border-bottom:1px solid var(--line);padding:10px;overflow:auto}.sidebar nav{display:flex;min-width:max-content}.sidebar nav button{width:auto;margin:0}.side-note{display:none}.grid.two,.grid.three{grid-template-columns:1fr}.page-head{align-items:start;flex-direction:column}.measure-list{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:520px){.topbar{align-items:flex-start}.brand p{display:none}.profile-switch{max-width:53%}.profile-switch select{min-width:0}.fields{grid-template-columns:1fr}.score-card{grid-template-columns:1fr}.comparison-row{grid-template-columns:90px 1fr 62px}.measure-list{grid-template-columns:1fr 1fr}main{padding:24px 16px}.card{padding:18px}}
   </style>
+  <link rel="stylesheet" href="./task-layout.css">
 </head>
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="mark">FR</div><div><h1>Fit Reference</h1><p>Your personal guide to clothes that fit</p></div></div>
+    <div class="brand"><div><h1>fit reference</h1><p>Your personal guide to clothes that fit</p></div></div>
     <div class="profile-switch"><select id="profileSelect" aria-label="Current profile"></select><button class="icon-btn" id="addProfileTop" title="Add profile">＋</button></div>
   </header>
-  <section class="card" style="margin:16px" aria-label="Account">
+  <section class="account-bar" aria-label="Account">
+<details id="accountDetails"><summary>Account and cloud settings</summary>
+<div class="account-panel">
 <form id="authForm" class="fields">
 <div class="field"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required></div>
 <div class="field"><label for="authPassword">Password (at least 8 characters)</label><input id="authPassword" type="password" minlength="8" autocomplete="current-password" required></div>
 <div class="actions"><button class="button" type="submit">Sign in</button><button class="button secondary" type="submit" name="signup" value="signup">Create account</button></div>
 </form>
 <div id="accountControls" hidden><p id="accountEmail"></p><div class="actions"><button id="cloudRetry" class="button secondary">Retry saving</button><button id="cloudReload" class="button secondary">Load latest cloud copy</button><button id="importGuest" class="button secondary">Import profiles from this browser</button><button id="signOut" class="button secondary">Sign out</button></div></div>
-<p id="cloudStatus" role="status" aria-live="polite">Connecting accounts…</p>
+
 <p class="help">Guest profiles are visible to anyone using this browser. Signed-in profiles are saved to your account. Reload before editing on another device.</p>
+</div></details>
+<p id="cloudStatus" role="status" aria-live="polite">Connecting accounts…</p>
 </section>
 <div class="shell">
     <aside class="sidebar">
-      <nav>
-        <button data-view="dashboard" class="active">⌂ Overview</button>
-        <button data-view="measurements">◎ My measurements</button>
-        <button data-view="wardrobe">♡ Fit favourites</button>
-        <button data-view="compare">↔ Compare a size</button>
+      <nav aria-label="Fit Reference">
+        <button data-view="compare" class="active" aria-current="page">Check item</button>
+        <button data-view="measurements">My fit</button>
+        <button data-view="wardrobe">Saved</button>
       </nav>
-      <div class="side-note"><strong>First version</strong><br>Use an account to save across devices, or keep guest profiles in this browser.</div>
     </aside>
     <main>
-      <section class="view active" id="dashboard">
-        <div class="page-head"><div><span class="eyebrow">Personal fit profile</span><h2 id="welcome">Hello</h2><p>Build a reference from your body and the clothes you already love, then use it before ordering online.</p></div><button class="button" data-go="compare">Compare something</button></div>
-        <div class="grid three" id="stats"></div>
-        <div class="grid two" style="margin-top:18px">
-          <div class="card quick"><h3>Where to start</h3><p class="sub">Three short steps make recommendations much more useful.</p><div id="steps"></div></div>
-          <div class="card"><h3>Recent comparisons</h3><p class="sub">Your latest size checks for this profile.</p><div id="recent"></div></div>
-        </div>
-      </section>
-
       <section class="view" id="measurements">
-        <div class="page-head"><div><span class="eyebrow">Your baseline</span><h2>Body measurements</h2><p>Measure close to the body over light clothing. Keep the tape level and comfortably snug.</p></div><button class="button" id="editMeasurements">Edit measurements</button></div>
+        <div class="page-head"><div><span class="eyebrow">Your baseline</span><h2>My fit</h2><p>Measure close to the body over light clothing. Keep the tape level and comfortably snug.</p></div><button class="button" id="editMeasurements">Edit measurements</button></div>
         <div class="card"><div class="measure-list" id="measureList"></div><div class="privacy">🔒 <span>Guest measurements stay in this browser. When signed in, measurements are saved to your account.</span></div></div>
         <div class="card" style="margin-top:18px"><h3>How to measure</h3><p class="sub">A simple, consistent measurement is more useful than trying to make it look smaller.</p><div class="grid three">
           <div><strong>Chest or bust</strong><p class="sub">Around the fullest part, with the tape level across your back.</p></div>
@@ -77,14 +71,18 @@
       </section>
 
       <section class="view" id="wardrobe">
-        <div class="page-head"><div><span class="eyebrow">Your real-world reference</span><h2>Fit favourites</h2><p>Save clothes that fit well. Their actual garment measurements are often a better comparison than the label alone.</p></div><button class="button" id="addGarment">Add favourite</button></div>
+        <div class="page-head"><div><span class="eyebrow">Your real-world reference</span><h2>Saved</h2><p>Save clothes that fit well. Their actual garment measurements are often a better comparison than the label alone.</p></div><button class="button" id="addGarment">Add clothing</button></div>
+        <h3>My clothes</h3>
         <div class="card" id="garmentList"></div>
+        <section class="saved-history" aria-labelledby="historyHeading"><h3 id="historyHeading">Previous checks</h3><p class="sub">Your saved checks for this profile. Older checks contain the original summary only.</p><div class="card" id="recent"></div></section>
       </section>
 
-      <section class="view" id="compare">
-        <div class="page-head"><div><span class="eyebrow">Before you buy</span><h2>Compare a size</h2><p>Copy measurements from a retailer’s size guide, or enter the garment measurements shown on the product page.</p></div></div>
+      <section class="view active" id="compare">
+        <div class="page-head"><div><span class="eyebrow">Before you buy</span><h2>Will it fit?</h2><p>Start with a size chart. Compare it with something you already know.</p></div></div>
         <div class="grid two">
           <form class="card" id="compareForm">
+            <div class="upload-zone" id="uploadZone"><div class="upload-head"><div><strong>Drop a size chart here</strong><span>Choose a screenshot with visible labels and units. Check every number before comparing.</span></div><button class="button" type="button" id="chooseImage">Choose screenshot</button></div><input id="sizeImage" type="file" accept="image/png,image/jpeg,image/webp" hidden><div class="upload-preview" id="uploadPreview"><img id="uploadImage" alt="Uploaded size guide"><div class="ocr-status" id="ocrStatus">Ready to read this image.</div></div></div>
+            <button class="text-button" type="button" id="manualEntry">Enter measurements instead ↓</button>
             <h3>Item and size</h3><p class="sub">Enter as much as the retailer provides. Empty measurements will be ignored.</p>
             <div class="fields">
               <div class="field"><label for="brand">Brand</label><input id="brand" required placeholder="e.g. Uniqlo"></div>
@@ -104,10 +102,11 @@
               <div class="field"><label for="cSleeve">Sleeve / inseam</label><input id="cSleeve" type="number" min="0" step=".1" inputmode="decimal"></div>
               <div class="field full"><label for="fitPreference">Preferred fit</label><select id="fitPreference"><option value="regular">Regular</option><option value="slim">Close / slim</option><option value="relaxed">Relaxed / oversized</option></select></div>
             </div>
-            <div class="upload-zone" id="uploadZone"><div class="upload-head"><div><strong>📷 Upload a size-guide screenshot</strong><span>We’ll read the image and fill in measurements for you to check.</span></div><label class="button secondary small" for="sizeImage" style="margin:0">Choose image</label></div><input id="sizeImage" type="file" accept="image/png,image/jpeg,image/webp" hidden><div class="upload-preview" id="uploadPreview"><img id="uploadImage" alt="Uploaded size guide"><div class="ocr-status" id="ocrStatus">Ready to read this image.</div></div></div>
+
             <button class="button" type="submit">Check this size</button>
           </form>
           <div>
+            <div class="card reference-help"><h3>Your reference</h3><p>Use a favourite garment or your body measurements. You can add either now and return to this check.</p><div class="actions"><button type="button" class="button secondary" data-go="measurements">Update my fit</button><button type="button" class="button secondary" data-go="wardrobe">My clothes</button></div></div>
             <div class="card" id="result"><div class="empty"><strong>No comparison yet</strong>Enter a size guide and choose “Check this size”.</div></div>
             <div class="card" style="margin-top:18px" id="visualCard"><div class="fit-visual"><div class="figure"><svg viewBox="0 0 160 300" role="img" aria-label="Illustrative body and garment fit preview"><circle class="body-shape" cx="80" cy="27" r="21"/><path class="body-shape" d="M56 53 Q80 45 104 53 L119 142 108 197 101 284 82 284 80 205 78 284 59 284 52 197 41 142Z"/><path class="garment-shape" id="shirtShape" d="M53 55 L30 78 43 103 54 91 57 158 Q80 166 103 158 L106 91 117 103 130 78 107 55 96 49 Q80 62 64 49Z"/><circle id="zoneChest" cx="80" cy="95" r="6" fill="#9eb0aa"/><circle id="zoneWaist" cx="80" cy="143" r="6" fill="#9eb0aa"/><circle id="zoneLength" cx="80" cy="158" r="6" fill="#9eb0aa"/></svg></div><div class="visual-copy"><span class="eyebrow">Illustrative preview</span><h3 id="visualTitle">Your fit will appear here</h3><p id="visualText">After comparing an item, this diagram will highlight where measurements appear close or different.</p><ul class="visual-notes" id="visualNotes"><li>Start by entering or uploading a size guide.</li></ul><div class="legend"><span><i style="background:#4c927d"></i>Close</span><span><i style="background:#d69a38"></i>Check</span><span><i style="background:#b84e43"></i>Mismatch</span></div></div></div></div>
             <div class="card" style="margin-top:18px"><h3>A useful distinction</h3><p class="sub"><strong>Body measurements</strong> in a size guide describe the person a size is intended for. <strong>Garment measurements</strong> describe the clothing itself and include wearing ease. When possible, compare like with like.</p></div>
@@ -163,23 +162,12 @@ function converted(n,from,to){if(n==null)return null;if(from===to)return n;retur
 function render(){
   const p=current();
   document.getElementById("profileSelect").innerHTML=data.profiles.map(x=>`<option value="${x.id}" ${x.id===p.id?"selected":""}>${esc(x.name)}</option>`).join("");
-  document.getElementById("welcome").textContent="Hello, "+p.name;
   document.querySelectorAll(".unitLabel").forEach(x=>x.textContent="("+p.unit+")");
-  renderDashboard();renderMeasurements();renderGarments();renderReferences();
+  renderHistory();renderMeasurements();renderGarments();renderReferences();
 }
-function renderDashboard(){
-  const p=current(),count=Object.values(p.measurements||{}).filter(Boolean).length;
-  document.getElementById("stats").innerHTML=`
-    <div class="card stat"><span class="eyebrow">Measurements</span><div class="number">${count}<small>/10</small></div><div class="label">body details saved</div></div>
-    <div class="card stat"><span class="eyebrow">Favourites</span><div class="number">${p.garments.length}</div><div class="label">known good fits</div></div>
-    <div class="card stat"><span class="eyebrow">Size checks</span><div class="number">${p.comparisons.length}</div><div class="label">comparisons saved</div></div>`;
-  const steps=[
-    [count>=3,"Add core body measurements","Chest, waist and hip create your baseline.","measurements"],
-    [p.garments.length>0,"Measure a favourite","Save an item whose fit you already know.","wardrobe"],
-    [p.comparisons.length>0,"Compare an online size","Enter a retailer size guide before ordering.","compare"]
-  ];
-  document.getElementById("steps").innerHTML=steps.map(s=>`<div class="item"><div><h4>${s[0]?"✓":"○"} ${s[1]}</h4><p>${s[2]}</p></div><button class="button small ${s[0]?"light":"secondary"}" data-go="${s[3]}">${s[0]?"Review":"Start"}</button></div>`).join("");
-  document.getElementById("recent").innerHTML=p.comparisons.length?p.comparisons.slice(-3).reverse().map(c=>`<div class="item"><div><h4>${esc(c.brand)} ${esc(c.item)}</h4><p>Size ${esc(c.size)} · ${c.score}% · ${esc(c.verdict)}</p></div><span class="tag">${esc(c.category)}</span></div>`).join(""):`<div class="empty"><strong>Nothing checked yet</strong>Your recent size comparisons will appear here.</div>`;
+function renderHistory(){
+  const p=current();
+  document.getElementById("recent").innerHTML=p.comparisons.length?p.comparisons.slice().reverse().map(c=>`<div class="item"><div><h4>${esc(c.brand)} ${esc(c.item)}</h4><p>Size ${esc(c.size)} · ${esc(c.verdict||"Saved check")}</p><p>${esc(c.date ? new Date(c.date).toLocaleDateString() : "Date not recorded")}</p></div><span class="tag">${esc(c.category)}</span></div>`).join(""):`<div class="empty"><strong>Nothing checked yet</strong>Your saved comparisons will appear here.<p><button class="button secondary" data-go="compare">Check an item</button></p></div>`;
 }
 function renderMeasurements(){
   const p=current();
@@ -192,11 +180,18 @@ function renderGarments(){
 }
 function renderReferences(){
   const p=current(),ref=document.getElementById("reference");
+  const selected=ref.value;
   ref.innerHTML=`<option value="body">My body measurements</option>`+p.garments.map(g=>`<option value="${g.id}">${esc(g.name)} (${esc(g.size||"no size")})</option>`).join("");
+  if([...ref.options].some(o=>o.value===selected))ref.value=selected;
 }
 function showView(id){
+  if(!["compare","measurements","wardrobe"].includes(id))return;
   document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===id));
-  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===id));
+  document.querySelectorAll("nav button").forEach(x=>{
+    const active=x.dataset.view===id;x.classList.toggle("active",active);
+    if(active)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");
+  });
+  const heading=document.querySelector("#"+id+" h2");heading.tabIndex=-1;heading.focus({preventScroll:true});
   scrollTo({top:0,behavior:"smooth"});
 }
 document.addEventListener("click",e=>{
@@ -236,7 +231,7 @@ document.getElementById("compareForm").onsubmit=e=>{
   const copy=score>=82?`This size is close to ${esc(baseName)} across the measurements available.`:score>=64?`This could work, but review the differences below and consider the fabric and cut.`:`Several measurements differ from your reference. Another size or cut may suit you better.`;
   document.getElementById("result").innerHTML=`<div class="score-card"><div class="score-ring" style="--score:${score}%"><div><strong>${score}</strong><span>fit match</span></div></div><div><span class="eyebrow">${esc(val("brand"))} · size ${esc(val("sizeName"))}</span><h3 class="verdict">${verdict}</h3><p class="sub">${copy}</p></div></div><div style="margin-top:22px">${rows.map(r=>`<div class="comparison-row"><strong>${r.label}</strong><div class="bar"><i style="width:${Math.round(r.quality)}%"></i></div><span class="delta ${r.quality>75?"good":r.quality>45?"close":"off"}">${r.delta>0?"+":""}${Math.round(r.delta*10)/10} ${p.unit}</span></div>`).join("")}</div><div class="privacy">ⓘ <span>This is a practical comparison, not a guarantee. Fabric stretch, cut, ease and how a brand measures garments all affect the final fit.</span></div>`;
   updateVisual(rows,score,verdict);
-  p.comparisons.push({id:"c"+Date.now(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category:val("category"),size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:fit,measurements:target,score,verdict});save();renderDashboard();toast("Comparison saved");
+  p.comparisons.push({id:"c"+Date.now(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category:val("category"),size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:fit,measurements:target,score,verdict});save();renderHistory();toast("Comparison saved");
 };
 
 function loadOcrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>resolve(window.Tesseract);s.onerror=()=>reject(new Error("The image reader could not load."));document.head.appendChild(s)})}
@@ -259,6 +254,8 @@ function updateVisual(rows,score,verdict){
  document.getElementById("visualNotes").innerHTML=rows.slice(0,4).map(r=>"<li><strong>"+r.label+":</strong> "+(r.quality>75?"close to the target fit":r.quality>45?"worth checking":"likely to feel noticeably different")+"</li>").join("")
 }
 const sizeImage=document.getElementById("sizeImage"),uploadZone=document.getElementById("uploadZone");
+document.getElementById("chooseImage").onclick=()=>sizeImage.click();
+document.getElementById("manualEntry").onclick=()=>document.getElementById("cChest").focus();
 sizeImage.addEventListener("change",()=>{if(sizeImage.files[0])readSizeImage(sizeImage.files[0])});
 ["dragenter","dragover"].forEach(n=>uploadZone.addEventListener(n,e=>{e.preventDefault();uploadZone.classList.add("drag")}));
 ["dragleave","drop"].forEach(n=>uploadZone.addEventListener(n,e=>{e.preventDefault();uploadZone.classList.remove("drag")}));
