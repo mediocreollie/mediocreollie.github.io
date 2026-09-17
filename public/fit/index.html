@@ -74,7 +74,7 @@
         <div class="page-head"><div><span class="eyebrow">Your real-world reference</span><h2>Saved</h2><p>Save clothes that fit well. Their actual garment measurements are often a better comparison than the label alone.</p></div><button class="button" id="addGarment">Add clothing</button></div>
         <h3>My clothes</h3>
         <div class="card" id="garmentList"></div>
-        <section class="saved-history" aria-labelledby="historyHeading"><h3 id="historyHeading">Previous checks</h3><p class="sub">Your saved checks for this profile. Older checks contain the original summary only.</p><div class="card" id="recent"></div></section>
+        <section class="saved-history" aria-labelledby="historyHeading"><h3 id="historyHeading">Previous checks</h3><p class="sub">Only comparisons you explicitly save appear here. Reopening a check shows the original snapshot.</p><div class="card" id="recent"></div></section>
       </section>
 
       <section class="view active" id="compare">
@@ -158,10 +158,12 @@
     <div class="field"><label for="gLength">Length</label><input id="gLength" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gSleeve">Sleeve length (tops only)</label><input id="gSleeve" type="number" min="0" step=".1"></div>
   <p id="garmentError" role="alert"></p><div class="field"><label for="gInseam">Inseam (trousers only)</label><input id="gInseam" type="number" min="0" step=".1"></div></div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveGarment">Save clothing</button></div></form></dialog>
+<dialog id="checkDialog"><div class="modal"><div class="modal-head"><div><span class="eyebrow">Saved snapshot</span><h3 id="checkDialogTitle">Previous check</h3></div><button class="close" id="closeCheck" type="button" aria-label="Close">×</button></div><div id="checkDialogBody"></div><div class="modal-actions"><button class="button secondary" id="closeCheckBottom" type="button">Close</button><button class="button" id="repeatCheck" type="button" hidden>Compare again</button></div></div></dialog>
 <div class="toast" id="toast"></div>
 
 <script src="./measurements.js"></script>
 <script src="./garments.js"></script>
+<script src="./history.js"></script>
 <script>
 const KEY="fit-reference-v1";
 const measureDefs=[
@@ -172,6 +174,7 @@ const measureDefs=[
 const defaultData={active:"p1",profiles:[{id:"p1",name:"My profile",unit:"cm",measurements:{},garments:[],comparisons:[]}]};
 let data=load();
 let inputEpoch=0;
+let comparisonDraft=null,openedCheckId=null;
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&Array.isArray(v.profiles)&&v.profiles.length?v:structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
 function save(){ if(window.fitCloud) window.fitCloud.save(); else {try{localStorage.setItem(KEY,JSON.stringify(data))}catch{toast("Browser storage unavailable. Changes are not saved.")}} }
 function current(){return data.profiles.find(p=>p.id===data.active)||data.profiles[0]}
@@ -193,7 +196,7 @@ function render(){
 }
 function renderHistory(){
   const p=current();
-  document.getElementById("recent").innerHTML=p.comparisons.length?p.comparisons.slice().reverse().map(c=>`<div class="item"><div><h4>${esc(c.brand)} ${esc(c.item)}</h4><p>Size ${esc(c.size)} · ${esc(c.verdict||"Saved check")}</p><p>${esc(c.date ? new Date(c.date).toLocaleDateString() : "Date not recorded")}</p></div><span class="tag">${esc(c.category)}</span></div>`).join(""):`<div class="empty"><strong>Nothing checked yet</strong>Your saved comparisons will appear here.<p><button class="button secondary" data-go="compare">Check an item</button></p></div>`;
+  document.getElementById("recent").innerHTML=p.comparisons.length?p.comparisons.slice().reverse().map(c=>`<div class="item"><div><h4>${esc([c.brand,c.item].filter(Boolean).join(" ")||"Saved check")}</h4><p>${c.size?`Size ${esc(c.size)} · `:""}${esc(c.verdict||"Saved check")}</p><p>${esc(c.date ? new Date(c.date).toLocaleDateString() : "Date not recorded")}</p></div><div class="actions"><span class="tag">${esc(c.category||"Legacy")}</span><button class="button secondary small" data-open-check="${esc(c.id)}">Open</button>${c.measurementVersion===2&&c.result?`<button class="button small" data-repeat-check="${esc(c.id)}">Compare again</button>`:""}</div></div>`).join(""):`<div class="empty"><strong>Nothing saved yet</strong>Run a comparison, then choose Save comparison to keep its original snapshot.<p><button class="button secondary" data-go="compare">Check an item</button></p></div>`;
 }
 function renderMeasurements(){
   const p=current();
@@ -220,9 +223,55 @@ function showView(id){
   const heading=document.querySelector("#"+id+" h2");heading.tabIndex=-1;heading.focus({preventScroll:true});
   scrollTo({top:0,behavior:"smooth"});
 }
+function snapshotRange(value){
+ if(!value)return "Not supplied";
+ const low=Math.round(value.low*10)/10,high=Math.round(value.high*10)/10;
+ return low+(high!==low?" to "+high:"")+" cm";
+}
+function snapshotDifference(row){
+ if(row.status==="unknown")return "Not assessed";
+ if(row.status==="within")return "Within the listed body range";
+ if(row.status==="below"||row.status==="above")return Math.round(Math.abs(row.difference)*10)/10+" cm "+row.status+" the listed body range";
+ if(row.status==="ease")return Math.round(Math.abs(row.difference)*10)/10+" cm "+(row.difference>=0?"more room around than the saved body measurement":"smaller around than the saved body measurement");
+ if(row.difference===0)return "Same measurement";
+ return Math.round(Math.abs(row.difference)*10)/10+" cm "+(row.difference>0?"larger":"smaller")+" than the saved reference";
+}
+function openCheck(id){
+ const check=FitHistory.find(current(),id);if(!check)return;
+ openedCheckId=id;
+ document.getElementById("checkDialogTitle").textContent=[check.brand,check.item].filter(Boolean).join(" ")||"Previous check";
+ const repeat=document.getElementById("repeatCheck");repeat.hidden=!(check.measurementVersion===2&&check.result);
+ if(check.measurementVersion!==2||!check.result){
+  document.getElementById("checkDialogBody").innerHTML=`<p><strong>Historical summary</strong></p><p>${esc(check.verdict||"Saved check")}${Number.isFinite(check.score)?` · Legacy fit score: ${esc(check.score)}%`:""}</p><p class="sub">This check was saved before measurement snapshots were introduced. It can be viewed here, but it cannot be rebuilt automatically.</p>`;
+ }else{
+  const rows=check.result.rows||[],reference=check.referenceSnapshot?.name||"Saved reference";
+  document.getElementById("checkDialogBody").innerHTML=`<p><strong>${check.size?`Size ${esc(check.size)} · `:""}${esc(check.category||"Item")}</strong></p><p>Compared with ${esc(reference)} on ${esc(check.date?new Date(check.date).toLocaleDateString():"an unrecorded date")}.</p><p class="sub">This is the original saved snapshot. Values are shown in centimetres so they do not change with your current profile settings.</p><div class="measurement-results">${rows.map(row=>`<div class="measurement-result"><strong>${esc(dimensionNames[row.key]||row.key)}</strong><p>${esc(snapshotDifference(row))}</p><small>Chart: ${esc(snapshotRange(row.target))} · Reference: ${esc(snapshotRange(row.reference))}</small></div>`).join("")}</div>`;
+ }
+ document.getElementById("checkDialog").showModal();
+}
+function repeatCheck(id){
+ const check=FitHistory.find(current(),id);if(!check)return;
+ try{
+  const draft=FitHistory.replay(check,current());
+  document.getElementById("category").value=draft.category;syncDimensions();
+  for(const [field,value] of [["brand",draft.brand],["itemName",draft.item],["sizeName",draft.size],["productUrl",draft.url],["chartType",draft.chartType],["chartUnit",draft.unit],["girthMethod",draft.girthMethod]])document.getElementById(field).value=value;
+  renderReferences();document.getElementById("reference").value=draft.reference;
+  for(const key of FitMeasurements.dimensions[draft.category]||[]){const field=document.getElementById("c"+key[0].toUpperCase()+key.slice(1));if(field)field.value=draft.values[key]??"";}
+  document.getElementById("confirmChart").checked=false;clearComparison();
+  document.getElementById("checkDialog").close();showView("compare");
+  if(draft.referenceMissing)document.getElementById("compareError").textContent="The original clothing reference is no longer available. My body measurements are selected instead; choose a new reference before comparing.";
+ }catch(err){document.getElementById("checkDialogBody").insertAdjacentHTML("beforeend",`<p class="error">${esc(err.message)}</p>`);}
+}
 document.addEventListener("click",e=>{
   const view=e.target.closest("[data-view]")?.dataset.view||e.target.closest("[data-go]")?.dataset.go;
   if(view)showView(view);
+  const open=e.target.closest("[data-open-check]")?.dataset.openCheck;if(open)openCheck(open);
+  const repeat=e.target.closest("[data-repeat-check]")?.dataset.repeatCheck;if(repeat)repeatCheck(repeat);
+  const saveComparison=e.target.closest("#saveComparison");
+  if(saveComparison){
+   try{FitHistory.save(current(),comparisonDraft,crypto.randomUUID(),new Date().toISOString());save();renderHistory();comparisonDraft=null;saveComparison.disabled=true;saveComparison.textContent="Saved";toast("Comparison saved. Check the save status above.");}
+   catch(err){document.getElementById("compareError").textContent=err.message;}
+  }
   const del=e.target.closest("[data-delete-garment]")?.dataset.deleteGarment;
   if(del&&confirm("Remove this favourite?")){current().garments=current().garments.filter(g=>g.id!==del);save();render();toast("Favourite removed")}
 });
@@ -275,6 +324,7 @@ document.addEventListener("click",e=>{
 const dimensionNames={chest:"Chest",waist:"Waist",hip:"Hip",shoulder:"Shoulder width",length:"Body length",sleeve:"Sleeve length",inseam:"Inseam"};
 function measurementText(n,unit){return (Math.round((unit==="in"?n/2.54:n)*10)/10)+" "+unit;}
 function clearComparison(){
+ comparisonDraft=null;
  document.getElementById("result").textContent="Check this size to see the measurement differences.";
  document.getElementById("visualTitle").textContent="Measurement guide";
  document.getElementById("visualText").textContent="Schematic only. Fabric drape and fit are unknown.";
@@ -308,13 +358,15 @@ document.getElementById("compareForm").onsubmit=e=>{
   const comparison=FitMeasurements.compare({category,chartType:val("chartType"),unit:val("chartUnit"),flat:val("girthMethod")==="flat",values,reference,confirmed:document.getElementById("confirmChart").checked});
   const unit=p.unit,range=v=>v?measurementText(v.low,unit)+(v.high!==v.low?" to "+measurementText(v.high,unit):""):"Not supplied";
   const description=r=>r.status==="unknown"?"Not assessed":r.status==="within"?"Within the listed body range":r.status==="below"||r.status==="above"?measurementText(Math.abs(r.difference),unit)+" "+r.status+" the listed body range":r.status==="ease"?measurementText(Math.abs(r.difference),unit)+(r.difference>=0?" more room around than your body":" smaller around than your body"):r.difference===0?"Same measurement":measurementText(Math.abs(r.difference),unit)+(r.difference>0?" larger":" smaller")+" than your reference";
-  document.getElementById("result").innerHTML=`<h3>Measurement differences</h3><p>Compared with ${esc(reference.name)}. Displayed in ${esc(unit)}.</p><div class="measurement-results">${comparison.rows.map(r=>`<div class="measurement-result"><strong>${dimensionNames[r.key]}</strong><p>${esc(description(r))}</p><small>Chart: ${esc(range(r.target))} · Reference: ${esc(range(r.reference))}</small></div>`).join("")}</div><p class="sub">${isBody&&val("chartType")==="garment"?"The difference around your body is wearing ease, not a comfort recommendation. ":""}Cut, stretch and measurement method can change how clothing feels. Missing measurements are not estimated.</p>`;
+  document.getElementById("result").innerHTML=`<h3>Measurement differences</h3><p>Compared with ${esc(reference.name)}. Displayed in ${esc(unit)}.</p><div class="measurement-results">${comparison.rows.map(r=>`<div class="measurement-result"><strong>${dimensionNames[r.key]}</strong><p>${esc(description(r))}</p><small>Chart: ${esc(range(r.target))} · Reference: ${esc(range(r.reference))}</small></div>`).join("")}</div><p class="sub">${isBody&&val("chartType")==="garment"?"The difference around your body is wearing ease, not a comfort recommendation. ":""}Cut, stretch and measurement method can change how clothing feels. Missing measurements are not estimated.</p><p><button class="button" type="button" id="saveComparison">Save comparison</button></p><p class="sub">This result is not in Previous checks until you save it.</p>`;
   document.getElementById("visualTitle").textContent="Measured differences only";
   document.getElementById("visualNotes").innerHTML=comparison.rows.map(r=>`<li><strong>${dimensionNames[r.key]}:</strong> ${esc(description(r))}</li>`).join("");
-  p.comparisons.push({id:crypto.randomUUID(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category,size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:val("fitPreference"),measurementVersion:2,measurements:values,sourceUnit:val("chartUnit"),chartType:val("chartType"),girthMethod:val("girthMethod"),referenceSnapshot:reference,importSnapshot:window.FitImport?.snapshot()||null,result:comparison,verdict:"Measurement differences"});
-  save();renderHistory();toast("Comparison recorded. Check the save status above.");
+  comparisonDraft={brand:val("brand").trim(),item:val("itemName").trim(),category,size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:val("fitPreference"),measurementVersion:2,measurements:structuredClone(values),sourceUnit:val("chartUnit"),chartType:val("chartType"),girthMethod:val("girthMethod"),referenceSnapshot:structuredClone(reference),importSnapshot:window.FitImport?.snapshot()||null,result:structuredClone(comparison),verdict:"Measurement differences"};
  }catch(err){document.getElementById("compareError").textContent=err.message;}
 };
+document.getElementById("closeCheck").onclick=()=>document.getElementById("checkDialog").close();
+document.getElementById("closeCheckBottom").onclick=()=>document.getElementById("checkDialog").close();
+document.getElementById("repeatCheck").onclick=()=>repeatCheck(openedCheckId);
 
 function loadOcrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>resolve(window.Tesseract);s.onerror=()=>reject(new Error("The image reader could not load."));document.head.appendChild(s)})}
 

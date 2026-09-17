@@ -71,7 +71,7 @@ Task 3 provides proper table extraction/review, image cancellation and source re
 
 `node --test tests/fit-*.test.mjs`: 20 passing checks. Seven parser/validation fixtures cover size columns, ranges, missing/duplicate rows, numeric size headers, vertical-table fallback and OCR character artifacts. Four controller fixtures exercise the actual importer with in-memory DOM/worker adapters: required review and selection, immutable snapshot, cancellation with late completion, profile reset/image release and invalid-file recovery. Nine existing measurement/submit checks also pass.
 
-JavaScript syntax, DOM IDs/references and git whitespace checks pass. These are not browser or OCR accuracy tests. Desktop/mobile rendering, actual Tesseract image recognition and live account saving remain unverified. Task 3 is a separate draft PR, not deployed.
+JavaScript syntax, DOM IDs/references and git whitespace checks pass. These are not browser or OCR accuracy tests. Desktop/mobile rendering, actual Tesseract image recognition and live account saving remain unverified. Task 3 was merged through PR #11 on 17 September 2026.
 
 ### Scope and next task
 
@@ -95,8 +95,29 @@ Worker API reference: https://github.com/naptha/tesseract.js/blob/master/docs/ap
 
 `node --test tests/fit-*.test.mjs`: 27 checks pass, including seven new garment fixtures for edit identity/units/metadata, snapshot preservation, atomic validation, deleted-item handling, new-item units, legacy trouser ambiguity and supported reference categories. Inline script syntax, static element references, unique IDs and whitespace checks pass.
 
-Browser interaction and live-account saving remain unverified. Task 4a is a separate draft change stacked on Task 3 PR #11, which remains unmerged. Neither task is deployed by this change.
+Browser interaction and live-account saving remain unverified. Task 4a was rebuilt cleanly on the merged Task 3 baseline and merged through PR #12 on 17 September 2026.
 
 ### Next
 
 Task 4b: explicit Save comparison and reopening original snapshots. Task 4c: mark a checked item as bought, record observed fit and add it to My clothes. No database migration is required for Task 4a; fields are additive and account payload validation is unchanged.
+
+## 17 September 2026: Task 4b
+
+### Changed
+
+- Running a comparison now creates an unsaved result. It reaches Previous checks only after the user chooses Save comparison.
+- Saved version 2 checks open in a dialog showing the original result rows, chart values and reference values. Normalised snapshot values display in centimetres and do not change when the current profile or garment is edited.
+- Compare again starts a separate draft from the saved chart inputs, then uses the current profile and current selected reference when run. The saved check is never recalculated or overwritten.
+- If a saved garment reference has been removed, Compare again selects body measurements and asks the user to choose a new reference before running the check.
+- Legacy checks remain readable as summaries. Because their original chart and reference values were not stored, they cannot be rebuilt automatically.
+- New history helpers deep-copy records at save and replay boundaries. No database migration is required; the existing comparisons array and version 2 schema remain compatible.
+
+### Verification
+
+`node --test tests/fit-*.test.mjs`: 33 checks pass. Six new history checks cover explicit save, deep-copy immutability, record lookup, replay with an available reference, deleted-reference fallback and legacy rejection. The real submit-handler fixture confirms that running a comparison does not mutate saved history or trigger cloud persistence.
+
+JavaScript syntax, static DOM references, unique IDs and whitespace checks pass. Browser interaction, deployed rendering and live-account saving remain unverified. Task 4b is prepared as a separate draft pull request for review.
+
+### Next
+
+Task 4c: mark a checked item as bought, record its observed fit and add it to My clothes without treating retailer body-chart values as measured garment dimensions. Task 5 then adds upper/lower measurement diagrams and release polish.

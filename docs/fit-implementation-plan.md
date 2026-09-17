@@ -23,7 +23,7 @@ Depends on task 1. Separate body charts from garment dimensions; define units, f
 
 ## Task 3: Screenshot extraction and review
 
-Status: implemented in a separate task branch. Twenty focused checks pass; browser and real-image OCR review remain outstanding.
+Status: merged through PR #11 on 17 September 2026. Twenty focused checks pass; browser and real-image OCR review remain outstanding.
 
 Depends on task 2. Read multi-size tables into editable candidates, retain source text and all sizes, confirm units and meaning, handle uncertainty and cancellation, and provide manual recovery. Decide OCR processing and image retention explicitly. No product scraping or label lookup in this task.
 
@@ -45,8 +45,8 @@ Use a dedicated branch and pull request for each task. Verify locally and record
 
 ## Task 4 delivery slices
 
-- **4a, edit and reuse clothing:** implemented in a separate draft branch based on Task 3. Edit existing garment records, record observed fit/notes and select a reference. Twenty-seven focused checks pass; browser verification outstanding.
-- **4b, save and reopen comparisons:** next. Explicit save button, original snapshot view and a separate compare-again action using current measurements.
+- **4a, edit and reuse clothing:** merged through PR #12 on 17 September 2026. Edit existing garment records, record observed fit/notes and select a reference. Twenty-seven focused checks pass; browser verification outstanding.
+- **4b, save and reopen comparisons:** implemented in a separate draft branch. Explicit save button, immutable original snapshot view and a separate compare-again action using current measurements. Thirty-three focused checks pass across the Fit feature; browser verification is outstanding.
 - **4c, record purchase outcome:** later. Mark an item as bought, record actual fit and add it to owned clothes without presenting retailer body-chart values as measured garment dimensions.
 
-Keep these slices separate for review. Task 3 PR #11 must land before the Task 4a branch is retargeted to main and released.
+Keep these slices separate for review. Tasks 3 and 4a are now on main; Task 4b remains isolated until reviewed.
