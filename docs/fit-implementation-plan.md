@@ -17,11 +17,13 @@ Acceptance: primary navigation works, draft fields survive view changes, guest r
 
 ## Task 2: Measurement contract and honest results
 
-Status: implemented in a separate task branch. Nine focused Node checks pass; browser review pending.
+Status: merged through PR #10 on 17 September 2026 at the owner’s request. Pages run 35175738396 succeeded. Nine focused Node checks pass; browser review remains outstanding.
 
 Depends on task 1. Separate body charts from garment dimensions; define units, flat width/circumference, sleeve and inseam. Replace the legacy percentage score and score-driven illustration with signed measurement differences and explicit unknowns. Version the data with a backwards-compatible migration before changing stored records. Verify manual fixtures before OCR uses the new contract.
 
 ## Task 3: Screenshot extraction and review
+
+Status: implemented in a separate task branch. Twenty focused checks pass; browser and real-image OCR review remain outstanding.
 
 Depends on task 2. Read multi-size tables into editable candidates, retain source text and all sizes, confirm units and meaning, handle uncertainty and cancellation, and provide manual recovery. Decide OCR processing and image retention explicitly. No product scraping or label lookup in this task.
 

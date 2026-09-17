@@ -1,0 +1,12 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import '../public/fit/measurements.js';
+import '../public/fit/chart-import.js';
+const C=globalThis.FitChart;
+test('preserve all sizes and do not substitute sleeve for inseam',()=>{const r=C.parse('Size S M L\nChest 50 53 56\nBody length 66 69 72\nSleeve 20 21 22\nInside leg 70 72 74');assert.equal(r.rows.length,3);assert.equal(r.rows[1].values.chest,'53');assert.equal(r.rows[1].values.length,'69');assert.equal(r.rows[1].values.inseam,'72');assert.equal(r.rows[1].values.sleeve,'21')});
+test('preserve body ranges and units without conversion',()=>{const r=C.parse('Size S M\nChest (cm) 90-96 96-102');assert.equal(r.rows[1].values.chest,'96-102')});
+test('misaligned rows stay blank',()=>{const r=C.parse('S M L\nChest 50 53\nLength 66 69 72');assert.equal(r.rows[0].values.chest,'');assert.match(r.warnings[0],/line up/)});
+test('explicit numeric size headers are retained; vertical charts use manual fallback',()=>{assert.equal(C.parse('Size 30 32 34\nWaist 76 81 86').rows[1].size,'32');assert.equal(C.parse('Size Chest Length\nS 50 66\nM 53 69').rows.length,0)});
+test('duplicate dimensions do not silently select first value',()=>{const r=C.parse('S M\nChest 50 53\nChest 20 21');assert.equal(r.rows[0].values.chest,'');assert.match(r.warnings[0],/Repeated/)});
+test('manual table validates size names, values and missing data',()=>{const rows=C.parse('S M\nChest 50 53').rows;assert(C.validate(rows));rows[1].size='s';assert.throws(()=>C.validate(rows),/unique/);rows[1].size='M';rows[0].values.chest='50cm';assert.throws(()=>C.validate(rows),/positive/)});
+test('OCR artifacts are never changed into guessed numbers',()=>{const r=C.parse('S M\nChest 5O 53');assert.equal(r.rows[0].values.chest,'');assert.equal(r.rows[1].values.chest,'')});
