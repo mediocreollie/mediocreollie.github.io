@@ -43,7 +43,7 @@ Task 2: measurement meaning, units and directional results before improving OCR.
 
 Run `node --test tests/fit-measurements.test.mjs`: nine passing tests covering conversions, ranges, unknowns, incompatible references, invalid inputs, ease, separate inseam, and the real UI submit handler with an in-memory DOM adapter. The submit check verifies the legacy record survives and the new reference snapshot stays unchanged after later edits. This adapter is not a browser test.
 
-Inline JavaScript syntax, static DOM ID references, duplicate IDs and git whitespace checks pass. Browser rendering, live authentication and real-image OCR were not tested. Task 2 remains a separate reviewable change, not a live release.
+Inline JavaScript syntax, static DOM ID references, duplicate IDs and git whitespace checks pass. Browser rendering, live authentication and real-image OCR were not tested. Task 2 was subsequently merged through PR #10 at the owner’s explicit request. Pages deployment 35175738396 succeeded. Browser and live-account checks remain outstanding.
 
 ### Compatibility and rollback
 
@@ -52,3 +52,29 @@ The existing account validator accepts the additive fields. No old records are r
 ### Remaining work
 
 Task 3 provides proper table extraction/review, image cancellation and source retention decisions. The legacy OCR still reads the first recognised number and requires manual correction; it cannot select a size column reliably. Task 4 adds explicit save controls, reopening snapshots and editable garments. Task 5 adds complete upper/lower body diagrams and visual accessibility verification.
+
+
+## 17 September 2026: Task 3
+
+### Changed
+
+- Replaced direct OCR autofill with source-image preview, original extracted text and an editable multi-size table.
+- Select and confirm a reviewed size before copying values into the comparison form. Blank values clear old fields and remain unknown. Chart meaning and unit confirmation are still required after import.
+- Conservative English parsing supports horizontal letter-size headers and explicit numeric Size headers. Misaligned, duplicated and unrecognised rows remain blank with warnings. Vertical tables and ambiguous layouts use manual entry; no product or label lookup is implied.
+- Add/remove size rows, correct extracted text, rebuild the table or enter a table manually. All candidates require human review; there is no invented confidence percentage.
+- Added cancellation, worker termination, stale-result protection, file validation (PNG/JPEG/WebP, 10 MB and 20 million decoded pixels) and recovery to manual entry.
+- Pending imports cannot be compared until applied or explicitly discarded via manual entry. Replacing a file preserves the manual comparison draft.
+- Images are processed locally in the browser with Tesseract's English reader. The library and language resources download externally; image bytes are not uploaded to the account. Blob URLs and review data are cleared on profile/account re-render, discard and page exit.
+- Reviewed table rows, selected size and extracted text are copied into an additive importSnapshot on saved comparisons. Editing copied values removes that provenance until re-reviewed. No storage schema or account policy migration.
+
+### Verification
+
+`node --test tests/fit-*.test.mjs`: 20 passing checks. Seven parser/validation fixtures cover size columns, ranges, missing/duplicate rows, numeric size headers, vertical-table fallback and OCR character artifacts. Four controller fixtures exercise the actual importer with in-memory DOM/worker adapters: required review and selection, immutable snapshot, cancellation with late completion, profile reset/image release and invalid-file recovery. Nine existing measurement/submit checks also pass.
+
+JavaScript syntax, DOM IDs/references and git whitespace checks pass. These are not browser or OCR accuracy tests. Desktop/mobile rendering, actual Tesseract image recognition and live account saving remain unverified. Task 3 is a separate draft PR, not deployed.
+
+### Scope and next task
+
+English first; unfamiliar text can be mapped manually. No automatic translation, page scraping or product-code lookup. Crop using the device photo editor and re-upload; in-app cropping is deferred. Original images are not stored in Supabase. Task 4 is editable owned garments, explicit comparison saving and reopening historical snapshots.
+
+Worker API reference: https://github.com/naptha/tesseract.js/blob/master/docs/api.md (reviewed 17 September 2026).

@@ -81,7 +81,19 @@
         <div class="page-head"><div><span class="eyebrow">Before you buy</span><h2>Will it fit?</h2><p>Start with a size chart. Compare it with something you already know.</p></div></div>
         <div class="grid two">
           <form class="card" id="compareForm">
-            <div class="upload-zone" id="uploadZone"><div class="upload-head"><div><strong>Drop a size chart here</strong><span>Choose a screenshot with visible labels and units. Check every number before comparing.</span></div><button class="button" type="button" id="chooseImage">Choose screenshot</button></div><input id="sizeImage" type="file" accept="image/png,image/jpeg,image/webp" hidden><div class="upload-preview" id="uploadPreview"><img id="uploadImage" alt="Uploaded size guide"><div class="ocr-status" id="ocrStatus">Ready to read this image.</div></div></div>
+            <div class="upload-zone" id="uploadZone"><div class="upload-head"><div><strong>Drop a size chart here</strong><span>Choose a screenshot with visible labels and units. Check every number before comparing.</span></div><button class="button" type="button" id="chooseImage">Choose screenshot</button></div><input id="sizeImage" type="file" accept="image/png,image/jpeg,image/webp" hidden><div class="upload-preview" id="uploadPreview"><img id="uploadImage" alt="Uploaded size guide"></div></div>
+            <p id="ocrStatus" role="status" aria-live="polite">Images are read in this browser tab and are not uploaded to your account. The reader downloads language files on first use.</p>
+            <div class="actions"><button id="cancelImport" type="button" class="button secondary" hidden>Cancel reading</button><button id="manualTable" type="button" class="button secondary">Enter a size table manually</button></div>
+            <section id="reviewPanel" hidden aria-labelledby="reviewHeading">
+              <h3 id="reviewHeading">Check what we read</h3><p>English size charts work best. Images and labels are not product searches. If a layout is unclear, enter the table yourself. To crop, use your device’s photo editor and choose the image again.</p>
+              <details><summary>Original extracted text</summary><label for="sourceText">Correct or paste chart text, then rebuild the table</label><textarea id="sourceText" maxlength="32000"></textarea><button id="parseText" type="button" class="button secondary">Rebuild table from text</button></details>
+              <p id="reviewWarnings" role="alert"></p><div class="review-scroll" role="region" aria-label="Editable size chart" tabindex="0"><table><thead><tr><th>Size</th><th>Chest</th><th>Waist</th><th>Hip</th><th>Shoulder</th><th>Length</th><th>Sleeve</th><th>Inseam</th><th>Actions</th></tr></thead><tbody id="reviewRows"></tbody></table></div>
+              <button id="addSize" type="button" class="button secondary">Add size</button>
+              <label for="reviewSize">Size to compare</label><select id="reviewSize"></select>
+              <label class="measurement-confirm"><input id="reviewConfirmed" type="checkbox"> I checked the size names and values against the source. Blank cells are unknown.</label>
+              <div class="actions"><button id="applyImport" type="button" class="button">Use this size</button><button id="discardImport" type="button" class="button secondary">Discard import</button></div>
+              <p class="help">Confirmed table values and extracted text are saved with your comparison. The original image is kept only in this tab until discarded, your profile changes, or the page closes.</p>
+            </section>
             <button class="text-button" type="button" id="manualEntry">Enter measurements instead ↓</button>
             <h3>Item and size</h3><p class="sub">Enter as much as the retailer provides. Empty measurements will be ignored.</p>
             <div class="fields">
@@ -171,6 +183,7 @@ function converted(n,from,to){if(n==null)return null;if(from===to)return n;retur
 
 function render(){
   inputEpoch++;
+  window.FitImport?.reset();
   document.getElementById("confirmChart").checked=false;clearComparison();
   const p=current();
   document.getElementById("profileSelect").innerHTML=data.profiles.map(x=>`<option value="${x.id}" ${x.id===p.id?"selected":""}>${esc(x.name)}</option>`).join("");
@@ -254,6 +267,7 @@ document.getElementById("compareForm").addEventListener("input",e=>{
 document.getElementById("compareForm").onsubmit=e=>{
  e.preventDefault();clearComparison();
  try{
+  if(window.FitImport?.pending?.())throw Error("Review and apply the imported size first, or choose Enter measurements instead to continue manually.");
   const p=current(),ref=val("reference"),isBody=ref==="body",g=p.garments.find(x=>x.id===ref);
   if(!isBody&&!g)throw Error("Choose an available reference garment.");
   if(!val("girthMethod"))throw Error("Confirm whether the chart uses widths or measurements around.");
@@ -268,38 +282,18 @@ document.getElementById("compareForm").onsubmit=e=>{
   document.getElementById("result").innerHTML=`<h3>Measurement differences</h3><p>Compared with ${esc(reference.name)}. Displayed in ${esc(unit)}.</p><div class="measurement-results">${comparison.rows.map(r=>`<div class="measurement-result"><strong>${dimensionNames[r.key]}</strong><p>${esc(description(r))}</p><small>Chart: ${esc(range(r.target))} · Reference: ${esc(range(r.reference))}</small></div>`).join("")}</div><p class="sub">${isBody&&val("chartType")==="garment"?"The difference around your body is wearing ease, not a comfort recommendation. ":""}Cut, stretch and measurement method can change how clothing feels. Missing measurements are not estimated.</p>`;
   document.getElementById("visualTitle").textContent="Measured differences only";
   document.getElementById("visualNotes").innerHTML=comparison.rows.map(r=>`<li><strong>${dimensionNames[r.key]}:</strong> ${esc(description(r))}</li>`).join("");
-  p.comparisons.push({id:crypto.randomUUID(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category,size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:val("fitPreference"),measurementVersion:2,measurements:values,sourceUnit:val("chartUnit"),chartType:val("chartType"),girthMethod:val("girthMethod"),referenceSnapshot:reference,result:comparison,verdict:"Measurement differences"});
+  p.comparisons.push({id:crypto.randomUUID(),date:new Date().toISOString(),brand:val("brand").trim(),item:val("itemName").trim(),category,size:val("sizeName").trim(),url:val("productUrl"),reference:ref,preference:val("fitPreference"),measurementVersion:2,measurements:values,sourceUnit:val("chartUnit"),chartType:val("chartType"),girthMethod:val("girthMethod"),referenceSnapshot:reference,importSnapshot:window.FitImport?.snapshot()||null,result:comparison,verdict:"Measurement differences"});
   save();renderHistory();toast("Comparison recorded. Check the save status above.");
  }catch(err){document.getElementById("compareError").textContent=err.message;}
 };
 
 function loadOcrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>resolve(window.Tesseract);s.onerror=()=>reject(new Error("The image reader could not load."));document.head.appendChild(s)})}
-function parseMeasurements(text){
- const clean=text.replace(/,/g,".");const labels={chest:["chest","bust"],waist:["waist"],hip:["hips?","seat"],shoulder:["shoulders?","shoulder width"],length:["body length","garment length","length"],sleeve:["sleeve","arm length"],inseam:["inseam","inside leg"]},found={};
- Object.entries(labels).forEach(([key,names])=>{for(const name of names){const m=clean.match(new RegExp("(?:^|\\n|\\s)"+name+"\\s*(?:\\([^)]*\\))?\\s*[:\\-]?\\s*(\\d{2,3}(?:\\.\\d)?)","i"));if(m){let n=parseFloat(m[1]);found[key]=n;break}}});return found
-}
-async function readSizeImage(file){
- const token=++inputEpoch;
- document.getElementById("confirmChart").checked=false;clearComparison();
- const preview=document.getElementById("uploadPreview"),img=document.getElementById("uploadImage"),status=document.getElementById("ocrStatus");img.src=URL.createObjectURL(file);preview.classList.add("show");status.innerHTML="<strong>Reading screenshot…</strong><br>This can take 10 to 30 seconds the first time.";
- try{const T=await loadOcrLibrary(),result=await T.recognize(file,"eng",{logger:m=>{if(token===inputEpoch&&m.status==="recognizing text")status.innerHTML="<strong>Reading screenshot… "+Math.round((m.progress||0)*100)+"%</strong><br>Keep this page open."}}),found=parseMeasurements(result.data.text||""),entries=Object.entries(found);
- if(token!==inputEpoch)return;
- document.getElementById("confirmChart").checked=false;clearComparison();
- entries.forEach(([k,n])=>{const el=document.getElementById("c"+k[0].toUpperCase()+k.slice(1));if(el)el.value=n});
- status.innerHTML=entries.length?"<strong>Found "+entries.length+" measurement"+(entries.length===1?"":"s")+".</strong><br>Please check every filled number against the image.<div class=detected>"+entries.map(([k,n])=>esc(k)+": "+n+" "+"(chart units)").join(" · ")+"</div>":"<strong>No labelled measurements were recognised.</strong><br>Try a tighter crop, or enter the numbers manually."
- }catch(err){if(token!==inputEpoch)return;status.innerHTML="<strong>Automatic reading did not work.</strong><br>"+esc(err.message||"Please enter the measurements manually.")}
-}
-const sizeImage=document.getElementById("sizeImage"),uploadZone=document.getElementById("uploadZone");
-document.getElementById("chooseImage").onclick=()=>sizeImage.click();
-document.getElementById("manualEntry").onclick=()=>document.getElementById("cChest").focus();
-sizeImage.addEventListener("change",()=>{if(sizeImage.files[0])readSizeImage(sizeImage.files[0])});
-["dragenter","dragover"].forEach(n=>uploadZone.addEventListener(n,e=>{e.preventDefault();uploadZone.classList.add("drag")}));
-["dragleave","drop"].forEach(n=>uploadZone.addEventListener(n,e=>{e.preventDefault();uploadZone.classList.remove("drag")}));
-uploadZone.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))readSizeImage(f)});
 
 syncDimensions();
 render();
 </script>
+<script src="./chart-import.js"></script>
+<script src="./import-review.js"></script>
 <script src="./account.js"></script>
 </body>
 </html>
