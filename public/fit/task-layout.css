@@ -1,0 +1,28 @@
+/* Task 1: visual foundation and task-first navigation. See docs/fit-implementation-plan.md. */
+:root{--ink:#171717;--muted:#646464;--paper:#f7f6f2;--line:#cccbc5;--green:#171717;--mint:#efeee8;--lime:#dfff00;--shadow:none}
+.topbar{max-width:1440px;margin:auto;background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line);padding:24px 32px}
+.brand h1{font-size:26px;letter-spacing:-.04em}.brand p{color:var(--muted)}
+.profile-switch select,.icon-btn{border:1px solid var(--ink);border-radius:0;color:var(--ink);min-height:44px}
+.account-bar{max-width:1376px;margin:0 auto;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+.account-bar summary{cursor:pointer;width:fit-content;padding:10px 0;min-height:44px;font-weight:650}
+.account-panel{padding:16px 0;max-width:800px}.account-bar #cloudStatus{margin:0 0 8px;overflow-wrap:anywhere}
+.shell{display:block}.sidebar{min-height:0;border:0;padding:12px 32px 0}.sidebar nav{display:flex;gap:12px;min-width:0}
+nav button{width:auto;min-height:48px;border-radius:0;margin:0;padding:12px 18px;color:var(--ink);border-bottom:3px solid transparent}
+nav button.active{background:transparent;border-bottom-color:var(--ink);color:var(--ink)}
+main{padding:32px}.page-head h2{font-family:inherit;font-size:clamp(36px,5vw,56px);font-weight:750;letter-spacing:-.045em;line-height:1.1;margin:10px 0 16px}
+.eyebrow{color:var(--muted);font-family:ui-monospace,monospace;font-weight:500;letter-spacing:.04em}
+.card,dialog,.measure,.empty,.privacy,.upload-zone,.upload-preview img,.detected,.figure,input,select,textarea,.button,.toast{border-radius:0;box-shadow:none}
+.button{background:var(--lime);color:var(--ink);border:1px solid var(--ink);min-height:44px}.button.secondary{border-color:var(--ink);color:var(--ink)}
+.button.light{background:var(--mint);color:var(--ink)}.button.danger{background:#fff3f1;color:#8e3327}
+label{color:var(--ink);font-size:13px}input,select,textarea{border-color:#888;min-height:44px}
+:focus-visible{outline:3px solid #315fd4!important;outline-offset:3px}h2:focus{outline:none}
+.tag{border-radius:0}.measure span,.verdict,.modal-head h3,.visual-copy h3{font-family:inherit}
+.upload-zone{border:1px solid var(--ink);background:var(--paper);padding:28px;margin:0 0 20px}
+.upload-head{display:block}.upload-head strong{font-size:26px;line-height:1.2;letter-spacing:-.025em}.upload-head span{font-size:14px;line-height:1.5;margin:12px 0 22px}.upload-head .button{width:100%}
+.text-button{border:0;background:none;color:var(--ink);padding:10px 0;margin:0 0 24px;min-height:44px;text-decoration:underline;text-underline-offset:4px}
+.reference-help{margin-bottom:18px;background:transparent}.reference-help p{color:var(--muted);line-height:1.6}.saved-history{margin-top:36px}
+#compareForm{min-width:0}#recent p{margin-top:6px}.toast{z-index:10}
+@media(max-width:1439px){.account-bar{margin:0 32px}}
+@media(max-width:850px){.topbar{padding:20px 24px}.account-bar{margin:0 24px}.sidebar{padding:10px 24px 0}.sidebar nav{min-width:0}main{padding:24px}.grid.two{grid-template-columns:1fr}}
+@media(max-width:520px){.topbar{padding:18px 16px;flex-wrap:wrap}.brand h1{font-size:24px}.profile-switch{max-width:100%;min-width:0}.profile-switch select{max-width:180px}.account-bar{margin:0 16px}.sidebar{position:fixed;bottom:0;left:0;right:0;z-index:5;background:var(--paper);border-top:1px solid var(--ink);padding:4px 8px calc(4px + env(safe-area-inset-bottom))}.sidebar nav{justify-content:space-around;gap:0}.sidebar nav button{justify-content:center;flex:1;padding:12px 8px;font-size:14px}main{padding:24px 16px 100px}.upload-zone{padding:20px}.upload-head strong{font-size:24px}.toast{bottom:85px;left:16px;right:16px}.item{flex-wrap:wrap}.account-panel .actions .button{flex:1 1 160px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
