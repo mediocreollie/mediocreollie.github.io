@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T22:52:30Z",
+  "generated_at": "2026-09-18T22:36:46Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,8 +8,8 @@
       "price": 3.85,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-17T22:52:07Z",
-      "updated_at": "2026-09-17T22:52:07Z",
+      "checked_at": "2026-09-18T22:36:21Z",
+      "updated_at": "2026-09-18T22:36:21Z",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
@@ -18,20 +18,17 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-17T22:52:07Z",
+      "checked_at": "2026-09-18T22:36:21Z",
       "error": "The expected product identity was not present"
     },
     "foodland": {
       "name": "Foodland Henley Square",
       "store_id": "henley-square",
-      "price": 4.95,
-      "status": "available",
-      "verified": true,
-      "checked_at": "2026-09-17T22:52:07Z",
-      "updated_at": "2026-09-17T22:52:07Z",
-      "source": "https://products.foodlandsa.com.au/lines/c-bella-ccnut-wtr-str-up-1l",
-      "price_scope": "Foodland SA advertised price; confirm Henley Square shelf price",
-      "store_specific": false
+      "price": null,
+      "status": "unavailable",
+      "verified": false,
+      "checked_at": "2026-09-18T22:36:21Z",
+      "error": "The expected product identity was not present"
     }
   },
   "cheapest_store": "coles",
@@ -70,6 +67,11 @@
       },
       {
         "date": "2026-09-17T22:52:07Z",
+        "price": 3.85,
+        "verified": true
+      },
+      {
+        "date": "2026-09-18T22:36:21Z",
         "price": 3.85,
         "verified": true
       }
