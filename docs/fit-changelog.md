@@ -116,8 +116,29 @@ Task 4b: explicit Save comparison and reopening original snapshots. Task 4c: mar
 
 `node --test tests/fit-*.test.mjs`: 33 checks pass. Six new history checks cover explicit save, deep-copy immutability, record lookup, replay with an available reference, deleted-reference fallback and legacy rejection. The real submit-handler fixture confirms that running a comparison does not mutate saved history or trigger cloud persistence.
 
-JavaScript syntax, static DOM references, unique IDs and whitespace checks pass. Browser interaction, deployed rendering and live-account saving remain unverified. Task 4b is prepared as a separate draft pull request for review.
+JavaScript syntax, static DOM references, unique IDs and whitespace checks pass. Task 4b was merged through PR #13 on 18 September 2026. The live Fit page was opened after deployment and confirmed to contain the explicit-save history copy. Full interaction and live-account saving remain unverified.
 
 ### Next
 
 Task 4c: mark a checked item as bought, record its observed fit and add it to My clothes without treating retailer body-chart values as measured garment dimensions. Task 5 then adds upper/lower measurement diagrams and release polish.
+
+## 18 September 2026: Task 4c
+
+### Changed
+
+- Saved version 2 checks now offer Record purchase. The outcome form records the item, label size, actual fit and notes, then links the check to an item in My clothes.
+- Updating a purchase edits the linked clothing record instead of creating duplicates. If that linked record was deleted, saving the outcome creates a new linked item safely.
+- Purchase status and observed fit are additive metadata on the saved check. Its original chart inputs, reference snapshot and calculated result remain unchanged.
+- Retailer chart values are never copied into owned-clothing measurements. New purchased items start with blank garment measurements and explain that the physical item can be measured later.
+- Clothing without a real garment measurement cannot be selected as a reference. After measurements are added through Edit, the normal Use as reference action becomes available.
+- T-shirt and trouser checks map to the corresponding owned-clothing category. Legacy summary checks do not offer purchase recording because their source snapshot is incomplete.
+
+### Verification
+
+`node --test tests/fit-*.test.mjs`: 40 checks pass. Seven new checks cover measurement eligibility plus purchase creation, snapshot preservation, duplicate prevention, retained physical measurements, deleted-link recovery, trouser mapping and atomic rejection of invalid outcomes.
+
+JavaScript syntax, unique IDs, static DOM references and whitespace checks pass. The live Task 4b deployment was checked in a browser before this task began. Task 4c browser interaction, responsive layout and live-account saving remain review items.
+
+### Next
+
+Task 5: replace the limited schematic with clear upper-body and trouser measurement diagrams, then complete responsive, accessibility, privacy and migration checks before the broader release review.

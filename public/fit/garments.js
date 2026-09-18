@@ -2,6 +2,10 @@
 (function(root){
  const keys=['chest','waist','hip','shoulder','length','sleeve','inseam'];
  function category(g){return g.category==='Trousers'?'trousers':['Top','Shirt','T-shirt'].includes(g.category)?'tee':null;}
+ function hasMeasurements(g){
+  const relevant=category(g)==='trousers'?['waist','hip','inseam']:category(g)==='tee'?['chest','shoulder','length','sleeve']:[];
+  return relevant.some(k=>Number.isFinite(g.measurements?.[k])&&g.measurements[k]>0);
+ }
  function update(profile,id,fields,newId){
   const previous=id?profile.garments.find(g=>g.id===id):null;
   if(id&&!previous)throw Error('This item is no longer available. Reopen My clothes.');
@@ -13,5 +17,5 @@
   profile.garments=id?profile.garments.map(g=>g.id===id?item:g):[...profile.garments,item];
   return item;
  }
- root.FitGarments={keys,category,update};
+ root.FitGarments={keys,category,hasMeasurements,update};
 })(globalThis);

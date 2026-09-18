@@ -46,7 +46,7 @@ Use a dedicated branch and pull request for each task. Verify locally and record
 ## Task 4 delivery slices
 
 - **4a, edit and reuse clothing:** merged through PR #12 on 17 September 2026; Pages run 35225273521 succeeded. Edit existing garment records, record observed fit/notes and select a reference. Twenty-seven focused checks pass; browser verification outstanding.
-- **4b, save and reopen comparisons:** implemented in a separate draft branch. Explicit save button, immutable original snapshot view and a separate compare-again action using current measurements. Thirty-three focused checks pass across the Fit feature; browser verification is outstanding.
-- **4c, record purchase outcome:** later. Mark an item as bought, record actual fit and add it to owned clothes without presenting retailer body-chart values as measured garment dimensions.
+- **4b, save and reopen comparisons:** merged through PR #13 on 18 September 2026 and confirmed on the live page. Explicit save button, immutable original snapshot view and a separate compare-again action using current measurements. Thirty-three focused checks passed at release.
+- **4c, record purchase outcome:** implemented in a separate draft branch. Mark an item as bought, record actual fit and add it to owned clothes without presenting retailer body-chart values as measured garment dimensions. Forty focused checks pass across the Fit feature.
 
-Keep these slices separate for review. Tasks 3 and 4a are now on main; Task 4b remains isolated until reviewed.
+Keep these slices separate for review. Tasks 3, 4a and 4b are now on main; Task 4c remains isolated until reviewed.
