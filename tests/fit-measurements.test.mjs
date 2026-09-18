@@ -12,7 +12,7 @@ test('reject invalid, reversed, zero and negative measurements',()=>{for(const n
 test('body to garment reports ease only and excludes sleeve method mismatch',()=>{const r=F.compare({...request,values:{chest:53,sleeve:60},reference:{kind:'body',unit:'cm',values:{chest:100,sleeve:60}}}).rows;assert.equal(r[0].status,'ease');assert.equal(r[0].difference,6);assert.equal(r[3].status,'unknown')});
 test('trouser inseam is distinct from legacy sleeve',()=>{assert.throws(()=>F.compare({...request,category:'trousers',values:{inseam:80},reference:{kind:'garment',unit:'cm',values:{sleeve:80}}}),/No compatible/)});
 
-test('UI submit saves a versioned snapshot without a score and preserves legacy records',async()=>{
+test('UI submit creates an unsaved result and preserves saved history',async()=>{
  const {readFileSync}=await import('node:fs');const {runInNewContext}=await import('node:vm');
  const html=readFileSync(new URL('../public/fit/index.html',import.meta.url),'utf8');
  const fragment=html.slice(html.indexOf('const dimensionNames='),html.indexOf('function loadOcrLibrary'));
@@ -21,6 +21,6 @@ test('UI submit saves a versioned snapshot without a score and preserves legacy 
  const legacy={id:'old',score:80};const profile={name:'Person',unit:'cm',garments:[{id:'g1',name:'Favourite',category:'Top',measurements:{chest:104,length:70}}],comparisons:[legacy]};let saves=0;
  const context={window:{},FitMeasurements:F,document:{getElementById:get},val:id=>get(id).value,current:()=>profile,structuredClone,crypto:{randomUUID:()=> 'new-id'},esc:s=>String(s),save:()=>saves++,renderHistory(){},toast(){}};
  runInNewContext(fragment,context);get('compareForm').onsubmit({preventDefault(){}});
- assert.equal(saves,1);assert.equal(profile.comparisons[0],legacy);const record=profile.comparisons[1];assert.equal(record.measurementVersion,2);assert.equal(record.score,undefined);assert.equal(record.result.rows[0].difference,2);profile.garments[0].measurements.chest=120;assert.equal(record.referenceSnapshot.values.chest,104);
- get('chartType').value='body';get('confirmChart').checked=true;get('compareForm').onsubmit({preventDefault(){}});assert.equal(saves,1);assert.match(get('compareError').textContent,/Body size charts/);
+ assert.equal(saves,0);assert.deepEqual(profile.comparisons,[legacy]);assert.match(get('result').innerHTML,/Save comparison/);assert.match(get('result').innerHTML,/not in Previous checks/);
+ get('chartType').value='body';get('confirmChart').checked=true;get('compareForm').onsubmit({preventDefault(){}});assert.equal(saves,0);assert.match(get('compareError').textContent,/Body size charts/);
 });
