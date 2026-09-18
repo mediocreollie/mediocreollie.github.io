@@ -158,12 +158,14 @@
     <div class="field"><label for="gLength">Length</label><input id="gLength" type="number" min="0" step=".1"></div>
     <div class="field"><label for="gSleeve">Sleeve length (tops only)</label><input id="gSleeve" type="number" min="0" step=".1"></div>
   <p id="garmentError" role="alert"></p><div class="field"><label for="gInseam">Inseam (trousers only)</label><input id="gInseam" type="number" min="0" step=".1"></div></div><div class="modal-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button" value="default" id="saveGarment">Save clothing</button></div></form></dialog>
-<dialog id="checkDialog"><div class="modal"><div class="modal-head"><div><span class="eyebrow">Saved snapshot</span><h3 id="checkDialogTitle">Previous check</h3></div><button class="close" id="closeCheck" type="button" aria-label="Close">×</button></div><div id="checkDialogBody"></div><div class="modal-actions"><button class="button secondary" id="closeCheckBottom" type="button">Close</button><button class="button" id="repeatCheck" type="button" hidden>Compare again</button></div></div></dialog>
+<dialog id="checkDialog"><div class="modal"><div class="modal-head"><div><span class="eyebrow">Saved snapshot</span><h3 id="checkDialogTitle">Previous check</h3></div><button class="close" id="closeCheck" type="button" aria-label="Close">×</button></div><div id="checkDialogBody"></div><div class="modal-actions"><button class="button secondary" id="closeCheckBottom" type="button">Close</button><button class="button secondary" id="recordPurchase" type="button" hidden>Record purchase</button><button class="button" id="repeatCheck" type="button" hidden>Compare again</button></div></div></dialog>
+<dialog id="purchaseDialog"><form class="modal" id="purchaseForm"><div class="modal-head"><div><span class="eyebrow">Real-world fit</span><h3 id="purchaseHeading">Record purchased item</h3></div><button class="close" id="closePurchase" type="button" aria-label="Close">×</button></div><p class="sub">Add what you actually bought and how it fitted. Size-chart values are not copied as clothing measurements. You can measure the garment later in My clothes.</p><div class="fields"><div class="field"><label for="purchaseName">Item name</label><input id="purchaseName" required maxlength="120"></div><div class="field"><label for="purchaseBrand">Brand</label><input id="purchaseBrand" maxlength="120"></div><div class="field"><label for="purchaseSize">Label size</label><input id="purchaseSize" maxlength="40"></div><div class="field"><label for="purchaseFit">How does it fit?</label><select id="purchaseFit"><option>Just right</option><option>Too tight</option><option>Too loose</option><option>Not sure yet</option><option>Relaxed</option><option>Close fitting</option></select></div></div><div class="field"><label for="purchaseNotes">Fit notes</label><textarea id="purchaseNotes" maxlength="1000" placeholder="e.g. Shoulders are right, body is slightly short"></textarea></div><p id="purchaseError" role="alert"></p><div class="modal-actions"><button class="button secondary" id="cancelPurchase" type="button">Cancel</button><button class="button" type="submit">Save to My clothes</button></div></form></dialog>
 <div class="toast" id="toast"></div>
 
 <script src="./measurements.js"></script>
 <script src="./garments.js"></script>
 <script src="./history.js"></script>
+<script src="./purchase.js"></script>
 <script>
 const KEY="fit-reference-v1";
 const measureDefs=[
@@ -174,7 +176,7 @@ const measureDefs=[
 const defaultData={active:"p1",profiles:[{id:"p1",name:"My profile",unit:"cm",measurements:{},garments:[],comparisons:[]}]};
 let data=load();
 let inputEpoch=0;
-let comparisonDraft=null,openedCheckId=null;
+let comparisonDraft=null,openedCheckId=null,purchaseDraft=null;
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&Array.isArray(v.profiles)&&v.profiles.length?v:structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
 function save(){ if(window.fitCloud) window.fitCloud.save(); else {try{localStorage.setItem(KEY,JSON.stringify(data))}catch{toast("Browser storage unavailable. Changes are not saved.")}} }
 function current(){return data.profiles.find(p=>p.id===data.active)||data.profiles[0]}
@@ -196,7 +198,7 @@ function render(){
 }
 function renderHistory(){
   const p=current();
-  document.getElementById("recent").innerHTML=p.comparisons.length?p.comparisons.slice().reverse().map(c=>`<div class="item"><div><h4>${esc([c.brand,c.item].filter(Boolean).join(" ")||"Saved check")}</h4><p>${c.size?`Size ${esc(c.size)} · `:""}${esc(c.verdict||"Saved check")}</p><p>${esc(c.date ? new Date(c.date).toLocaleDateString() : "Date not recorded")}</p></div><div class="actions"><span class="tag">${esc(c.category||"Legacy")}</span><button class="button secondary small" data-open-check="${esc(c.id)}">Open</button>${c.measurementVersion===2&&c.result?`<button class="button small" data-repeat-check="${esc(c.id)}">Compare again</button>`:""}</div></div>`).join(""):`<div class="empty"><strong>Nothing saved yet</strong>Run a comparison, then choose Save comparison to keep its original snapshot.<p><button class="button secondary" data-go="compare">Check an item</button></p></div>`;
+  document.getElementById("recent").innerHTML=p.comparisons.length?p.comparisons.slice().reverse().map(c=>`<div class="item"><div><h4>${esc([c.brand,c.item].filter(Boolean).join(" ")||"Saved check")}</h4><p>${c.size?`Size ${esc(c.size)} · `:""}${esc(c.verdict||"Saved check")}</p><p>${esc(c.date ? new Date(c.date).toLocaleDateString() : "Date not recorded")}</p></div><div class="actions"><span class="tag">${esc(c.category||"Legacy")}</span>${c.purchase?.status==="bought"?'<span class="tag">Bought</span>':""}<button class="button secondary small" data-open-check="${esc(c.id)}">Open</button>${c.measurementVersion===2&&c.result?`<button class="button small" data-repeat-check="${esc(c.id)}">Compare again</button>`:""}</div></div>`).join(""):`<div class="empty"><strong>Nothing saved yet</strong>Run a comparison, then choose Save comparison to keep its original snapshot.<p><button class="button secondary" data-go="compare">Check an item</button></p></div>`;
 }
 function renderMeasurements(){
   const p=current();
@@ -205,7 +207,7 @@ function renderMeasurements(){
 function renderGarments(){
   const p=current(),el=document.getElementById("garmentList");
   if(!p.garments.length){el.innerHTML=`<div class="empty"><strong>No favourites yet</strong>Start with one item that fits exactly how you like.</div>`;return}
-  el.innerHTML=p.garments.map(g=>`<div class="item"><div><h4>${esc(g.name)}</h4><p>${esc(g.brand||"Unbranded")} · ${esc(g.category)} · Size ${esc(g.size||"not recorded")}</p><div style="margin-top:8px"><span class="tag">${esc(g.fit)}</span><span class="tag">${Object.values(g.measurements).filter(Boolean).length} measurements · ${esc(g.unit||p.unit)}</span></div>${g.notes?`<p class="fit-notes">${esc(g.notes)}</p>`:""}</div><div class="actions"><button class="button secondary small" data-edit-garment="${esc(g.id)}">Edit</button>${FitGarments.category(g)?`<button class="button small" data-use-garment="${esc(g.id)}">Use as reference</button>`:""}<button class="button danger small" data-delete-garment="${esc(g.id)}">Remove</button></div></div>`).join("");
+  el.innerHTML=p.garments.map(g=>`<div class="item"><div><h4>${esc(g.name)}</h4><p>${esc(g.brand||"Unbranded")} · ${esc(g.category)} · Size ${esc(g.size||"not recorded")}</p><div style="margin-top:8px"><span class="tag">${esc(g.fit)}</span><span class="tag">${Object.values(g.measurements).filter(Boolean).length} measurements · ${esc(g.unit||p.unit)}</span></div>${g.sourceComparisonId&&!FitGarments.hasMeasurements(g)?'<p class="help">Bought item saved. Add garment measurements before using it as a reference.</p>':""}${g.notes?`<p class="fit-notes">${esc(g.notes)}</p>`:""}</div><div class="actions"><button class="button secondary small" data-edit-garment="${esc(g.id)}">Edit</button>${FitGarments.category(g)&&FitGarments.hasMeasurements(g)?`<button class="button small" data-use-garment="${esc(g.id)}">Use as reference</button>`:""}<button class="button danger small" data-delete-garment="${esc(g.id)}">Remove</button></div></div>`).join("");
 }
 function renderReferences(){
   const p=current(),ref=document.getElementById("reference");
@@ -241,13 +243,27 @@ function openCheck(id){
  openedCheckId=id;
  document.getElementById("checkDialogTitle").textContent=[check.brand,check.item].filter(Boolean).join(" ")||"Previous check";
  const repeat=document.getElementById("repeatCheck");repeat.hidden=!(check.measurementVersion===2&&check.result);
+ const purchase=document.getElementById("recordPurchase");purchase.hidden=repeat.hidden;purchase.textContent=check.purchase?.status==="bought"?"Update purchased item":"Record purchase";
  if(check.measurementVersion!==2||!check.result){
   document.getElementById("checkDialogBody").innerHTML=`<p><strong>Historical summary</strong></p><p>${esc(check.verdict||"Saved check")}${Number.isFinite(check.score)?` · Legacy fit score: ${esc(check.score)}%`:""}</p><p class="sub">This check was saved before measurement snapshots were introduced. It can be viewed here, but it cannot be rebuilt automatically.</p>`;
  }else{
   const rows=check.result.rows||[],reference=check.referenceSnapshot?.name||"Saved reference";
-  document.getElementById("checkDialogBody").innerHTML=`<p><strong>${check.size?`Size ${esc(check.size)} · `:""}${esc(check.category||"Item")}</strong></p><p>Compared with ${esc(reference)} on ${esc(check.date?new Date(check.date).toLocaleDateString():"an unrecorded date")}.</p><p class="sub">This is the original saved snapshot. Values are shown in centimetres so they do not change with your current profile settings.</p><div class="measurement-results">${rows.map(row=>`<div class="measurement-result"><strong>${esc(dimensionNames[row.key]||row.key)}</strong><p>${esc(snapshotDifference(row))}</p><small>Chart: ${esc(snapshotRange(row.target))} · Reference: ${esc(snapshotRange(row.reference))}</small></div>`).join("")}</div>`;
+  document.getElementById("checkDialogBody").innerHTML=`<p><strong>${check.size?`Size ${esc(check.size)} · `:""}${esc(check.category||"Item")}</strong></p><p>Compared with ${esc(reference)} on ${esc(check.date?new Date(check.date).toLocaleDateString():"an unrecorded date")}.</p>${check.purchase?.status==="bought"?`<p><span class="tag">Bought</span> Actual fit: <strong>${esc(check.purchase.fit)}</strong>${check.purchase.notes?` · ${esc(check.purchase.notes)}`:""}</p>`:""}<p class="sub">This is the original saved snapshot. Values are shown in centimetres so they do not change with your current profile settings.</p><div class="measurement-results">${rows.map(row=>`<div class="measurement-result"><strong>${esc(dimensionNames[row.key]||row.key)}</strong><p>${esc(snapshotDifference(row))}</p><small>Chart: ${esc(snapshotRange(row.target))} · Reference: ${esc(snapshotRange(row.reference))}</small></div>`).join("")}</div>`;
  }
  document.getElementById("checkDialog").showModal();
+}
+function openPurchase(id){
+ const check=FitHistory.find(current(),id);if(!check||check.measurementVersion!==2||!check.result)return;
+ purchaseDraft={checkId:id,profileId:current().id};
+ const linked=check.purchase?.garmentId?current().garments.find(g=>g.id===check.purchase.garmentId):null;
+ document.getElementById("purchaseForm").reset();document.getElementById("purchaseError").textContent="";
+ document.getElementById("purchaseHeading").textContent=check.purchase?.status==="bought"?"Update purchased item":"Record purchased item";
+ document.getElementById("purchaseName").value=linked?.name||check.item||"";
+ document.getElementById("purchaseBrand").value=linked?.brand||check.brand||"";
+ document.getElementById("purchaseSize").value=linked?.size||check.size||"";
+ document.getElementById("purchaseFit").value=linked?.fit||check.purchase?.fit||"Not sure yet";
+ document.getElementById("purchaseNotes").value=linked?.notes||check.purchase?.notes||"";
+ document.getElementById("checkDialog").close();document.getElementById("purchaseDialog").showModal();
 }
 function repeatCheck(id){
  const check=FitHistory.find(current(),id);if(!check)return;
@@ -318,6 +334,7 @@ document.addEventListener("click",e=>{
  const edit=e.target.closest("[data-edit-garment]")?.dataset.editGarment;if(edit)openGarment(edit);
  const use=e.target.closest("[data-use-garment]")?.dataset.useGarment;if(!use)return;
  const g=current().garments.find(x=>x.id===use);if(!g)return;
+ if(!FitGarments.hasMeasurements(g)){toast("Add garment measurements before using this item as a reference.");return;}
  if(["Too tight","Too loose"].includes(g.fit)&&!confirm("This item is marked "+g.fit.toLowerCase()+". Use its measurements as your reference anyway?"))return;
  document.getElementById("category").value=FitGarments.category(g);syncDimensions();document.getElementById("reference").value=g.id;showView("compare");
 });
@@ -367,6 +384,16 @@ document.getElementById("compareForm").onsubmit=e=>{
 document.getElementById("closeCheck").onclick=()=>document.getElementById("checkDialog").close();
 document.getElementById("closeCheckBottom").onclick=()=>document.getElementById("checkDialog").close();
 document.getElementById("repeatCheck").onclick=()=>repeatCheck(openedCheckId);
+document.getElementById("recordPurchase").onclick=()=>openPurchase(openedCheckId);
+document.getElementById("closePurchase").onclick=document.getElementById("cancelPurchase").onclick=()=>{document.getElementById("purchaseDialog").close();purchaseDraft=null;};
+document.getElementById("purchaseForm").onsubmit=e=>{
+ e.preventDefault();
+ try{
+  if(!purchaseDraft||current().id!==purchaseDraft.profileId)throw Error("The active profile changed. Close this form and reopen the saved check.");
+  FitPurchase.record(current(),purchaseDraft.checkId,{name:val("purchaseName"),brand:val("purchaseBrand"),size:val("purchaseSize"),fit:val("purchaseFit"),notes:val("purchaseNotes")},crypto.randomUUID(),new Date().toISOString());
+  save();renderHistory();renderGarments();renderReferences();document.getElementById("purchaseDialog").close();purchaseDraft=null;toast("Purchased item saved to My clothes. Add its measurements when convenient.");
+ }catch(err){document.getElementById("purchaseError").textContent=err.message;}
+};
 
 function loadOcrLibrary(){return new Promise((resolve,reject)=>{if(window.Tesseract)return resolve(window.Tesseract);const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>resolve(window.Tesseract);s.onerror=()=>reject(new Error("The image reader could not load."));document.head.appendChild(s)})}
 
