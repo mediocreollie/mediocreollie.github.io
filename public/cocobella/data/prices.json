@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T01:33:53Z",
+  "generated_at": "2026-09-19T22:20:51Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,8 +8,8 @@
       "price": 3.85,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-19T01:33:27Z",
-      "updated_at": "2026-09-19T01:33:27Z",
+      "checked_at": "2026-09-19T22:20:27Z",
+      "updated_at": "2026-09-19T22:20:27Z",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527",
       "store_specific": false,
       "price_scope": "Coles online listing; Rundle Place price not independently verified"
@@ -20,7 +20,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-19T01:33:27Z",
+      "checked_at": "2026-09-19T22:20:27Z",
       "error": "The expected product identity was not present"
     },
     "foodland": {
@@ -29,7 +29,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-19T01:33:27Z",
+      "checked_at": "2026-09-19T22:20:27Z",
       "error": "The expected product identity was not present"
     },
     "drakes_findon": {
@@ -39,8 +39,8 @@
       "status": "available",
       "verified": true,
       "store_specific": true,
-      "checked_at": "2026-09-19T01:33:27Z",
-      "updated_at": "2026-09-19T01:33:27Z",
+      "checked_at": "2026-09-19T22:20:27Z",
+      "updated_at": "2026-09-19T22:20:27Z",
       "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
       "price_scope": "Findon online shop; shelf price and stock may differ"
     }
@@ -90,7 +90,7 @@
         "verified": true
       },
       {
-        "date": "2026-09-19T01:33:27Z",
+        "date": "2026-09-19T22:20:27Z",
         "price": 3.85,
         "verified": true
       }
@@ -125,7 +125,7 @@
     ],
     "drakes_findon": [
       {
-        "date": "2026-09-19T01:33:27Z",
+        "date": "2026-09-19T22:20:27Z",
         "price": 4.5,
         "verified": true
       }
