@@ -10,7 +10,9 @@
       "verified": true,
       "checked_at": "2026-09-18T22:36:21Z",
       "updated_at": "2026-09-18T22:36:21Z",
-      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
+      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527",
+      "store_specific": false,
+      "price_scope": "Coles online listing; Rundle Place price not independently verified"
     },
     "woolworths": {
       "name": "Woolworths Rundle Mall",
@@ -29,10 +31,22 @@
       "verified": false,
       "checked_at": "2026-09-18T22:36:21Z",
       "error": "The expected product identity was not present"
+    },
+    "drakes_findon": {
+      "name": "Drakes Findon",
+      "store_id": "079",
+      "price": 4.5,
+      "status": "available",
+      "verified": true,
+      "store_specific": true,
+      "checked_at": "2026-09-19T01:30:23Z",
+      "updated_at": "2026-09-19T01:30:23Z",
+      "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+      "price_scope": "Findon online shop; shelf price and stock may differ"
     }
   },
   "cheapest_store": "coles",
-  "recommended_store": "coles",
+  "recommended_store": "drakes_findon",
   "history": {
     "coles": [
       {
@@ -101,6 +115,13 @@
       {
         "date": "2026-09-17T22:52:07Z",
         "price": 4.95,
+        "verified": true
+      }
+    ],
+    "drakes_findon": [
+      {
+        "date": "2026-09-19T01:30:23Z",
+        "price": 4.5,
         "verified": true
       }
     ]

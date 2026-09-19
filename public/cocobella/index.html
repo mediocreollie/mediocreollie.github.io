@@ -11,15 +11,19 @@
       <header class="header">
         <p class="eyebrow">Cocobella</p>
         <h1>Grocery price tracker</h1>
+        <p>Cocobella Straight Up Coconut Water 1L only.</p>
+        <p>Within 5 miles (8.05 km) of Henley Square, measured in a straight line. Driving distances will be longer.</p>
+        <label for="store-view">Show prices:</label>
+        <select id="store-view"><option value="nearby">Near Henley Square</option><option value="all">Include Rundle Mall shops</option></select>
       </header>
 
       <section class="summary" id="summary">
         <div class="summary-card">
-          <span class="label">Cheapest store</span>
+          <span class="label">Lowest verified store-specific online price</span>
           <strong id="cheapest-store">Loading…</strong>
         </div>
         <div class="summary-card">
-          <span class="label">Last updated</span>
+          <span class="label">Last refresh attempt</span>
           <strong id="updated-at">Loading…</strong>
         </div>
       </section>
@@ -29,7 +33,13 @@
       <section class="chart-panel">
         <h2>Price history</h2>
         <svg id="history-chart" viewBox="0 0 680 220" role="img" aria-label="Price history chart"></svg>
+        <p id="chart-legend"></p>
+        <p>Prices in AUD. Missing checks are gaps. Historical chain listings do not confirm local shelf prices.</p>
       </section>
+      <h2>Nearby shops to check</h2>
+      <p>Drakes Findon has a confirmed online listing for the exact product. Other branches below are candidates from chains that list Cocobella; their local range, stock and prices are unconfirmed. This is a researched shortlist, not an exhaustive stock audit.</p>
+      <section class="stores" id="nearby-stores"></section>
+      <p>Locations checked September 2026. Approximate coordinates from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>; distances are to Henley Square. Some locations use the nearby street segment rather than the shop entrance.</p>
     </main>
 
     <script src="./app.js"></script>

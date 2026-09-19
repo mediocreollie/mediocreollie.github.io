@@ -1,0 +1,143 @@
+{
+  "checked_on": "2026-09-19",
+  "radius_km": 8.04672,
+  "origin": {
+    "name": "Henley Square",
+    "latitude": -34.919625,
+    "longitude": 138.4938152
+  },
+  "stores": [
+    {
+      "name": "Drakes Grange",
+      "address": "528 Grange Rd, Grange SA 5024",
+      "source": "https://grange.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9073083,
+      "longitude": 138.4947065,
+      "distance_km": 1.4,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/180061231"
+    },
+    {
+      "name": "Drakes Fulham",
+      "address": "Tapleys Hill Rd & Valetta Rd, Fulham Gardens SA 5024",
+      "source": "https://fulham.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9135293,
+      "longitude": 138.5149334,
+      "distance_km": 2,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/2589756362"
+    },
+    {
+      "name": "Woolworths Fulham Gardens",
+      "address": "445-457 Tapleys Hill Rd, Fulham Gardens SA 5024",
+      "source": "https://fulhamgardensshopping.com.au/",
+      "note": "Candidate: chain lists the product; automated price access is currently blocked and branch stock is unverified.",
+      "latitude": -34.9138967,
+      "longitude": 138.5148694,
+      "distance_km": 2,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/9537128520"
+    },
+    {
+      "name": "Drakes West Beach",
+      "address": "693 Burbridge Rd, West Beach SA 5024",
+      "source": "https://westbeach.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9368757,
+      "longitude": 138.5057626,
+      "distance_km": 2.2,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/12751118623"
+    },
+    {
+      "name": "Foodland Lockleys",
+      "address": "491 Henley Beach Rd, Lockleys SA 5024",
+      "source": "https://www.foodlandsa.com.au/stores/",
+      "note": "Candidate: no verified store-specific Cocobella price or stock source.",
+      "latitude": -34.9260942,
+      "longitude": 138.5286346,
+      "distance_km": 3.3,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/1230091789"
+    },
+    {
+      "name": "Drakes Findon",
+      "address": "303 Grange Rd, Findon SA 5023",
+      "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+      "note": "Tracked: exact 1L original listed in the Findon online shop. Shelf stock may differ.",
+      "latitude": -34.9044046,
+      "longitude": 138.5306739,
+      "distance_km": 3.8,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/2391427400"
+    },
+    {
+      "name": "Coles Findon",
+      "address": "303 Grange Rd, Findon SA 5023",
+      "source": "https://www.coles.com.au/find-stores/coles/sa/findon-403",
+      "note": "Candidate: chain lists the product; this branch's price and stock are unverified.",
+      "latitude": -34.9048091,
+      "longitude": 138.5318295,
+      "distance_km": 3.8,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/497197520"
+    },
+    {
+      "name": "Woolworths West Lakes",
+      "address": "111 West Lakes Blvd, West Lakes SA 5021",
+      "source": "https://www.woolworths.com.au/shop/storelocator/sa-west-lakes-5623",
+      "note": "Candidate: chain lists the product; automated price access is currently blocked and branch stock is unverified.",
+      "latitude": -34.8806931,
+      "longitude": 138.4903036,
+      "distance_km": 4.3,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/way/203684560"
+    },
+    {
+      "name": "Foodland Royal Park",
+      "address": "53-59 Tapleys Hill Rd, Hendon SA 5014",
+      "source": "https://www.foodlandsa.com.au/stores/",
+      "note": "Candidate: no verified store-specific Cocobella price or stock source.",
+      "latitude": -34.8706716,
+      "longitude": 138.5122429,
+      "distance_km": 5.7,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/23194819"
+    },
+    {
+      "name": "Drakes Torrensville",
+      "address": "159 Henley Beach Rd, Torrensville SA 5031",
+      "source": "https://torrensville.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9243561,
+      "longitude": 138.5580466,
+      "distance_km": 5.9,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/547407603"
+    },
+    {
+      "name": "Drakes Allenby Gardens",
+      "address": "612 Port Rd, Allenby Gardens SA 5009",
+      "source": "https://allenbygardens.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.8926587,
+      "longitude": 138.5515648,
+      "distance_km": 6.1,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/2400274259"
+    },
+    {
+      "name": "Foodland West Lakes",
+      "address": "Bartley Terrace, West Lakes Shore SA 5020",
+      "source": "https://www.foodlandsa.com.au/stores/",
+      "note": "Candidate: no verified store-specific Cocobella price or stock source.",
+      "latitude": -34.8605036,
+      "longitude": 138.4890313,
+      "distance_km": 6.6,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/way/82591274"
+    }
+  ]
+}
