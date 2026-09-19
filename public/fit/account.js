@@ -8,12 +8,11 @@ function clearPrivateView(){
  document.querySelectorAll("dialog[open]").forEach(d=>d.close());
  document.querySelectorAll("form").forEach(f=>f.reset());
  $("result").textContent="Enter measurements to compare a size.";
- $("visualTitle").textContent="Your fit will appear here"; $("visualNotes").textContent="";
- $("visualText").textContent="Compare an item to see measurement differences.";
- ["zoneChest","zoneWaist","zoneLength"].forEach(id=>$(id).setAttribute("fill","#9eb0aa"));
+ $("visualTitle").textContent="Measurement guide"; $("visualNotes").textContent="";
+ $("visualText").textContent="Choose a category to see where its measurements are taken.";
  $("uploadPreview").classList.remove("show"); $("uploadImage").removeAttribute("src");
 }
-function valid(v){return v&&Array.isArray(v.profiles)&&v.profiles.length&&v.profiles.every(p=>typeof p.id==="string"&&typeof p.name==="string"&&["cm","in"].includes(p.unit)&&p.measurements&&Array.isArray(p.garments)&&Array.isArray(p.comparisons));}
+function valid(v){return window.FitData.valid(v);}
 function queueSave(){
  if(!user){try{localStorage.setItem(KEY,JSON.stringify(data));status("Saved in this browser only.")}catch{status("Browser storage unavailable. Keep this tab open.")}return;}
  if(!ready){status("Cloud is not ready. Load your account before editing.");return;}
