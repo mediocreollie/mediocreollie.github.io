@@ -19,6 +19,7 @@ PRODUCT_NAME = "Cocobella Coconut Water Straight Up 1L"
 COLES_URL = "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
 WOOLWORTHS_URL = "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up"
 FOODLAND_URL = "https://products.foodlandsa.com.au/lines/c-bella-ccnut-wtr-str-up-1l"
+DRAKES_URL = "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l"
 USER_AGENT = "Mozilla/5.0 (compatible; CocobellaPriceTracker/1.0; +https://olliewritesthings.com/cocobella/)"
 
 
@@ -101,7 +102,9 @@ def collect_coles(checked_at: str) -> dict[str, Any]:
         page = fetch_text(COLES_URL, cookies="fulfilmentStoreId=4964; storeId=4964")
         price = extract_price_near_product(page, PRODUCT_NAME, "1251527")
         return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": COLES_URL}
+                "checked_at": checked_at, "updated_at": checked_at, "source": COLES_URL,
+                "store_specific": False,
+                "price_scope": "Coles online listing; Rundle Place price not independently verified"}
     except (HTTPError, URLError, TimeoutError, ValueError) as exc:
         return unavailable(name, store_id, str(exc), checked_at)
 
@@ -130,17 +133,49 @@ def collect_foodland(checked_at: str) -> dict[str, Any]:
         return unavailable(name, store_id, str(exc), checked_at)
 
 
+def parse_drakes(page: str) -> float:
+    # The shop's own structured offer avoids confusing unit/previous prices.
+    text = visible_text(page)
+    if "Serviced by Drakes Online Findon" not in text:
+        raise ValueError("Findon shop identity could not be verified")
+    for raw in re.findall(r'<script\b[^>]*type=[\"\']application/ld\+json[\"\'][^>]*>(.*?)</script>', page, re.I | re.S):
+        product = json.loads(raw)
+        if not isinstance(product, dict) or product.get("@type") != "Product":
+            continue
+        if product.get("name") != "Cocobella Straight Up Coconut Water 1L" or product.get("url") != DRAKES_URL:
+            continue
+        offer = product.get("offers", {})
+        if offer.get("priceCurrency") != "AUD" or not offer.get("availability", "").endswith("/InStock"):
+            raise ValueError("No in-stock AUD offer for Findon")
+        price = float(offer["price"])
+        if not 1 <= price <= 20:
+            raise ValueError("Implausible Findon price")
+        return price
+    raise ValueError("Exact original 1L product offer missing")
+
+
+def collect_drakes(checked_at: str) -> dict[str, Any]:
+    try:
+        price = parse_drakes(fetch_text(DRAKES_URL))
+        return {"name": "Drakes Findon", "store_id": "079", "price": price,
+                "status": "available", "verified": True, "store_specific": True,
+                "checked_at": checked_at, "updated_at": checked_at, "source": DRAKES_URL,
+                "price_scope": "Findon online shop; shelf price and stock may differ"}
+    except Exception as exc:
+        return unavailable("Drakes Findon", "079", str(exc), checked_at)
+
+
 def build_snapshot() -> dict[str, dict[str, Any]]:
     checked_at = now_iso()
     return {"coles": collect_coles(checked_at), "woolworths": collect_woolworths(checked_at),
-            "foodland": collect_foodland(checked_at)}
+            "foodland": collect_foodland(checked_at), "drakes_findon": collect_drakes(checked_at)}
 
 
 def read_history() -> dict[str, list[dict[str, Any]]]:
     if not HISTORY_PATH.exists():
         return {"coles": [], "woolworths": [], "foodland": []}
     history = json.loads(HISTORY_PATH.read_text(encoding="utf-8")).get("history", {})
-    return {key: list(history.get(key, [])) for key in ("coles", "woolworths", "foodland")}
+    return {key: list(values) for key, values in history.items()}
 
 
 def append_history(history: dict[str, list[dict[str, Any]]], snapshot: dict[str, dict[str, Any]]) -> None:
@@ -164,7 +199,7 @@ def main() -> int:
     snapshot = build_snapshot()
     history = read_history()
     append_history(history, snapshot)
-    cheapest = compute_cheapest(snapshot)
+    cheapest = compute_cheapest({key: value for key, value in snapshot.items() if value.get("store_specific") is True})
     payload = {"generated_at": now_iso(), "product": PRODUCT_NAME, "stores": snapshot,
                "cheapest_store": cheapest, "recommended_store": cheapest, "history": history}
     write_json(PRICES_PATH, payload)

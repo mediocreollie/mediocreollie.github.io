@@ -69,6 +69,13 @@
         "price": 4.95,
         "verified": true
       }
+    ],
+    "drakes_findon": [
+      {
+        "date": "2026-09-19T01:30:23Z",
+        "price": 4.5,
+        "verified": true
+      }
     ]
   }
 }

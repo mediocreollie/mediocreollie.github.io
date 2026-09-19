@@ -1,5 +1,7 @@
 import importlib.util
 import unittest
+import json
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -9,6 +11,32 @@ SPEC.loader.exec_module(MODULE)
 
 
 class TrackerTests(unittest.TestCase):
+    def drakes_page(self, **changes):
+        product = {"@type": "Product", "name": "Cocobella Straight Up Coconut Water 1L", "url": MODULE.DRAKES_URL,
+                   "offers": {"price": "4.50", "priceCurrency": "AUD", "availability": "https://schema.org/InStock"}}
+        product.update(changes)
+        return 'Serviced by Drakes Online Findon<script type="application/ld+json">' + json.dumps(product) + '</script>'
+
+    def test_drakes_exact_offer_and_store(self):
+        self.assertEqual(MODULE.parse_drakes(self.drakes_page()), 4.5)
+        for page in [self.drakes_page(name="Cocobella Coffee 1L"), self.drakes_page().replace('Findon', 'Wayville'),
+                     self.drakes_page(url="https://022.drakes.com.au/lines/example"), self.drakes_page().replace('InStock', 'OutOfStock'),
+                     self.drakes_page().replace('AUD', 'USD')]:
+            with self.assertRaises(ValueError):
+                MODULE.parse_drakes(page)
+
+    def test_drakes_failure_is_isolated(self):
+        with patch.object(MODULE, 'fetch_text', side_effect=TimeoutError('offline')):
+            self.assertIsNone(MODULE.collect_drakes('2026-09-19T00:00:00Z')['price'])
+
+    def test_history_keeps_new_stores_on_reload(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / 'history.json'
+            path.write_text(json.dumps({'history': {'drakes_findon': [{'date': '2026-09-19T00:00:00Z', 'price': 4.5}]}}))
+            with patch.object(MODULE, 'HISTORY_PATH', path):
+                self.assertEqual(MODULE.read_history()['drakes_findon'][0]['price'], 4.5)
+
     def test_currency_and_verified_availability_logic(self):
         self.assertEqual(MODULE.format_price(5.5), "$5.50")
         self.assertEqual(MODULE.format_price(None), "Unavailable")
