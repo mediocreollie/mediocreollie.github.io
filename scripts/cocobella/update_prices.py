@@ -118,7 +118,10 @@ def fetch_coles_findon() -> str:
             page = browser.new_page(locale="en-AU")
             page.set_default_timeout(20000)
             page.goto(COLES_URL, wait_until="domcontentloaded", timeout=60000)
-            page.get_by_role("button", name=re.compile(r"^Set your location")).click()
+            try:
+                page.get_by_role("button", name=re.compile(r"^(Set your location|Set shopping method)")).click()
+            except Exception as exc:
+                raise RuntimeError(f"Coles location selector unavailable. Page: {page.title()}; {page.locator('body').inner_text()[:200]}") from exc
             page.get_by_role("button", name="Click & Collect", exact=True).click()
             page.get_by_role("combobox", name="Your selected store", exact=True).fill("Findon")
             page.get_by_role("option", name="Findon, SA 5023", exact=True).click()
@@ -142,7 +145,23 @@ def collect_coles_findon(checked_at: str) -> dict[str, Any]:
                 "checked_at": checked_at, "updated_at": checked_at, "source": COLES_URL,
                 "price_scope": "Findon Click & Collect price; shelf price and stock may differ"}
     except Exception as exc:
-        return unavailable("Coles Findon", "403", str(exc), checked_at)
+        result = unavailable("Coles Findon", "403", str(exc), checked_at)
+        path = DATA_DIR / "browser-observations.json"
+        if path.exists():
+            observation = json.loads(path.read_text()).get("coles_findon", {})
+            observed_at = observation.get("updated_at", "")
+            try:
+                age = (datetime.fromisoformat(checked_at.replace("Z", "+00:00")) - datetime.fromisoformat(observed_at.replace("Z", "+00:00"))).total_seconds()
+                if (0 <= age < 36 * 3600 and observation.get("product_id") == "1251527"
+                        and observation.get("store_id") == "403" and observation.get("verified") is True
+                        and isinstance(observation.get("price"), (int, float)) and 1 <= observation["price"] <= 20):
+                    result.update(observation)
+                    result["checked_at"] = checked_at
+                    result["refresh_error"] = str(exc)
+                    result["price_scope"] = "Findon Click & Collect, dated browser check; automatic refresh failed. Expires after 36 hours."
+            except (ValueError, TypeError):
+                pass
+        return result
 
 
 def collect_woolworths(checked_at: str) -> dict[str, Any]:
@@ -219,8 +238,10 @@ def append_history(history: dict[str, list[dict[str, Any]]], snapshot: dict[str,
     for store, entry in snapshot.items():
         if not is_available(entry):
             continue
-        observation = {"date": entry["checked_at"], "price": entry["price"], "verified": True}
+        observation = {"date": entry.get("updated_at", entry["checked_at"]), "price": entry["price"], "verified": True}
         prior = history.setdefault(store, [])
+        if prior and prior[-1].get("date", "") > observation["date"]:
+            continue
         if prior and prior[-1].get("date", "")[:10] == observation["date"][:10]:
             prior[-1] = observation
         else:

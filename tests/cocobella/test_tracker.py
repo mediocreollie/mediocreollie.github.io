@@ -11,6 +11,20 @@ SPEC.loader.exec_module(MODULE)
 
 
 class TrackerTests(unittest.TestCase):
+    def test_browser_observation_expires_and_keeps_original_time(self):
+        with patch.object(MODULE, 'fetch_coles_findon', side_effect=TimeoutError('offline')):
+            current = MODULE.collect_coles_findon('2026-09-20T01:00:00Z')
+            expired = MODULE.collect_coles_findon('2026-09-22T01:00:00Z')
+        self.assertEqual(current['price'], 3.85)
+        self.assertEqual(current['updated_at'], '2026-09-20T00:04:19Z')
+        self.assertIsNone(expired['price'])
+        history = {}
+        MODULE.append_history(history, {'coles_findon': current})
+        current['checked_at'] = '2026-09-21T01:00:00Z'
+        MODULE.append_history(history, {'coles_findon': current})
+        self.assertEqual(len(history['coles_findon']), 1)
+        self.assertEqual(history['coles_findon'][0]['date'], current['updated_at'])
+
     def test_findon_does_not_fall_back_to_generic_price(self):
         with patch.object(MODULE, 'fetch_coles_findon', side_effect=TimeoutError('location not confirmed')):
             result = MODULE.collect_coles_findon('2026-09-20T00:00:00Z')
