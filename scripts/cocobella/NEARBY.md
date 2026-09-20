@@ -26,6 +26,29 @@ Foodland's SA listing cannot establish any individual independent store's price.
 
 ## Operation
 
+### Follow-up price checks, 20 September 2026
+
+Coles Findon was selected through the public Click & Collect chooser. The exact
+original 1L product was $3.85 (was $5.50), with Findon visible in the header,
+including after reloading the product page. The new collector reproduces these
+UI steps without cookies guessed from a store ID, and returns unavailable if
+selection or product validation fails. GitHub runner access may differ from the
+interactive browser, so browser success alone does not prove unattended support.
+
+The first Actions attempt could not locate Coles' location selector. A dated
+observation is therefore stored in data/browser-observations.json as a fallback,
+explicitly labelled in the page. It expires after 36 hours, preserves its original
+observation timestamp in history, and never gains freshness from a failed retry.
+Automatic collection continues to try the normal store selector each morning.
+
+Other Drakes microsites returned HTTP 403 for direct product requests. Fulham's
+linked 16-22 September catalogue was downloaded and all 24 pages OCR-scanned;
+no Cocobella offer was found. OCR cannot establish a regular price when the
+product is absent. Henley's linked local specials PDF was for 9-15 September,
+already expired. Woolworths rendered the product at $5.50 in an unselected
+session, but completing the Fulham pickup selection requested login; that
+price must not be labelled as a verified Fulham or West Lakes price.
+
 Existing daily GitHub Actions schedule includes Findon via build_snapshot().
 Run `python scripts/cocobella/update_prices.py`; tests:
 `python -m unittest discover -s tests/cocobella -p 'test_*.py'`.

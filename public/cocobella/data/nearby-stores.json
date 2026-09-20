@@ -77,7 +77,7 @@
       "name": "Coles Findon",
       "address": "303 Grange Rd, Findon SA 5023",
       "source": "https://www.coles.com.au/find-stores/coles/sa/findon-403",
-      "note": "Candidate: chain lists the product; this branch's price and stock are unverified.",
+      "note": "Exact 1L original confirmed with Findon selected for Click & Collect. Automated checks fail closed if the location cannot be confirmed; shelf price and stock may differ.",
       "latitude": -34.9048091,
       "longitude": 138.5318295,
       "distance_km": 3.8,

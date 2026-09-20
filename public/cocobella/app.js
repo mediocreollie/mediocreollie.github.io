@@ -1,13 +1,13 @@
 const state = {stores: {}, history: {}, nearby: [], view: 'nearby'};
-const labels = {coles:'Coles Rundle Place', woolworths:'Woolworths Rundle Mall', foodland:'Foodland Henley Square', drakes_findon:'Drakes Findon'};
-const colors = {coles:'#2d7d46', woolworths:'#3e8ed2', foodland:'#a66810', drakes_findon:'#9045ad'};
+const labels = {coles:'Coles Rundle Place', coles_findon:'Coles Findon', woolworths:'Woolworths Rundle Mall', foodland:'Foodland Henley Square', drakes_findon:'Drakes Findon'};
+const colors = {coles:'#2d7d46', coles_findon:'#b83131', woolworths:'#3e8ed2', foodland:'#a66810', drakes_findon:'#9045ad'};
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money = value => Number.isFinite(value) ? `$${value.toFixed(2)}` : 'Unavailable';
 const fresh = s => s?.verified === true && Number.isFinite(s.price) && Date.now()-Date.parse(s.updated_at) < 36*3600000;
 const dateLabel = value => new Date(value).toLocaleString('en-AU', {timeZone:'Australia/Adelaide'});
-const entries = () => Object.entries(state.stores).filter(([key]) => state.view === 'all' || ['drakes_findon','foodland'].includes(key));
+const entries = () => Object.entries(state.stores).filter(([key]) => state.view === 'all' || ['drakes_findon','coles_findon','foodland'].includes(key));
 function render() {
-  document.getElementById('stores').innerHTML = entries().map(([key,s]) => `<article class="store-card"><h3>${esc(s.name || labels[key])}</h3><div class="price">${fresh(s) ? money(s.price) : 'Unavailable'}</div><p class="meta">${esc(s.price_scope || 'No verified current price')}</p><p class="meta">${s.checked_at ? 'Last attempt: '+dateLabel(s.checked_at)+' (Adelaide)' : ''}</p>${!fresh(s) && s.updated_at ? '<p class="meta">Last success: '+dateLabel(s.updated_at)+'. Price is stale.</p>' : ''}${s.source ? `<a href="${esc(s.source)}" target="_blank" rel="noopener">Check product</a>` : ''}</article>`).join('');
+  document.getElementById('stores').innerHTML = entries().map(([key,s]) => `<article class="store-card"><h3>${esc(s.name || labels[key])}</h3><div class="price">${fresh(s) ? money(s.price) : 'Unavailable'}</div><p class="meta">${esc(s.price_scope || 'No verified current price')}</p><p class="meta">${s.updated_at ? 'Price observed: '+dateLabel(s.updated_at)+' (Adelaide)' : ''}</p><p class="meta">${s.checked_at ? 'Last attempt: '+dateLabel(s.checked_at)+' (Adelaide)' : ''}</p>${!fresh(s) && s.updated_at ? '<p class="meta">Last success: '+dateLabel(s.updated_at)+'. Price is stale.</p>' : ''}${s.source ? `<a href="${esc(s.source)}" target="_blank" rel="noopener">Check product</a>` : ''}</article>`).join('');
   const eligible = entries().filter(([,s]) => fresh(s) && s.store_specific === true);
   const min = Math.min(...eligible.map(([,s]) => s.price));
   document.getElementById('cheapest-store').textContent = eligible.length ? eligible.filter(([,s]) => s.price === min).map(([,s]) => s.name).join(' / ')+': '+money(min) : 'No current store-specific price';
