@@ -263,7 +263,7 @@ def main() -> int:
     write_json(PRICES_PATH, payload)
     write_json(HISTORY_PATH, {"history": history})
     verified = [key for key, value in snapshot.items() if is_available(value)]
-    print("Verified live prices: " + (", ".join(verified) if verified else "none"))
+    print("Available verified observations: " + (", ".join(verified) if verified else "none"))
     for key, value in snapshot.items():
         print(f"{key}: {format_price(value.get('price'))} ({value.get('status')})")
         if value.get("error"):
