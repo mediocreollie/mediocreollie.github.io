@@ -11,6 +11,16 @@ SPEC.loader.exec_module(MODULE)
 
 
 class TrackerTests(unittest.TestCase):
+    def test_findon_does_not_fall_back_to_generic_price(self):
+        with patch.object(MODULE, 'fetch_coles_findon', side_effect=TimeoutError('location not confirmed')):
+            result = MODULE.collect_coles_findon('2026-09-20T00:00:00Z')
+        self.assertFalse(result['verified'])
+        self.assertIsNone(result['price'])
+
+    def test_findon_rejects_wrong_product(self):
+        with patch.object(MODULE, 'fetch_coles_findon', return_value='<h1>Cocobella Coffee 1L</h1>$2.75 1251527'):
+            self.assertFalse(MODULE.collect_coles_findon('2026-09-20T00:00:00Z')['verified'])
+
     def drakes_page(self, **changes):
         product = {"@type": "Product", "name": "Cocobella Straight Up Coconut Water 1L", "url": MODULE.DRAKES_URL,
                    "offers": {"price": "4.50", "priceCurrency": "AUD", "availability": "https://schema.org/InStock"}}

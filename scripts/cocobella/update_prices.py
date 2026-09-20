@@ -109,6 +109,42 @@ def collect_coles(checked_at: str) -> dict[str, Any]:
         return unavailable(name, store_id, str(exc), checked_at)
 
 
+def fetch_coles_findon() -> str:
+    """Select a real pickup store, then reload to avoid the default-location price."""
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        try:
+            page = browser.new_page(locale="en-AU")
+            page.set_default_timeout(20000)
+            page.goto(COLES_URL, wait_until="domcontentloaded", timeout=60000)
+            page.get_by_role("button", name=re.compile(r"^Set your location")).click()
+            page.get_by_role("button", name="Click & Collect", exact=True).click()
+            page.get_by_role("combobox", name="Your selected store", exact=True).fill("Findon")
+            page.get_by_role("option", name="Findon, SA 5023", exact=True).click()
+            page.get_by_role("radio", name=re.compile(r"^Coles Findon Findon S/C, Cnr Grange & Findon Rds")).check()
+            page.get_by_role("button", name="Set location", exact=True).click()
+            page.get_by_role("banner").get_by_text("Findon", exact=True).wait_for()
+            page.reload(wait_until="domcontentloaded", timeout=60000)
+            page.get_by_role("banner").get_by_text("Findon", exact=True).wait_for()
+            page.get_by_role("heading", name="Cocobella Coconut Water Straight Up | 1L", exact=True).wait_for()
+            return page.content()
+        finally:
+            browser.close()
+
+
+def collect_coles_findon(checked_at: str) -> dict[str, Any]:
+    try:
+        page = fetch_coles_findon()
+        price = extract_price_near_product(page, PRODUCT_NAME, "1251527")
+        return {"name": "Coles Findon", "store_id": "403", "price": price,
+                "status": "available", "verified": True, "store_specific": True,
+                "checked_at": checked_at, "updated_at": checked_at, "source": COLES_URL,
+                "price_scope": "Findon Click & Collect price; shelf price and stock may differ"}
+    except Exception as exc:
+        return unavailable("Coles Findon", "403", str(exc), checked_at)
+
+
 def collect_woolworths(checked_at: str) -> dict[str, Any]:
     name, store_id = "Woolworths Rundle Mall", "5317"
     try:
@@ -168,7 +204,8 @@ def collect_drakes(checked_at: str) -> dict[str, Any]:
 def build_snapshot() -> dict[str, dict[str, Any]]:
     checked_at = now_iso()
     return {"coles": collect_coles(checked_at), "woolworths": collect_woolworths(checked_at),
-            "foodland": collect_foodland(checked_at), "drakes_findon": collect_drakes(checked_at)}
+            "foodland": collect_foodland(checked_at), "drakes_findon": collect_drakes(checked_at),
+            "coles_findon": collect_coles_findon(checked_at)}
 
 
 def read_history() -> dict[str, list[dict[str, Any]]]:
@@ -208,6 +245,8 @@ def main() -> int:
     print("Verified live prices: " + (", ".join(verified) if verified else "none"))
     for key, value in snapshot.items():
         print(f"{key}: {format_price(value.get('price'))} ({value.get('status')})")
+        if value.get("error"):
+            print(f"  {value['error']}")
     return 0 if verified else 1
 
 
