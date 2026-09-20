@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T00:08:38Z",
+  "generated_at": "2026-09-20T22:29:11Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,8 +8,8 @@
       "price": 3.85,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-20T00:07:51Z",
-      "updated_at": "2026-09-20T00:07:51Z",
+      "checked_at": "2026-09-20T22:28:25Z",
+      "updated_at": "2026-09-20T22:28:25Z",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527",
       "store_specific": false,
       "price_scope": "Coles online listing; Rundle Place price not independently verified"
@@ -20,7 +20,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-20T00:07:51Z",
+      "checked_at": "2026-09-20T22:28:25Z",
       "error": "The expected product identity was not present"
     },
     "foodland": {
@@ -29,7 +29,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-20T00:07:51Z",
+      "checked_at": "2026-09-20T22:28:25Z",
       "error": "The expected product identity was not present"
     },
     "drakes_findon": {
@@ -39,8 +39,8 @@
       "status": "available",
       "verified": true,
       "store_specific": true,
-      "checked_at": "2026-09-20T00:07:51Z",
-      "updated_at": "2026-09-20T00:07:51Z",
+      "checked_at": "2026-09-20T22:28:25Z",
+      "updated_at": "2026-09-20T22:28:25Z",
       "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
       "price_scope": "Findon online shop; shelf price and stock may differ"
     },
@@ -50,7 +50,7 @@
       "price": 3.85,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-20T00:07:51Z",
+      "checked_at": "2026-09-20T22:28:25Z",
       "error": "Coles location selector unavailable. Page: ; ",
       "product_id": "1251527",
       "regular_price": 5.5,
@@ -113,7 +113,7 @@
         "verified": true
       },
       {
-        "date": "2026-09-20T00:07:51Z",
+        "date": "2026-09-20T22:28:25Z",
         "price": 3.85,
         "verified": true
       }
@@ -153,7 +153,7 @@
         "verified": true
       },
       {
-        "date": "2026-09-20T00:07:51Z",
+        "date": "2026-09-20T22:28:25Z",
         "price": 4.5,
         "verified": true
       }
