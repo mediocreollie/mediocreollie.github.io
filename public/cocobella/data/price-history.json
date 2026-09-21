@@ -50,6 +50,11 @@
         "date": "2026-09-20T22:28:25Z",
         "price": 3.85,
         "verified": true
+      },
+      {
+        "date": "2026-09-21T23:19:11Z",
+        "price": 3.85,
+        "verified": true
       }
     ],
     "woolworths": [],
@@ -88,6 +93,11 @@
       },
       {
         "date": "2026-09-20T22:28:25Z",
+        "price": 4.5,
+        "verified": true
+      },
+      {
+        "date": "2026-09-21T23:19:11Z",
         "price": 4.5,
         "verified": true
       }
