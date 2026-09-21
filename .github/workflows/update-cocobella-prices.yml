@@ -48,6 +48,15 @@ jobs:
       - name: Collect and update price data
         run: python scripts/cocobella/update_prices.py
 
+      - name: Upload Woolworths diagnostic screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: woolworths-diagnostics
+          path: artifacts/woolworths/
+          retention-days: 3
+          if-no-files-found: warn
+
       - name: Commit and push updated Cocobella data
         if: github.event_name != 'pull_request'
         run: |
