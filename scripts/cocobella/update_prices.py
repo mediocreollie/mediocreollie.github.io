@@ -117,11 +117,15 @@ def fetch_coles_findon() -> str:
         try:
             page = browser.new_page(locale="en-AU")
             page.set_default_timeout(20000)
-            page.goto(COLES_URL, wait_until="domcontentloaded", timeout=60000)
+            response = page.goto(COLES_URL, wait_until="domcontentloaded", timeout=60000)
             try:
                 page.get_by_role("button", name=re.compile(r"^(Set your location|Set shopping method)")).click()
             except Exception as exc:
-                raise RuntimeError(f"Coles location selector unavailable. Page: {page.title()}; {page.locator('body').inner_text()[:200]}") from exc
+                diagnostics = ROOT / "artifacts" / "coles-findon"
+                diagnostics.mkdir(parents=True, exist_ok=True)
+                page.screenshot(path=str(diagnostics / "page.png"), full_page=True)
+                (diagnostics / "page.html").write_text(page.content())
+                raise RuntimeError(f"Coles location selector unavailable. HTTP {response.status if response else 'unknown'}; URL {page.url}; Page: {page.title()}; HTML length {len(page.content())}; {page.locator('body').inner_text()[:200]}") from exc
             page.get_by_role("button", name="Click & Collect", exact=True).click()
             page.get_by_role("combobox", name="Your selected store", exact=True).fill("Findon")
             page.get_by_role("option", name="Findon, SA 5023", exact=True).click()
