@@ -1,5 +1,6 @@
 """Read-only Woolworths API diagnostic. Never publishes prices."""
 import json
+import re
 from http.cookiejar import CookieJar
 from urllib.request import build_opener, HTTPCookieProcessor, Request
 from urllib.error import HTTPError
@@ -17,7 +18,8 @@ def request(path, body=None):
     except HTTPError as exc:
         status, raw = exc.code, exc.read().decode(errors="replace")
     print(json.dumps({"path": path, "http_status": status, "bytes": len(raw)}))
-    if status in (401, 403, 429) or any(x in raw.lower() for x in ("access denied", "verify you are human", "captcha", "request blocked")):
+    if status in (401, 403, 429) or any(x in raw.lower() for x in ("<title>access denied", "verify you are human", "request blocked")):
+        print(json.dumps({"response_summary": re.sub(r"<[^>]+>", " ", raw)[:500]}))
         raise RuntimeError("Access or security check prevented retrieval; stopping without retry")
     return json.loads(raw) if raw.lstrip().startswith(("{", "[")) else None
 
@@ -32,8 +34,7 @@ def products(value):
             yield from products(child)
 
 try:
-    # Standard anonymous cookie session, no copied credentials or fingerprint changes.
-    request("/shop/productdetails/724514/cocobella-coconut-water-straight-up")
+    # Test the documented endpoint directly, with no borrowed cookies or spoofing.
     payload = request("/apis/ui/Search/products", {
         "Filters": [], "IsSpecial": False,
         "Location": "/shop/search/products?searchTerm=Cocobella",
