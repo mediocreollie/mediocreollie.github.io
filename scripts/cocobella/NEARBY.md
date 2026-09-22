@@ -62,3 +62,10 @@ No historical observations were fabricated or copied between stores.
 To add a supported collector, give it a stable key, verify product and shop
 identity, add it to build_snapshot(), the nearby view and chart labels/colors.
 Update the shortlist only after checking the branch address and radius.
+
+
+## Coles runner diagnosis, 22 September 2026
+
+The GitHub Actions response is HTTP 200 but contains an Imperva/Incapsula iframe. The diagnostic screenshot explicitly asks for an additional security check and hCaptcha. This is not a missing selector or price parsing error. OCR would read the challenge rather than a product price. Do not change fingerprints, rotate proxies, or attempt to bypass it.
+
+The collector now identifies this response and reports that a human security check is required. Failed-selector screenshots are retained as Actions artifacts for three days, not published on the tracker. Dated browser observations still expire after 36 hours and retain their original observation time. Findon was checked interactively again on 22 September at 04:20:41 UTC: $3.85, was $5.50, with Findon Click & Collect selected after reload. This does not establish working unattended retrieval.
