@@ -48,6 +48,15 @@ jobs:
       - name: Collect and update price data
         run: python scripts/cocobella/update_prices.py
 
+      - name: Upload Coles diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coles-findon-diagnostics
+          path: artifacts/coles-findon
+          retention-days: 3
+          if-no-files-found: ignore
+
       - name: Commit and push updated Cocobella data
         if: github.event_name != 'pull_request'
         run: |
