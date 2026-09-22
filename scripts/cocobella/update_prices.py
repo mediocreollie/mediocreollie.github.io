@@ -109,6 +109,12 @@ def collect_coles(checked_at: str) -> dict[str, Any]:
         return unavailable(name, store_id, str(exc), checked_at)
 
 
+def check_coles_access(page_html: str) -> None:
+    # HTTP 200 can still be an Imperva challenge inside an otherwise empty iframe.
+    if '_Incapsula_Resource' in page_html and ('incident_id=' in page_html or 'Incapsula incident ID' in page_html):
+        raise RuntimeError("Coles requires a human security check on the automatic runner; no Findon price was retrieved")
+
+
 def fetch_coles_findon() -> str:
     """Select a real pickup store, then reload to avoid the default-location price."""
     from playwright.sync_api import sync_playwright
@@ -119,12 +125,13 @@ def fetch_coles_findon() -> str:
             page.set_default_timeout(20000)
             response = page.goto(COLES_URL, wait_until="domcontentloaded", timeout=60000)
             try:
+                check_coles_access(page.content())
                 page.get_by_role("button", name=re.compile(r"^(Set your location|Set shopping method)")).click()
             except Exception as exc:
                 diagnostics = ROOT / "artifacts" / "coles-findon"
                 diagnostics.mkdir(parents=True, exist_ok=True)
                 page.screenshot(path=str(diagnostics / "page.png"), full_page=True)
-                (diagnostics / "page.html").write_text(page.content())
+                check_coles_access(page.content())
                 raise RuntimeError(f"Coles location selector unavailable. HTTP {response.status if response else 'unknown'}; URL {page.url}; Page: {page.title()}; HTML length {len(page.content())}; {page.locator('body').inner_text()[:200]}") from exc
             page.get_by_role("button", name="Click & Collect", exact=True).click()
             page.get_by_role("combobox", name="Your selected store", exact=True).fill("Findon")
@@ -162,7 +169,7 @@ def collect_coles_findon(checked_at: str) -> dict[str, Any]:
                     result.update(observation)
                     result["checked_at"] = checked_at
                     result["refresh_error"] = str(exc)
-                    result["price_scope"] = "Findon Click & Collect, dated browser check; automatic refresh failed. Expires after 36 hours."
+                    result["price_scope"] = "Findon Click & Collect, dated browser check; automatic refresh unavailable. Expires after 36 hours."
             except (ValueError, TypeError):
                 pass
         return result
