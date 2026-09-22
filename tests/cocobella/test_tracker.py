@@ -12,7 +12,8 @@ SPEC.loader.exec_module(MODULE)
 
 class TrackerTests(unittest.TestCase):
     def test_browser_observation_expires_and_keeps_original_time(self):
-        with patch.object(MODULE, 'fetch_coles_findon', side_effect=TimeoutError('offline')):
+        fixture = {'coles_findon': {'price': 3.85, 'verified': True, 'product_id': '1251527', 'store_id': '403', 'updated_at': '2026-09-20T00:04:19Z'}}
+        with patch.object(MODULE, 'fetch_coles_findon', side_effect=TimeoutError('offline')), patch.object(MODULE.json, 'loads', return_value=fixture):
             current = MODULE.collect_coles_findon('2026-09-20T01:00:00Z')
             expired = MODULE.collect_coles_findon('2026-09-22T01:00:00Z')
         self.assertEqual(current['price'], 3.85)
@@ -24,6 +25,12 @@ class TrackerTests(unittest.TestCase):
         MODULE.append_history(history, {'coles_findon': current})
         self.assertEqual(len(history['coles_findon']), 1)
         self.assertEqual(history['coles_findon'][0]['date'], current['updated_at'])
+
+    def test_coles_security_challenge_is_not_a_price_page(self):
+        challenge = '<iframe src="/_Incapsula_Resource?incident_id=example">Request unsuccessful</iframe>'
+        with self.assertRaisesRegex(RuntimeError, 'human security check'):
+            MODULE.check_coles_access(challenge)
+        MODULE.check_coles_access('<h1>Cocobella Coconut Water Straight Up | 1L</h1>')
 
     def test_findon_does_not_fall_back_to_generic_price(self):
         with patch.object(MODULE, 'fetch_coles_findon', side_effect=TimeoutError('location not confirmed')):
