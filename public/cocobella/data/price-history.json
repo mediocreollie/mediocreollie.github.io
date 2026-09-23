@@ -4,62 +4,74 @@
       {
         "date": "2026-09-11T22:36:33Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-12T22:19:53Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-13T22:26:09Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-14T23:09:35Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-15T22:55:06Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-16T22:58:27Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-17T22:52:07Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-18T22:36:21Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-19T22:20:27Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-20T22:28:25Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-21T23:19:11Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-22T22:58:57Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       }
     ],
     "woolworths": [],
@@ -67,61 +79,78 @@
       {
         "date": "2026-09-13T22:26:09Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-14T23:09:35Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-15T22:55:06Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-16T22:58:27Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-17T22:52:07Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       }
     ],
     "drakes_findon": [
       {
         "date": "2026-09-19T22:20:27Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-20T22:28:25Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-21T23:19:11Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-22T22:58:57Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
+      },
+      {
+        "date": "2026-09-23T04:14:32Z",
+        "price": 4.5,
+        "verified": true,
+        "store_specific": true
       }
     ],
     "coles_findon": [
       {
         "date": "2026-09-20T00:04:19Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-22T04:20:41Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       }
     ]
   }

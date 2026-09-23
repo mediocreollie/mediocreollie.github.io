@@ -1,18 +1,16 @@
 {
-  "generated_at": "2026-09-22T22:59:24Z",
+  "generated_at": "2026-09-23T04:14:35Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
       "name": "Coles Rundle Place",
       "store_id": "4964",
-      "price": 5.5,
-      "status": "available",
-      "verified": true,
-      "checked_at": "2026-09-22T22:58:57Z",
-      "updated_at": "2026-09-22T22:58:57Z",
-      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527",
-      "store_specific": false,
-      "price_scope": "Coles online listing; Rundle Place price not independently verified"
+      "price": null,
+      "status": "unavailable",
+      "verified": false,
+      "checked_at": "2026-09-23T04:14:32Z",
+      "error": "No verified Rundle Place price source. Generic online prices are excluded.",
+      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
     "woolworths": {
       "name": "Woolworths Rundle Mall",
@@ -20,8 +18,9 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-22T22:58:57Z",
-      "error": "The expected product identity was not present"
+      "checked_at": "2026-09-23T04:14:32Z",
+      "error": "Automatic access is blocked; branch pricing could not be verified. Check the product with your store selected.",
+      "source": "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up"
     },
     "foodland": {
       "name": "Foodland Henley Square",
@@ -29,8 +28,9 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-22T22:58:57Z",
-      "error": "The expected product identity was not present"
+      "checked_at": "2026-09-23T04:14:32Z",
+      "error": "No verified Henley Square product-price source. Another Foodland's price is not substituted.",
+      "source": "https://henleysquarefoodland.com.au/specials/"
     },
     "drakes_findon": {
       "name": "Drakes Findon",
@@ -39,8 +39,8 @@
       "status": "available",
       "verified": true,
       "store_specific": true,
-      "checked_at": "2026-09-22T22:58:57Z",
-      "updated_at": "2026-09-22T22:58:57Z",
+      "checked_at": "2026-09-23T04:14:32Z",
+      "updated_at": "2026-09-23T04:14:32Z",
       "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
       "price_scope": "Findon online shop; shelf price and stock may differ"
     },
@@ -50,8 +50,7 @@
       "price": 3.85,
       "status": "available",
       "verified": true,
-      "checked_at": "2026-09-22T22:58:57Z",
-      "error": "Coles requires a human security check on the automatic runner; no Findon price was retrieved",
+      "checked_at": "2026-09-23T04:14:32Z",
       "product_id": "1251527",
       "regular_price": 5.5,
       "store_specific": true,
@@ -70,62 +69,74 @@
       {
         "date": "2026-09-11T22:36:33Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-12T22:19:53Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-13T22:26:09Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-14T23:09:35Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-15T22:55:06Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-16T22:58:27Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-17T22:52:07Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-18T22:36:21Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-19T22:20:27Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-20T22:28:25Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-21T23:19:11Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-22T22:58:57Z",
         "price": 5.5,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       }
     ],
     "woolworths": [],
@@ -133,61 +144,78 @@
       {
         "date": "2026-09-13T22:26:09Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-14T23:09:35Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-15T22:55:06Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-16T22:58:27Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       },
       {
         "date": "2026-09-17T22:52:07Z",
         "price": 4.95,
-        "verified": true
+        "verified": true,
+        "store_specific": false
       }
     ],
     "drakes_findon": [
       {
         "date": "2026-09-19T22:20:27Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-20T22:28:25Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-21T23:19:11Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-22T22:58:57Z",
         "price": 4.5,
-        "verified": true
+        "verified": true,
+        "store_specific": true
+      },
+      {
+        "date": "2026-09-23T04:14:32Z",
+        "price": 4.5,
+        "verified": true,
+        "store_specific": true
       }
     ],
     "coles_findon": [
       {
         "date": "2026-09-20T00:04:19Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       },
       {
         "date": "2026-09-22T04:20:41Z",
         "price": 3.85,
-        "verified": true
+        "verified": true,
+        "store_specific": true
       }
     ]
   }
