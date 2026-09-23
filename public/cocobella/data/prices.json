@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T04:14:35Z",
+  "generated_at": "2026-09-23T22:58:25Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,7 +8,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-23T04:14:32Z",
+      "checked_at": "2026-09-23T22:58:22Z",
       "error": "No verified Rundle Place price source. Generic online prices are excluded.",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
@@ -18,7 +18,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-23T04:14:32Z",
+      "checked_at": "2026-09-23T22:58:22Z",
       "error": "Automatic access is blocked; branch pricing could not be verified. Check the product with your store selected.",
       "source": "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up"
     },
@@ -28,7 +28,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-23T04:14:32Z",
+      "checked_at": "2026-09-23T22:58:22Z",
       "error": "No verified Henley Square product-price source. Another Foodland's price is not substituted.",
       "source": "https://henleysquarefoodland.com.au/specials/"
     },
@@ -39,31 +39,23 @@
       "status": "available",
       "verified": true,
       "store_specific": true,
-      "checked_at": "2026-09-23T04:14:32Z",
-      "updated_at": "2026-09-23T04:14:32Z",
+      "checked_at": "2026-09-23T22:58:22Z",
+      "updated_at": "2026-09-23T22:58:22Z",
       "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
       "price_scope": "Findon online shop; shelf price and stock may differ"
     },
     "coles_findon": {
       "name": "Coles Findon",
       "store_id": "403",
-      "price": 3.85,
-      "status": "available",
-      "verified": true,
-      "checked_at": "2026-09-23T04:14:32Z",
-      "product_id": "1251527",
-      "regular_price": 5.5,
-      "store_specific": true,
-      "updated_at": "2026-09-22T04:20:41Z",
-      "observation_method": "interactive_browser",
-      "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527",
-      "evidence": "Selected Findon SA 5023, Coles Findon at Findon S/C, Cnr Grange & Findon Rds, Click & Collect on 22 September 2026. Reloaded product; header Findon and original 1L price $3.85 (was $5.50).",
-      "refresh_error": "Coles requires a human security check on the automatic runner; no Findon price was retrieved",
-      "price_scope": "Findon Click & Collect, dated browser check; automatic refresh unavailable. Expires after 36 hours."
+      "price": null,
+      "status": "unavailable",
+      "verified": false,
+      "checked_at": "2026-09-23T22:58:22Z",
+      "error": "Coles requires a human security check on the automatic runner; no Findon price was retrieved"
     }
   },
-  "cheapest_store": "coles_findon",
-  "recommended_store": "coles_findon",
+  "cheapest_store": "drakes_findon",
+  "recommended_store": "drakes_findon",
   "history": {
     "coles": [
       {
@@ -198,7 +190,7 @@
         "store_specific": true
       },
       {
-        "date": "2026-09-23T04:14:32Z",
+        "date": "2026-09-23T22:58:22Z",
         "price": 4.5,
         "verified": true,
         "store_specific": true
