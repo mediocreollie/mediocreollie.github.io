@@ -28,13 +28,14 @@
         </div>
       </section>
 
+      <p id="data-warning" role="status"></p>
       <section class="stores" id="stores" aria-live="polite"></section>
 
       <section class="chart-panel">
         <h2>Price history</h2>
         <svg id="history-chart" viewBox="0 0 680 220" role="img" aria-label="Price history chart"></svg>
         <p id="chart-legend"></p>
-        <p>Prices in AUD. Missing checks are gaps. Historical chain listings do not confirm local shelf prices.</p>
+        <p>Prices in AUD. Missing checks are gaps. Only confirmed branch observations are plotted. Historical chain listings are retained in the data but excluded from this chart.</p>
       </section>
       <h2>Nearby shops to check</h2>
       <p>Drakes Findon and Coles Findon have confirmed online listings for the exact product. Other branches below are candidates from chains that list Cocobella; their local range, stock and prices are unconfirmed. This is a researched shortlist, not an exhaustive stock audit.</p>
@@ -42,6 +43,6 @@
       <p>Locations checked September 2026. Approximate coordinates from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>; distances are to Henley Square. Some locations use the nearby street segment rather than the shop entrance.</p>
     </main>
 
-    <script src="./app.js?v=findon-status-20260922"></script>
+    <script src="./app.js?v=reliability-20260923"></script>
   </body>
 </html>

@@ -3,7 +3,7 @@ const labels = {coles:'Coles Rundle Place', coles_findon:'Coles Findon', woolwor
 const colors = {coles:'#2d7d46', coles_findon:'#b83131', woolworths:'#3e8ed2', foodland:'#a66810', drakes_findon:'#9045ad'};
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money = value => Number.isFinite(value) ? `$${value.toFixed(2)}` : 'Unavailable';
-const fresh = s => s?.verified === true && Number.isFinite(s.price) && Date.now()-Date.parse(s.updated_at) < 36*3600000;
+const fresh = s => s?.verified === true && s.store_specific === true && Number.isFinite(s.price) && s.price >= 1 && s.price <= 20 && Date.now() >= Date.parse(s.updated_at) && Date.now()-Date.parse(s.updated_at) < 36*3600000;
 const dateLabel = value => new Date(value).toLocaleString('en-AU', {timeZone:'Australia/Adelaide'});
 const entries = () => Object.entries(state.stores).filter(([key]) => state.view === 'all' || ['drakes_findon','coles_findon','foodland'].includes(key));
 function render() {
@@ -18,7 +18,7 @@ function render() {
 }
 function buildChart() {
   const keys = new Set(entries().map(([key]) => key));
-  const series = Object.entries(state.history).filter(([key]) => keys.has(key)).map(([key,v]) => [key,v.filter(p => Number.isFinite(p.price) && Number.isFinite(Date.parse(p.date))).sort((a,b) => Date.parse(a.date)-Date.parse(b.date))]).filter(([,v]) => v.length);
+  const series = Object.entries(state.history).filter(([key]) => keys.has(key)).map(([key,v]) => [key,v.filter(p => p.verified === true && p.store_specific === true && Number.isFinite(p.price) && Number.isFinite(Date.parse(p.date))).sort((a,b) => Date.parse(a.date)-Date.parse(b.date))]).filter(([,v]) => v.length);
   const svg = document.getElementById('history-chart');
   if (!series.length) { svg.innerHTML='<text x="40" y="100">No observations yet</text>'; document.getElementById('chart-legend').textContent=''; return; }
   const points = series.flatMap(([,v]) => v), dates = points.map(p => Date.parse(p.date));
@@ -36,9 +36,14 @@ function buildChart() {
   document.getElementById('chart-legend').innerHTML=series.map(([key])=>`<span style="color:${colors[key] || '#555'}">● ${esc(labels[key] || key)}</span>`).join(' · ');
 }
 async function loadData() {
-  const data=await Promise.all(['prices','price-history','nearby-stores'].map(async name=>{const r=await fetch(`./data/${name}.json`,{cache:'no-store'});if(!r.ok)throw new Error(name);return r.json();}));
-  state.stores=data[0].stores || {};state.history=data[1].history || {};state.nearby=data[2].stores || [];
+  const results=await Promise.allSettled(['prices','price-history','nearby-stores'].map(async name=>{const r=await fetch(`./data/${name}.json`,{cache:'no-store'});if(!r.ok)throw new Error(name);return r.json();}));
+  if (results[0].status !== 'fulfilled' || !results[0].value.stores) throw new Error('Current prices unavailable');
+  state.stores=results[0].value.stores;
+  state.history=results[1].status === 'fulfilled' ? results[1].value.history || {} : results[0].value.history || {};
+  state.nearby=results[2].status === 'fulfilled' ? results[2].value.stores || [] : [];
+  document.getElementById('data-warning').textContent=results.slice(1).some(r=>r.status === 'rejected') ? 'Some history or nearby shop information could not be loaded. Current price status is shown below.' : '';
   document.getElementById('store-view').addEventListener('change',event=>{state.view=event.target.value;render();});
   render();
+  setInterval(render, 60000);
 }
 loadData().catch(error=>{console.error(error);document.getElementById('stores').textContent='Unable to load tracker data. Please try again.';document.getElementById('cheapest-store').textContent='Unavailable';document.getElementById('updated-at').textContent='Unknown';});

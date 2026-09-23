@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import html
+import math
 import json
 import re
 import sys
@@ -32,7 +33,7 @@ def format_price(value: float | None) -> str:
 
 
 def is_available(entry: dict[str, Any] | None) -> bool:
-    return bool(entry and entry.get("verified") is True and entry.get("price") is not None)
+    return bool(entry and entry.get("verified") is True and isinstance(entry.get("price"), (int, float)) and not isinstance(entry["price"], bool) and math.isfinite(entry["price"]) and 1 <= entry["price"] <= 20)
 
 
 def compute_cheapest(prices: dict[str, dict[str, Any]]) -> str | None:
@@ -56,14 +57,23 @@ def visible_text(page: str) -> str:
 
 
 def extract_price_near_product(page: str, product_name: str, product_id: str | None = None) -> float:
-    text = visible_text(page)
-    if product_name.lower() not in text.lower() or (product_id and product_id not in page):
-        raise ValueError("The expected product identity was not present")
-    product_at = text.lower().find(product_name.lower())
-    match = re.search(r"\$(\d{1,3}(?:\.\d{2})?)", text[product_at : product_at + 700])
-    if not match:
-        raise ValueError("No current price was present near the product name")
-    price = float(match.group(1))
+    headings = re.findall(r"<h1\b[^>]*>(.*?)</h1>", page, re.I | re.S)
+    if not any(visible_text(h).casefold() == product_name.casefold() for h in headings):
+        raise ValueError("The exact product heading was not present")
+    if product_id and product_id not in page:
+        raise ValueError("The expected product identifier was not present")
+    # Never take the first dollar amount: it may be savings, a was price or a recommendation.
+    after_heading = re.split(r"</h1\s*>", page, maxsplit=1, flags=re.I)[1]
+    text = visible_text(after_heading).split("Similar Items")[0].split("People Who Bought")[0][:700]
+    explicit = re.search(r"(?:^|\s)Price\s*\$(\d{1,3}(?:\.\d{2})?)(?![\d.])", text, re.I)
+    if explicit:
+        price = float(explicit.group(1))
+    else:
+        # Coles exposes an isolated current-price amount directly after the heading.
+        first = re.match(r"\s*\$(\d{1,3}(?:\.\d{2})?)(?![\d.])", text)
+        if not first:
+            raise ValueError("An unambiguous current product price was not present")
+        price = float(first.group(1))
     if not 1 <= price <= 20:
         raise ValueError(f"Implausible price {price}")
     return price
@@ -97,16 +107,9 @@ def unavailable(name: str, store_id: str, error: str, checked_at: str) -> dict[s
 
 
 def collect_coles(checked_at: str) -> dict[str, Any]:
-    name, store_id = "Coles Rundle Place", "4964"
-    try:
-        page = fetch_text(COLES_URL, cookies="fulfilmentStoreId=4964; storeId=4964")
-        price = extract_price_near_product(page, PRODUCT_NAME, "1251527")
-        return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": COLES_URL,
-                "store_specific": False,
-                "price_scope": "Coles online listing; Rundle Place price not independently verified"}
-    except (HTTPError, URLError, TimeoutError, ValueError) as exc:
-        return unavailable(name, store_id, str(exc), checked_at)
+    result = unavailable("Coles Rundle Place", "4964", "No verified Rundle Place price source. Generic online prices are excluded.", checked_at)
+    result["source"] = COLES_URL
+    return result
 
 
 def check_coles_access(page_html: str) -> None:
@@ -159,44 +162,34 @@ def collect_coles_findon(checked_at: str) -> dict[str, Any]:
         result = unavailable("Coles Findon", "403", str(exc), checked_at)
         path = DATA_DIR / "browser-observations.json"
         if path.exists():
-            observation = json.loads(path.read_text()).get("coles_findon", {})
-            observed_at = observation.get("updated_at", "")
             try:
+                observation = json.loads(path.read_text()).get("coles_findon", {})
+                observed_at = observation.get("updated_at", "")
                 age = (datetime.fromisoformat(checked_at.replace("Z", "+00:00")) - datetime.fromisoformat(observed_at.replace("Z", "+00:00"))).total_seconds()
                 if (0 <= age < 36 * 3600 and observation.get("product_id") == "1251527"
                         and observation.get("store_id") == "403" and observation.get("verified") is True
                         and isinstance(observation.get("price"), (int, float)) and 1 <= observation["price"] <= 20):
                     result.update(observation)
+                    result.update(status="available", store_specific=True)
+                    result.pop("error", None)
                     result["checked_at"] = checked_at
                     result["refresh_error"] = str(exc)
                     result["price_scope"] = "Findon Click & Collect, dated browser check; automatic refresh unavailable. Expires after 36 hours."
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, AttributeError, OSError):
                 pass
         return result
 
 
 def collect_woolworths(checked_at: str) -> dict[str, Any]:
-    name, store_id = "Woolworths Rundle Mall", "5317"
-    try:
-        page = fetch_rendered_text(WOOLWORTHS_URL)
-        price = extract_price_near_product(page, PRODUCT_NAME, "724514")
-        return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": WOOLWORTHS_URL,
-                "price_scope": "Woolworths online price; confirm Rundle Mall shelf price", "store_specific": False}
-    except Exception as exc:
-        return unavailable(name, store_id, str(exc), checked_at)
+    result = unavailable("Woolworths Rundle Mall", "5317", "Automatic access is blocked; branch pricing could not be verified. Check the product with your store selected.", checked_at)
+    result["source"] = WOOLWORTHS_URL
+    return result
 
 
 def collect_foodland(checked_at: str) -> dict[str, Any]:
-    name, store_id = "Foodland Henley Square", "henley-square"
-    try:
-        page = fetch_text(FOODLAND_URL)
-        price = extract_price_near_product(page, PRODUCT_NAME)
-        return {"name": name, "store_id": store_id, "price": price, "status": "available", "verified": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": FOODLAND_URL,
-                "price_scope": "Foodland SA advertised price; confirm Henley Square shelf price", "store_specific": False}
-    except (HTTPError, URLError, TimeoutError, ValueError) as exc:
-        return unavailable(name, store_id, str(exc), checked_at)
+    result = unavailable("Foodland Henley Square", "henley-square", "No verified Henley Square product-price source. Another Foodland's price is not substituted.", checked_at)
+    result["source"] = "https://henleysquarefoodland.com.au/specials/"
+    return result
 
 
 def parse_drakes(page: str) -> float:
@@ -242,14 +235,16 @@ def read_history() -> dict[str, list[dict[str, Any]]]:
     if not HISTORY_PATH.exists():
         return {"coles": [], "woolworths": [], "foodland": []}
     history = json.loads(HISTORY_PATH.read_text(encoding="utf-8")).get("history", {})
-    return {key: list(values) for key, values in history.items()}
+    # Legacy collectors verified the product, not the branch. Preserve but label those records.
+    return {key: [dict(value, store_specific=value.get("store_specific", key in {"drakes_findon", "coles_findon"}))
+                  for value in values] for key, values in history.items()}
 
 
 def append_history(history: dict[str, list[dict[str, Any]]], snapshot: dict[str, dict[str, Any]]) -> None:
     for store, entry in snapshot.items():
-        if not is_available(entry):
+        if not is_available(entry) or entry.get("store_specific") is not True:
             continue
-        observation = {"date": entry.get("updated_at", entry["checked_at"]), "price": entry["price"], "verified": True}
+        observation = {"date": entry.get("updated_at", entry["checked_at"]), "price": entry["price"], "verified": True, "store_specific": True}
         prior = history.setdefault(store, [])
         if prior and prior[-1].get("date", "") > observation["date"]:
             continue
@@ -279,7 +274,8 @@ def main() -> int:
         print(f"{key}: {format_price(value.get('price'))} ({value.get('status')})")
         if value.get("error"):
             print(f"  {value['error']}")
-    return 0 if verified else 1
+    # Unavailability is valid data and must reach the site, even if every source fails.
+    return 0
 
 
 if __name__ == "__main__":

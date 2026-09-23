@@ -26,6 +26,36 @@ class TrackerTests(unittest.TestCase):
         self.assertEqual(len(history['coles_findon']), 1)
         self.assertEqual(history['coles_findon'][0]['date'], current['updated_at'])
 
+    def test_savings_was_price_and_multipack_are_not_current_price(self):
+        head = '<h1>Cocobella Coconut Water Straight Up 1L</h1>'
+        self.assertEqual(MODULE.extract_price_near_product(head + 'Save $2.20 Price $3.30 Was $5.50', MODULE.PRODUCT_NAME), 3.3)
+        for body in ['Save $2.20 Was $5.50', 'Was $5.50', 'Similar Items Price $2.75']:
+            with self.assertRaises(ValueError):
+                MODULE.extract_price_near_product(head + body, MODULE.PRODUCT_NAME)
+        with self.assertRaises(ValueError):
+            MODULE.extract_price_near_product(head.replace('1L', '1L x 6 pack') + '$33.00', MODULE.PRODUCT_NAME)
+
+    def test_generic_sources_never_verify_a_branch(self):
+        for collector in [MODULE.collect_coles, MODULE.collect_woolworths, MODULE.collect_foodland]:
+            result = collector('2026-09-23T00:00:00Z')
+            self.assertFalse(result['verified'])
+            self.assertIsNone(result['price'])
+            self.assertTrue(result['source'].startswith('https://'))
+
+    def test_all_sources_unavailable_still_publish(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            with patch.object(MODULE, 'build_snapshot', return_value={'store': MODULE.unavailable('Store', '1', 'offline', '2026-09-23T00:00:00Z')}), patch.object(MODULE, 'read_history', return_value={}), patch.object(MODULE, 'PRICES_PATH', Path(folder)/'prices.json'), patch.object(MODULE, 'HISTORY_PATH', Path(folder)/'history.json'):
+                self.assertEqual(MODULE.main(), 0)
+                payload = json.loads((Path(folder)/'prices.json').read_text())
+                self.assertIsNone(payload['cheapest_store'])
+                self.assertIsNone(payload['stores']['store']['price'])
+
+    def test_generic_history_is_not_added(self):
+        history = {}
+        MODULE.append_history(history, {'coles': {'price': 5.5, 'verified': True, 'store_specific': False, 'checked_at': '2026-09-23T00:00:00Z'}})
+        self.assertEqual(history, {})
+
     def test_coles_security_challenge_is_not_a_price_page(self):
         challenge = '<iframe src="/_Incapsula_Resource?incident_id=example">Request unsuccessful</iframe>'
         with self.assertRaisesRegex(RuntimeError, 'human security check'):
@@ -94,7 +124,7 @@ class TrackerTests(unittest.TestCase):
 
     def test_history_only_records_verified_live_prices(self):
         history = {"coles": [], "woolworths": [], "foodland": []}
-        snapshot = {"coles": {"checked_at": "2026-09-03T00:00:00Z", "price": 5.5, "verified": True},
+        snapshot = {"coles": {"checked_at": "2026-09-03T00:00:00Z", "price": 5.5, "verified": True, "store_specific": True},
                     "woolworths": {"checked_at": "2026-09-03T00:00:00Z", "price": 3.3, "verified": False},
                     "foodland": {"checked_at": "2026-09-03T00:00:00Z", "price": None, "verified": False}}
         MODULE.append_history(history, snapshot)
