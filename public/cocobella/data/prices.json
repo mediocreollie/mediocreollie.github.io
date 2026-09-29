@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T00:23:36Z",
+  "generated_at": "2026-09-29T23:45:01Z",
   "product": "Cocobella Coconut Water Straight Up 1L",
   "stores": {
     "coles": {
@@ -8,7 +8,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-29T00:23:33Z",
+      "checked_at": "2026-09-29T23:44:57Z",
       "error": "No verified Rundle Place price source. Generic online prices are excluded.",
       "source": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
     },
@@ -18,7 +18,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-29T00:23:33Z",
+      "checked_at": "2026-09-29T23:44:57Z",
       "error": "Automatic access is blocked; branch pricing could not be verified. Check the product with your store selected.",
       "source": "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up"
     },
@@ -28,19 +28,19 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-29T00:23:33Z",
+      "checked_at": "2026-09-29T23:44:57Z",
       "error": "No verified Henley Square product-price source. Another Foodland's price is not substituted.",
       "source": "https://henleysquarefoodland.com.au/specials/"
     },
     "drakes_findon": {
       "name": "Drakes Findon",
       "store_id": "079",
-      "price": 4.5,
+      "price": 5.5,
       "status": "available",
       "verified": true,
       "store_specific": true,
-      "checked_at": "2026-09-29T00:23:33Z",
-      "updated_at": "2026-09-29T00:23:33Z",
+      "checked_at": "2026-09-29T23:44:57Z",
+      "updated_at": "2026-09-29T23:44:57Z",
       "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
       "price_scope": "Findon online shop; shelf price and stock may differ"
     },
@@ -50,7 +50,7 @@
       "price": null,
       "status": "unavailable",
       "verified": false,
-      "checked_at": "2026-09-29T00:23:33Z",
+      "checked_at": "2026-09-29T23:44:57Z",
       "error": "Coles requires a human security check on the automatic runner; no Findon price was retrieved"
     }
   },
@@ -220,8 +220,8 @@
         "store_specific": true
       },
       {
-        "date": "2026-09-29T00:23:33Z",
-        "price": 4.5,
+        "date": "2026-09-29T23:44:57Z",
+        "price": 5.5,
         "verified": true,
         "store_specific": true
       }
