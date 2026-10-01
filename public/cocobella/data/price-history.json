@@ -173,6 +173,12 @@
         "price": 5.5,
         "verified": true,
         "store_specific": true
+      },
+      {
+        "date": "2026-10-01T23:54:34Z",
+        "price": 5.5,
+        "verified": true,
+        "store_specific": true
       }
     ],
     "coles_findon": [
