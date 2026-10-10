@@ -311,6 +311,23 @@
       "offer_text": null,
       "price_cents": 550,
       "expires_at": "2026-10-11T12:28:52Z"
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_findon",
+      "retailer_product_id": "cocobella-coconut-water-straight-up-1l",
+      "retailer_store_id": "079",
+      "source": "drakes_direct",
+      "source_url": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+      "currency": "AUD",
+      "scope": "store_online",
+      "verified": true,
+      "observed_at": "2026-10-10T00:31:38Z",
+      "availability": "in_stock",
+      "multibuy": null,
+      "offer_text": null,
+      "price_cents": 550,
+      "expires_at": "2026-10-11T12:31:38Z"
     }
   ]
 }
