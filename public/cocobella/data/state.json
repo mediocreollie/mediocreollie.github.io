@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-10T22:45:59Z",
+  "generated_at": "2026-10-10T23:35:01Z",
   "records": [
     {
       "product_id": "cocobella-original-1l",
@@ -78,7 +78,7 @@
       "product_id": "cocobella-original-1l",
       "store_id": "drakes_findon",
       "status": "current",
-      "last_attempt_at": "2026-10-10T22:45:59Z",
+      "last_attempt_at": "2026-10-10T23:35:01Z",
       "observation": {
         "product_id": "cocobella-original-1l",
         "store_id": "drakes_findon",
@@ -89,12 +89,12 @@
         "currency": "AUD",
         "scope": "store_online",
         "verified": true,
-        "observed_at": "2026-10-10T22:45:59Z",
+        "observed_at": "2026-10-10T23:35:01Z",
         "availability": "in_stock",
         "multibuy": null,
         "offer_text": null,
         "price_cents": 550,
-        "expires_at": "2026-10-12T10:45:59Z"
+        "expires_at": "2026-10-12T11:35:01Z"
       },
       "last_success": {
         "product_id": "cocobella-original-1l",
@@ -106,12 +106,12 @@
         "currency": "AUD",
         "scope": "store_online",
         "verified": true,
-        "observed_at": "2026-10-10T22:45:59Z",
+        "observed_at": "2026-10-10T23:35:01Z",
         "availability": "in_stock",
         "multibuy": null,
         "offer_text": null,
         "price_cents": 550,
-        "expires_at": "2026-10-12T10:45:59Z"
+        "expires_at": "2026-10-12T11:35:01Z"
       },
       "message": "Current verified branch observation."
     },
