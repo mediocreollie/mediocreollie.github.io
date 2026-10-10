@@ -9,6 +9,7 @@
 <main class="page">
 <header class="header"><p class="eyebrow">Your local grocery watchlist</p><h1>Welcome to Cocobella</h1><p>Original Straight Up 1L. Your shops, your quantities, verified prices.</p><p class="meta">Shops within 5 miles of Henley Square, plus your Rundle Mall favourites.</p></header>
 <p id="notice" class="notice" role="status">Loading your watchlist…</p>
+<p><a class="capture-link" href="./capture.html">Add a Coles or Woolworths price: screenshot or browser capture →</a></p>
 <section class="panel"><h2>Your basket</h2><p>Choose quantities to compare what you would actually buy. Your basket and shop choices are saved on this device.</p><div id="basket"></div><p class="meta">Cocobella is the first product. More products can be added without changing the collectors or this page.</p>
 <details><summary>Choose shops</summary><div class="actions"><button id="nearby" type="button">Henley Square area</button><button id="all-stores" type="button">Include Rundle Mall</button></div><div id="store-options" class="choices"></div></details></section>
 <section class="summary" aria-live="polite"><div class="summary-card"><span class="label">Lowest complete basket, among verified prices</span><strong id="best">Loading…</strong><p id="coverage" class="meta"></p></div><div class="summary-card"><span class="label">Two-shop option</span><strong id="split">Loading…</strong><p id="split-detail" class="meta"></p></div></section>
@@ -19,5 +20,5 @@
 <details class="panel"><summary>Source coverage and nearby shops</summary><p>Some nearby shops are still candidates. Listing a shop does not confirm that it stocks this product.</p><div id="directory" class="stores"></div><p class="meta">Distances are approximate straight-line distances, not driving distances. Existing location research: September 2026, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</p></details>
 <footer><p id="published" class="meta"></p><p class="meta">A site update is not a successful price check. Each card shows the actual observation time and the last request, where one was made.</p><a href="https://github.com/mediocreollie/mediocreollie.github.io/blob/main/scripts/cocobella/README.md">How the tracker works</a></footer>
 </main>
-<script src="./core.js?v=2"></script><script src="./app.js?v=2"></script>
+<script src="./core.js?v=2"></script><script src="./capture-rules.js?v=3"></script><script src="./app.js?v=3"></script>
 </body></html>

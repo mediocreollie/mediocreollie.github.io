@@ -165,3 +165,5 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 12px
 #product-view { max-width: 100%; }
 footer { margin-top: 28px; }
 @media(max-width:600px){.basket-row label{max-width:70%}.panel,.chart-panel{padding:16px}.summary{grid-template-columns:1fr}.stores{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
+
+#confirm-form label, label[for="price-text"], label[for="import-checks"]{display:block;margin:14px 0 6px}textarea,input[type=url],input[type=datetime-local]{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font:inherit}input[type=file]{max-width:100%;margin:12px 0}.confirm-check{line-height:1.6}.capture-link{display:inline-block;padding:12px 0;font-weight:bold}#capture-status,#save-error{line-height:1.5}#save-error{color:#9a3020}
