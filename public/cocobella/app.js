@@ -37,7 +37,7 @@ function render(){
  const r=state.records.find(r=>r.store_id===s.id&&r.product_id===state.product);
  const o=r?.observation,current=CocobellaRules.fresh(o),last=r?.last_success;
  const m=product.mappings[s.retailer];const source=m&&(!m.store_ids||m.store_ids.includes(s.id))?m.url:s.source;
- let status=current?(r.status==='manual'?'Manual check':'Verified price'):o?'Expired':r?.status==='failed'?'Check failed':r?.status==='out_of_stock'?'Out of stock':'Not connected';
+ let status=current?(r.status==='manual'?'Your confirmed check':'Verified price'):o?'Expired':r?.status==='failed'?'Check failed':r?.status==='out_of_stock'?'Out of stock':'Not connected';
  return `<article class="store-card"><h3>${esc(s.name)}</h3><span class="status ${current?'available':'unavailable'}">${status}</span><p class="price">${current?money(o.price_cents):'Unavailable'}</p>${current?`<p>${scope(o.scope)}</p><p class="meta">Observed ${date(o.observed_at)}<br>Valid until ${date(o.expires_at)}</p>${o.offer_text?`<p class="meta">${esc(o.offer_text)}. Offer conditions are not deducted from basket totals.</p>`:''}`:''}<p class="meta">${esc(current?'':r?.message||'No verified price source for this branch yet.')}</p>${!current&&last?`<p class="meta">Last recorded: ${money(last.price_cents)} on ${date(last.observed_at)}. Excluded from totals.</p>`:''}<p class="meta">Last request: ${date(r?.last_attempt_at)}</p><a href="${link(source)}" target="_blank" rel="noopener">Check ${m?'product':'shop'}</a></article>`;
  }).join('')||'<p>No shops selected.</p>';
  $('directory').innerHTML=state.catalog.stores.map(s=>`<article class="store-card"><h3>${esc(s.name)}</h3><p>${esc(s.address||'Rundle Mall, Adelaide')}</p><p class="meta">${s.distance_km!==undefined?s.distance_km.toFixed(1)+' km straight-line':'Outside the nearby filter'}</p><a href="${link(s.source)}" target="_blank" rel="noopener">Shop website</a> · <a href="https://www.google.com/maps/dir/?api=1&amp;destination=${encodeURIComponent(s.name+' '+(s.address||'Adelaide'))}" target="_blank" rel="noopener">Directions</a></article>`).join('');
@@ -68,6 +68,7 @@ async function load(){
  if(results[1].status==='fulfilled'&&results[1].value.schema_version===2){state.records=results[1].value.records||[];$('published').textContent='Site data updated: '+date(results[1].value.generated_at)+' (Adelaide).';}else state.warnings.push('Price data could not be loaded. Prices are unavailable.');
  if(results[2].status==='fulfilled')state.history=results[2].value.observations||[];else state.warnings.push('History could not be loaded. Current prices are still shown.');
  $('notice').textContent=state.warnings.join(' ')||'Only current, verified branch prices count towards your basket. Unchecked shops may be cheaper.';
+ try{const local=JSON.parse(localStorage.getItem('cocobella-confirmed-checks-v1')||'[]');if(Array.isArray(local)&&typeof CocobellaCapture!=='undefined'){const merged=CocobellaCapture.merge(state.records,state.history,local,state.catalog);state.records=merged.records;state.history=merged.history;}}catch{state.warnings.push('Saved checks could not be loaded.');}
  initControls();render();setInterval(render,60000);
 }
 load().catch(()=>{$('notice').textContent='The watchlist could not be loaded. Please reload the page.';$('best').textContent='Unavailable';$('split').textContent='Unavailable';});
