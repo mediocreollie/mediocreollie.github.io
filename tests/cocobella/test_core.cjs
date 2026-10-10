@@ -1,0 +1,15 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const fs=require('node:fs'), vm=require('node:vm'), path=require('node:path');
+const sandbox={module:{exports:{}}};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../../public/cocobella/core.js'),'utf8'),sandbox);
+const {fresh,cost,compare}=sandbox.module.exports;
+const now=Date.parse('2026-10-10T00:00:00Z');
+const observation=(price,changes={})=>({price_cents:price,verified:true,currency:'AUD',scope:'store_online',availability:'in_stock',observed_at:new Date(now).toISOString(),expires_at:new Date(now+3600000).toISOString(),...changes});
+const stores=[{id:'a',name:'A'},{id:'b',name:'B'}];
+const record=(p,s,c)=>({product_id:p,store_id:s,observation:observation(c)});
+test('stale, future, default-store and unknown stock cannot win',()=>{for(const x of [ {expires_at:new Date(now).toISOString()}, {observed_at:new Date(now+1).toISOString()}, {scope:'chain'}, {availability:'unknown'}, {price_cents:NaN}])assert.equal(fresh(observation(200,x),now),false);});
+test('incomplete basket cannot win against a complete one',()=>{const r=compare({p:2,q:1},stores,[record('p','a',300),record('q','a',200),record('p','b',100)],now);assert.equal(r.winners[0].store.id,'a');assert.equal(r.winners[0].total_cents,800);assert.equal(r.options[1].complete,false);});
+test('ties and empty baskets',()=>{const r=compare({p:1},stores,[record('p','a',200),record('p','b',200)],now);assert.equal(r.winners.length,2);assert.equal(compare({},stores,[],now).winners.length,0);});
+test('two-shop allocation is complete and measures savings',()=>{const r=compare({p:2,q:1},stores,[record('p','a',200),record('q','a',600),record('p','b',400),record('q','b',100)],now);assert.equal(r.split.total_cents,500);assert.equal(r.split.savings_cents,400);});
+test('multibuy only applies to qualifying quantities and confirmed conditions',()=>{const o=observation(550,{multibuy:{quantity:6,total_cents:2700,unconditional:true}});assert.equal(cost(o,5),2750);assert.equal(cost(o,6),2700);assert.equal(cost(o,7),3250);assert.equal(cost({...o,multibuy:{...o.multibuy,unconditional:false}},6),3300);});
+test('different products stay separate and missing prices are not zero',()=>{const r=compare({p:1,q:1},stores,[record('p','a',200),record('q','b',100)],now);assert.equal(r.winners.length,0);assert.equal(r.split.total_cents,300);assert.equal(r.split.savings_cents,null);});

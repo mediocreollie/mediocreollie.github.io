@@ -1,72 +1,77 @@
 name: Update Cocobella prices
-
 on:
   schedule:
-    # 20:15 UTC is 05:45 Adelaide standard time, 06:45 during daylight saving.
+    # Adelaide 05:45 standard / 06:45 daylight time. Actual request times appear on cards.
     - cron: '15 20 * * *'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Publish configured sources or validate a candidate without publishing
+        type: choice
+        options: [publish, validate-woolworths, validate-coles]
+        default: publish
+      store:
+        description: Branch for candidate validation
+        type: choice
+        options: [woolworths, woolworths_west_lakes, coles, coles_findon]
+        default: woolworths
   push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/update-cocobella-prices.yml'
-      - 'scripts/cocobella/**'
-      - 'tests/cocobella/**'
+    branches: [main]
+    paths: ['scripts/cocobella/**', 'tests/cocobella/**', 'public/cocobella/data/catalog.json', 'public/cocobella/data/manual-observations.json', '.github/workflows/update-cocobella-prices.yml']
   pull_request:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/update-cocobella-prices.yml'
-      - 'scripts/cocobella/**'
-      - 'tests/cocobella/**'
-
+    branches: [main]
+    paths: ['scripts/cocobella/**', 'tests/cocobella/**', 'public/cocobella/**', '.github/workflows/update-cocobella-prices.yml']
+permissions:
+  contents: write
 concurrency:
   group: cocobella-${{ github.ref }}
   cancel-in-progress: false
-
-permissions:
-  contents: write
-
 jobs:
   update-prices:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.COCOBELLA_PUSH_TOKEN || github.token }}
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+          token: ${{ github.event_name == 'pull_request' && github.token || secrets.COCOBELLA_PUSH_TOKEN || github.token }}
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Install browser for Coles Findon
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate collectors and basket rules
         run: |
-          python -m pip install --disable-pip-version-check playwright==1.55.0
-          python -m playwright install --with-deps chromium
-
-      - name: Validate tracker tests
-        run: python -m unittest discover -s tests/cocobella -p 'test_*.py'
-
-      - name: Collect and update price data
-        run: python scripts/cocobella/update_prices.py
-
-      - name: Upload Coles diagnostics
+          python -m unittest discover -s tests/cocobella -p 'test_*.py'
+          node --test tests/cocobella/test_*.cjs
+          node --check public/cocobella/app.js
+      - name: Collect verified observations or validate candidate
+        env:
+          APIFY_TOKEN: ${{ github.event_name != 'pull_request' && secrets.APIFY_TOKEN || '' }}
+          APIFY_FREE_PLAN_CONFIRMED: ${{ vars.APIFY_FREE_PLAN_CONFIRMED }}
+          CHECK_MODE: ${{ inputs.mode || 'publish' }}
+          CHECK_STORE: ${{ inputs.store || 'woolworths' }}
+        run: |
+          case "$CHECK_MODE" in
+            publish) python scripts/cocobella/update_prices.py ;;
+            validate-woolworths) python scripts/cocobella/update_prices.py --validate-provider apify_woolworths --store "$CHECK_STORE" ;;
+            validate-coles) python scripts/cocobella/update_prices.py --validate-provider apify_coles --store "$CHECK_STORE" ;;
+            *) exit 1 ;;
+          esac
+      - name: Save source validation report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coles-findon-diagnostics
-          path: artifacts/coles-findon
-          retention-days: 3
+          name: cocobella-source-validation
+          path: artifacts/cocobella
+          retention-days: 7
           if-no-files-found: ignore
-
-      - name: Commit and push updated Cocobella data
-        if: github.event_name != 'pull_request'
+      - name: Publish current status and history
+        if: github.event_name != 'pull_request' && (inputs.mode == '' || inputs.mode == 'publish')
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/cocobella/data
-          git diff --cached --quiet || git commit -m "Update Cocobella prices"
+          git add public/cocobella/data/state.json public/cocobella/data/history-v2.json
+          git diff --cached --quiet || git commit -m "Update verified Cocobella observations"
           git pull --rebase origin main
           git push

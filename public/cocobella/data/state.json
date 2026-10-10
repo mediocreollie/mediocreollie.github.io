@@ -1,0 +1,177 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-10-10T00:28:52Z",
+  "records": [
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "coles",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "Replacement price source awaits branch validation."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "woolworths",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "Replacement price source awaits branch validation."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "foodland",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_grange",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_fulham",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "woolworths_fulham_gardens",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_west_beach",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "foodland_lockleys",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_findon",
+      "status": "current",
+      "last_attempt_at": "2026-10-10T00:28:52Z",
+      "observation": {
+        "product_id": "cocobella-original-1l",
+        "store_id": "drakes_findon",
+        "retailer_product_id": "cocobella-coconut-water-straight-up-1l",
+        "retailer_store_id": "079",
+        "source": "drakes_direct",
+        "source_url": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+        "currency": "AUD",
+        "scope": "store_online",
+        "verified": true,
+        "observed_at": "2026-10-10T00:28:52Z",
+        "availability": "in_stock",
+        "multibuy": null,
+        "offer_text": null,
+        "price_cents": 550,
+        "expires_at": "2026-10-11T12:28:52Z"
+      },
+      "last_success": {
+        "product_id": "cocobella-original-1l",
+        "store_id": "drakes_findon",
+        "retailer_product_id": "cocobella-coconut-water-straight-up-1l",
+        "retailer_store_id": "079",
+        "source": "drakes_direct",
+        "source_url": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+        "currency": "AUD",
+        "scope": "store_online",
+        "verified": true,
+        "observed_at": "2026-10-10T00:28:52Z",
+        "availability": "in_stock",
+        "multibuy": null,
+        "offer_text": null,
+        "price_cents": 550,
+        "expires_at": "2026-10-11T12:28:52Z"
+      },
+      "message": "Current verified branch observation."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "coles_findon",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "Replacement price source awaits branch validation."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "woolworths_west_lakes",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "Replacement price source awaits branch validation."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "foodland_royal_park",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_torrensville",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "drakes_allenby_gardens",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    },
+    {
+      "product_id": "cocobella-original-1l",
+      "store_id": "foodland_west_lakes",
+      "status": "not_connected",
+      "last_attempt_at": null,
+      "observation": null,
+      "last_success": null,
+      "message": "No verified automatic price source for this branch yet."
+    }
+  ],
+  "coverage": {
+    "current": 1,
+    "total": 15
+  }
+}

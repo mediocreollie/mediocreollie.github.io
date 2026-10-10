@@ -1,282 +1,166 @@
 #!/usr/bin/env python3
-from __future__ import annotations
-
-import html
-import math
+"""Collect configured products. Optional providers must pass branch validation first."""
+import argparse
 import json
-import re
-import sys
-from datetime import datetime, timezone
+import os
+from datetime import datetime,timezone
 from pathlib import Path
-from typing import Any
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from model import iso,timestamp,cents,expiry,mapping_for,validate_catalog,validate_observation,usable,add_history
+from providers import fetch_drakes,fetch_provider,parse_provider,SourceError
 
-ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = ROOT / "public" / "cocobella" / "data"
-PRICES_PATH = DATA_DIR / "prices.json"
-HISTORY_PATH = DATA_DIR / "price-history.json"
-PRODUCT_NAME = "Cocobella Coconut Water Straight Up 1L"
-COLES_URL = "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527"
-WOOLWORTHS_URL = "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up"
-FOODLAND_URL = "https://products.foodlandsa.com.au/lines/c-bella-ccnut-wtr-str-up-1l"
-DRAKES_URL = "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l"
-USER_AGENT = "Mozilla/5.0 (compatible; CocobellaPriceTracker/1.0; +https://olliewritesthings.com/cocobella/)"
+ROOT=Path(__file__).resolve().parents[2]
+DATA=ROOT/'public/cocobella/data'
+DEFAULT_PRODUCT='cocobella-original-1l'
 
+def read(path,default):
+    return json.loads(path.read_text()) if path.exists() else default
 
-def now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+def write(path,data):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    temp=path.with_suffix('.tmp')
+    temp.write_text(json.dumps(data,indent=2,allow_nan=False)+'\n')
+    temp.replace(path)
 
+def migrate_history(data,catalog):
+    target=data/'history-v2.json'
+    if target.exists():
+        return read(target,{})['observations']
+    legacy=read(data/'price-history.json',{'history':{}})['history']
+    rows=[]
+    # Only these two legacy series were proven branch observations.
+    for key in ('drakes_findon','coles_findon'):
+        store=next((s for s in catalog['stores'] if s['id']==key),None)
+        product=next((p for p in catalog['products'] if p['id']==DEFAULT_PRODUCT),None)
+        if not store or not product or not mapping_for(product,store):
+            continue
+        for point in legacy.get(key,[]):
+            if point.get('verified') is not True or point.get('store_specific') is not True:
+                continue
+            at=timestamp(point['date'])
+            rows.append(dict(product_id=DEFAULT_PRODUCT,store_id=key,price_cents=cents(point['price']),
+                observed_at=iso(at),expires_at=iso(expiry(at)),currency='AUD',verified=True,
+                scope='store_online' if key=='drakes_findon' else 'store_pickup',availability='unknown',
+                source='legacy_branch_observation',source_url=mapping_for(product,store)['url'],multibuy=None))
+    return add_history([],rows)
 
-def format_price(value: float | None) -> str:
-    return "Unavailable" if value is None else f"${value:.2f}"
-
-
-def is_available(entry: dict[str, Any] | None) -> bool:
-    return bool(entry and entry.get("verified") is True and isinstance(entry.get("price"), (int, float)) and not isinstance(entry["price"], bool) and math.isfinite(entry["price"]) and 1 <= entry["price"] <= 20)
-
-
-def compute_cheapest(prices: dict[str, dict[str, Any]]) -> str | None:
-    available = {key: value for key, value in prices.items() if is_available(value)}
-    return min(available, key=lambda key: available[key]["price"]) if available else None
-
-
-def fetch_text(url: str, *, cookies: str = "") -> str:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
-    if cookies:
-        headers["Cookie"] = cookies
-    with urlopen(Request(url, headers=headers), timeout=25) as response:
-        return response.read().decode("utf-8", errors="replace")
-
-
-def visible_text(page: str) -> str:
-    page = re.sub(r"<script\b[^>]*>.*?</script>", " ", page, flags=re.I | re.S)
-    page = re.sub(r"<style\b[^>]*>.*?</style>", " ", page, flags=re.I | re.S)
-    text = html.unescape(re.sub(r"<[^>]+>", " ", page)).replace("|", " ")
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def extract_price_near_product(page: str, product_name: str, product_id: str | None = None) -> float:
-    headings = re.findall(r"<h1\b[^>]*>(.*?)</h1>", page, re.I | re.S)
-    if not any(visible_text(h).casefold() == product_name.casefold() for h in headings):
-        raise ValueError("The exact product heading was not present")
-    if product_id and product_id not in page:
-        raise ValueError("The expected product identifier was not present")
-    # Never take the first dollar amount: it may be savings, a was price or a recommendation.
-    after_heading = re.split(r"</h1\s*>", page, maxsplit=1, flags=re.I)[1]
-    text = visible_text(after_heading).split("Similar Items")[0].split("People Who Bought")[0][:700]
-    explicit = re.search(r"(?:^|\s)Price\s*\$(\d{1,3}(?:\.\d{2})?)(?![\d.])", text, re.I)
-    if explicit:
-        price = float(explicit.group(1))
-    else:
-        # Coles exposes an isolated current-price amount directly after the heading.
-        first = re.match(r"\s*\$(\d{1,3}(?:\.\d{2})?)(?![\d.])", text)
-        if not first:
-            raise ValueError("An unambiguous current product price was not present")
-        price = float(first.group(1))
-    if not 1 <= price <= 20:
-        raise ValueError(f"Implausible price {price}")
-    return price
-
-
-def fetch_rendered_text(url: str) -> str:
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError as exc:
-        raise RuntimeError("Playwright is required for the Woolworths collector") from exc
-
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
-        context = browser.new_context(user_agent=USER_AGENT, locale="en-AU")
-        page = context.new_page()
-        page.goto(url, wait_until="domcontentloaded", timeout=60000)
-        try:
-            page.locator("h1", has_text=PRODUCT_NAME).wait_for(timeout=20000)
-            page.locator("text=/Price \\$[0-9]+(?:\\.[0-9]{2})?/").first.wait_for(timeout=20000)
-        except Exception:
-            # Preserve the rendered response so product validation can fail safely.
-            pass
-        content = page.content()
-        browser.close()
-        return content
-
-
-def unavailable(name: str, store_id: str, error: str, checked_at: str) -> dict[str, Any]:
-    return {"name": name, "store_id": store_id, "price": None, "status": "unavailable", "verified": False,
-            "checked_at": checked_at, "error": error}
-
-
-def collect_coles(checked_at: str) -> dict[str, Any]:
-    result = unavailable("Coles Rundle Place", "4964", "No verified Rundle Place price source. Generic online prices are excluded.", checked_at)
-    result["source"] = COLES_URL
-    return result
-
-
-def check_coles_access(page_html: str) -> None:
-    # HTTP 200 can still be an Imperva challenge inside an otherwise empty iframe.
-    if '_Incapsula_Resource' in page_html and ('incident_id=' in page_html or 'Incapsula incident ID' in page_html):
-        raise RuntimeError("Coles requires a human security check on the automatic runner; no Findon price was retrieved")
-
-
-def fetch_coles_findon() -> str:
-    """Select a real pickup store, then reload to avoid the default-location price."""
-    from playwright.sync_api import sync_playwright
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
-        try:
-            page = browser.new_page(locale="en-AU")
-            page.set_default_timeout(20000)
-            response = page.goto(COLES_URL, wait_until="domcontentloaded", timeout=60000)
+def collect(catalog,settings,previous,manual,now,probe=None,probe_store=None):
+    records=[]; diagnostics=[]; provider_calls=0
+    previous={(r['product_id'],r['store_id']):r for r in previous.get('records',[])}
+    for store in catalog['stores']:
+        provider=store['connector']
+        mapped=[p for p in catalog['products'] if mapping_for(p,store)]
+        config=settings.get('providers',{}).get(provider,{})
+        approval=config.get('approved_stores',{}).get(store['id'],{})
+        approved=(approval.get('validated') is True and bool(approval.get('evidence')) and bool(approval.get('validated_at')))
+        if approved:
             try:
-                check_coles_access(page.content())
-                page.get_by_role("button", name=re.compile(r"^(Set your location|Set shopping method)")).click()
-            except Exception as exc:
-                diagnostics = ROOT / "artifacts" / "coles-findon"
-                diagnostics.mkdir(parents=True, exist_ok=True)
-                page.screenshot(path=str(diagnostics / "page.png"), full_page=True)
-                check_coles_access(page.content())
-                raise RuntimeError(f"Coles location selector unavailable. HTTP {response.status if response else 'unknown'}; URL {page.url}; Page: {page.title()}; HTML length {len(page.content())}; {page.locator('body').inner_text()[:200]}") from exc
-            page.get_by_role("button", name="Click & Collect", exact=True).click()
-            page.get_by_role("combobox", name="Your selected store", exact=True).fill("Findon")
-            page.get_by_role("option", name="Findon, SA 5023", exact=True).click()
-            page.get_by_role("radio", name=re.compile(r"^Coles Findon Findon S/C, Cnr Grange & Findon Rds")).check()
-            page.get_by_role("button", name="Set location", exact=True).click()
-            page.get_by_role("banner").get_by_text("Findon", exact=True).wait_for()
-            page.reload(wait_until="domcontentloaded", timeout=60000)
-            page.get_by_role("banner").get_by_text("Findon", exact=True).wait_for()
-            page.get_by_role("heading", name="Cocobella Coconut Water Straight Up | 1L", exact=True).wait_for()
-            return page.content()
-        finally:
-            browser.close()
+                approved=timestamp(approval['validated_at'])<=now
+            except (ValueError,TypeError):
+                approved=False
+        is_probe=bool(probe==provider and probe_store==store['id'])
+        enabled=(not probe or is_probe) and provider.startswith('apify_') and (approved or is_probe) and bool(store.get('retailer_store_id')) and bool(mapped)
+        rows=None; shared_error=None; attempted=None
+        if enabled and os.environ.get('APIFY_TOKEN') and os.environ.get('APIFY_FREE_PLAN_CONFIRMED')=='true':
+            if provider_calls>=5:
+                shared_error='Provider request budget reached'
+            else:
+                attempted=iso(now); provider_calls+=1
+                try:
+                    rows=fetch_provider(provider,mapped,store)
+                except (SourceError,ValueError,TypeError) as exc:
+                    shared_error=str(exc)
+        for product in catalog['products']:
+            old=previous.get((product['id'],store['id']),{})
+            record={'product_id':product['id'],'store_id':store['id'],'status':'not_connected',
+                    'last_attempt_at':old.get('last_attempt_at'),'observation':None,
+                    'last_success':old.get('last_success') or old.get('observation'),
+                    'message':'No verified automatic price source for this branch yet.'}
+            observation=None
+            if provider=='drakes' and mapping_for(product,store) and not probe:
+                record['last_attempt_at']=iso(now)
+                try:
+                    observation=fetch_drakes(product,store,now)
+                except (SourceError,ValueError,TypeError,KeyError) as exc:
+                    record.update(status='failed',message=str(exc))
+            elif provider.startswith('apify_'):
+                if not store.get('retailer_store_id'):
+                    record['message']='Branch mapping needs verification.'
+                elif not approved and not is_probe:
+                    record['message']='Replacement price source awaits branch validation.'
+                elif not os.environ.get('APIFY_TOKEN') or os.environ.get('APIFY_FREE_PLAN_CONFIRMED')!='true':
+                    record['message']='Replacement price source is not connected.'
+                elif enabled:
+                    if attempted:
+                        record['last_attempt_at']=attempted
+                    try:
+                        if shared_error:
+                            raise SourceError(shared_error)
+                        observation=parse_provider(rows or [],provider,product,store,now)
+                    except (SourceError,ValueError,TypeError,KeyError) as exc:
+                        record.update(status='failed',message=str(exc))
+            if observation:
+                record['last_success']=observation
+                if usable(observation,now):
+                    record.update(status='current',observation=observation,message='Current verified branch observation.')
+                else:
+                    record.update(status='out_of_stock' if observation['availability']=='out_of_stock' else 'unavailable',message='Source returned a price without current confirmed availability, or an expired observation.')
+            if not observation and not probe:
+                candidates=[m for m in manual if m.get('product_id')==product['id'] and m.get('store_id')==store['id']]
+                valid=[]
+                for m in candidates:
+                    try:
+                        if not m.get('evidence') or m.get('source')!='manual' or not m.get('confirmed_by'):
+                            raise ValueError('Manual observation needs confirmation and evidence')
+                        clean=validate_observation(m,product,store,now)
+                        if usable(clean,now):
+                            valid.append(clean)
+                    except (ValueError,TypeError) as exc:
+                        diagnostics.append({'product_id':product['id'],'store_id':store['id'],'error':str(exc)})
+                if valid:
+                    observation=max(valid,key=lambda o:o['observed_at'])
+                    record.update(observation=observation,last_success=observation,status='manual',message='Dated manual check. Automatic source is not current.')
+            # A previous success is preserved for context, but never silently republished as current.
+            records.append(record)
+            if is_probe:
+                diagnostics.append({'product_id':product['id'],'store_id':store['id'],'attempted_at':record['last_attempt_at'],
+                                    'result':record['status'],'message':record['message'],'observation':observation})
+    return records,diagnostics
 
-
-def collect_coles_findon(checked_at: str) -> dict[str, Any]:
-    try:
-        page = fetch_coles_findon()
-        price = extract_price_near_product(page, PRODUCT_NAME, "1251527")
-        return {"name": "Coles Findon", "store_id": "403", "price": price,
-                "status": "available", "verified": True, "store_specific": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": COLES_URL,
-                "price_scope": "Findon Click & Collect price; shelf price and stock may differ"}
-    except Exception as exc:
-        result = unavailable("Coles Findon", "403", str(exc), checked_at)
-        path = DATA_DIR / "browser-observations.json"
-        if path.exists():
-            try:
-                observation = json.loads(path.read_text()).get("coles_findon", {})
-                observed_at = observation.get("updated_at", "")
-                age = (datetime.fromisoformat(checked_at.replace("Z", "+00:00")) - datetime.fromisoformat(observed_at.replace("Z", "+00:00"))).total_seconds()
-                if (0 <= age < 36 * 3600 and observation.get("product_id") == "1251527"
-                        and observation.get("store_id") == "403" and observation.get("verified") is True
-                        and isinstance(observation.get("price"), (int, float)) and 1 <= observation["price"] <= 20):
-                    result.update(observation)
-                    result.update(status="available", store_specific=True)
-                    result.pop("error", None)
-                    result["checked_at"] = checked_at
-                    result["refresh_error"] = str(exc)
-                    result["price_scope"] = "Findon Click & Collect, dated browser check; automatic refresh unavailable. Expires after 36 hours."
-            except (ValueError, TypeError, AttributeError, OSError):
-                pass
-        return result
-
-
-def collect_woolworths(checked_at: str) -> dict[str, Any]:
-    result = unavailable("Woolworths Rundle Mall", "5317", "Automatic access is blocked; branch pricing could not be verified. Check the product with your store selected.", checked_at)
-    result["source"] = WOOLWORTHS_URL
-    return result
-
-
-def collect_foodland(checked_at: str) -> dict[str, Any]:
-    result = unavailable("Foodland Henley Square", "henley-square", "No verified Henley Square product-price source. Another Foodland's price is not substituted.", checked_at)
-    result["source"] = "https://henleysquarefoodland.com.au/specials/"
-    return result
-
-
-def parse_drakes(page: str) -> float:
-    # The shop's own structured offer avoids confusing unit/previous prices.
-    text = visible_text(page)
-    if "Serviced by Drakes Online Findon" not in text:
-        raise ValueError("Findon shop identity could not be verified")
-    for raw in re.findall(r'<script\b[^>]*type=[\"\']application/ld\+json[\"\'][^>]*>(.*?)</script>', page, re.I | re.S):
-        product = json.loads(raw)
-        if not isinstance(product, dict) or product.get("@type") != "Product":
-            continue
-        if product.get("name") != "Cocobella Straight Up Coconut Water 1L" or product.get("url") != DRAKES_URL:
-            continue
-        offer = product.get("offers", {})
-        if offer.get("priceCurrency") != "AUD" or not offer.get("availability", "").endswith("/InStock"):
-            raise ValueError("No in-stock AUD offer for Findon")
-        price = float(offer["price"])
-        if not 1 <= price <= 20:
-            raise ValueError("Implausible Findon price")
-        return price
-    raise ValueError("Exact original 1L product offer missing")
-
-
-def collect_drakes(checked_at: str) -> dict[str, Any]:
-    try:
-        price = parse_drakes(fetch_text(DRAKES_URL))
-        return {"name": "Drakes Findon", "store_id": "079", "price": price,
-                "status": "available", "verified": True, "store_specific": True,
-                "checked_at": checked_at, "updated_at": checked_at, "source": DRAKES_URL,
-                "price_scope": "Findon online shop; shelf price and stock may differ"}
-    except Exception as exc:
-        return unavailable("Drakes Findon", "079", str(exc), checked_at)
-
-
-def build_snapshot() -> dict[str, dict[str, Any]]:
-    checked_at = now_iso()
-    return {"coles": collect_coles(checked_at), "woolworths": collect_woolworths(checked_at),
-            "foodland": collect_foodland(checked_at), "drakes_findon": collect_drakes(checked_at),
-            "coles_findon": collect_coles_findon(checked_at)}
-
-
-def read_history() -> dict[str, list[dict[str, Any]]]:
-    if not HISTORY_PATH.exists():
-        return {"coles": [], "woolworths": [], "foodland": []}
-    history = json.loads(HISTORY_PATH.read_text(encoding="utf-8")).get("history", {})
-    # Legacy collectors verified the product, not the branch. Preserve but label those records.
-    return {key: [dict(value, store_specific=value.get("store_specific", key in {"drakes_findon", "coles_findon"}))
-                  for value in values] for key, values in history.items()}
-
-
-def append_history(history: dict[str, list[dict[str, Any]]], snapshot: dict[str, dict[str, Any]]) -> None:
-    for store, entry in snapshot.items():
-        if not is_available(entry) or entry.get("store_specific") is not True:
-            continue
-        observation = {"date": entry.get("updated_at", entry["checked_at"]), "price": entry["price"], "verified": True, "store_specific": True}
-        prior = history.setdefault(store, [])
-        if prior and prior[-1].get("date", "") > observation["date"]:
-            continue
-        if prior and prior[-1].get("date", "")[:10] == observation["date"][:10]:
-            prior[-1] = observation
-        else:
-            prior.append(observation)
-
-
-def write_json(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-
-
-def main() -> int:
-    snapshot = build_snapshot()
-    history = read_history()
-    append_history(history, snapshot)
-    cheapest = compute_cheapest({key: value for key, value in snapshot.items() if value.get("store_specific") is True})
-    payload = {"generated_at": now_iso(), "product": PRODUCT_NAME, "stores": snapshot,
-               "cheapest_store": cheapest, "recommended_store": cheapest, "history": history}
-    write_json(PRICES_PATH, payload)
-    write_json(HISTORY_PATH, {"history": history})
-    verified = [key for key, value in snapshot.items() if is_available(value)]
-    print("Available verified observations: " + (", ".join(verified) if verified else "none"))
-    for key, value in snapshot.items():
-        print(f"{key}: {format_price(value.get('price'))} ({value.get('status')})")
-        if value.get("error"):
-            print(f"  {value['error']}")
-    # Unavailability is valid data and must reach the site, even if every source fails.
+def main(argv=None):
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--validate-provider',choices=['apify_coles','apify_woolworths'])
+    parser.add_argument('--store')
+    args=parser.parse_args(argv)
+    catalog=read(DATA/'catalog.json',{})
+    validate_catalog(catalog)
+    now=datetime.now(timezone.utc)
+    settings=read(Path(__file__).with_name('providers.json'),{})
+    if args.validate_provider:
+        store=next((s for s in catalog['stores'] if s['id']==args.store and s['connector']==args.validate_provider),None)
+        if not store:
+            parser.error('Validation requires --store with a matching catalog branch ID')
+    history=migrate_history(DATA,catalog)
+    previous=read(DATA/'state.json',{})
+    manual=read(DATA/'manual-observations.json',{'observations':[]})['observations']
+    records,diagnostics=collect(catalog,settings,previous,manual,now,args.validate_provider,args.store)
+    if args.validate_provider:
+        write(ROOT/'artifacts/cocobella/provider-validation.json',{'generated_at':iso(now),'provider':args.validate_provider,'branch':args.store,'results':diagnostics,'approved':False})
+        print('Diagnostic only. Branch approval requires an independent price check; nothing was published.')
+        return 0 if any(d.get('attempted_at') and d.get('observation') for d in diagnostics) else 1
+    observations=[r['last_success'] for r in records if r.get('last_success')]
+    history=add_history(history,observations)
+    payload={'schema_version':2,'generated_at':iso(now),'records':records,
+             'coverage':{'current':sum(usable(r.get('observation'),now) for r in records),'total':len(records)}}
+    write(DATA/'history-v2.json',{'schema_version':2,'observations':history})
+    write(DATA/'state.json',payload)
+    if diagnostics:
+        write(ROOT/'artifacts/cocobella/validation-errors.json',diagnostics)
+    print(f"Current verified product/branch observations: {payload['coverage']['current']}/{len(records)}")
+    for r in records:
+        if r['status'] in ('current','manual','failed'):
+            print(f"{r['product_id']} / {r['store_id']}: {r['status']}; {r['message']}")
+    # All unavailable is valid output, so stale data can still be replaced on the site.
     return 0
 
-
-if __name__ == "__main__":
-    sys.exit(main())
+if __name__=='__main__':
+    raise SystemExit(main())
