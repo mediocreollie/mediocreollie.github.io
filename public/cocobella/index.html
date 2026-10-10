@@ -1,48 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cocobella Tracker</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <main class="page">
-      <header class="header">
-        <p class="eyebrow">Cocobella</p>
-        <h1>Grocery price tracker</h1>
-        <p>Cocobella Straight Up Coconut Water 1L only.</p>
-        <p>Within 5 miles (8.05 km) of Henley Square, measured in a straight line. Driving distances will be longer.</p>
-        <label for="store-view">Show prices:</label>
-        <select id="store-view"><option value="nearby">Near Henley Square</option><option value="all">Include Rundle Mall shops</option></select>
-      </header>
-
-      <section class="summary" id="summary">
-        <div class="summary-card">
-          <span class="label">Lowest verified store-specific online price</span>
-          <strong id="cheapest-store">Loading…</strong>
-        </div>
-        <div class="summary-card">
-          <span class="label">Last refresh attempt</span>
-          <strong id="updated-at">Loading…</strong>
-        </div>
-      </section>
-
-      <p id="data-warning" role="status"></p>
-      <section class="stores" id="stores" aria-live="polite"></section>
-
-      <section class="chart-panel">
-        <h2>Price history</h2>
-        <svg id="history-chart" viewBox="0 0 680 220" role="img" aria-label="Price history chart"></svg>
-        <p id="chart-legend"></p>
-        <p>Prices in AUD. Missing checks are gaps. Only confirmed branch observations are plotted. Historical chain listings are retained in the data but excluded from this chart.</p>
-      </section>
-      <h2>Nearby shops to check</h2>
-      <p>Drakes Findon and Coles Findon have confirmed online listings for the exact product. Other branches below are candidates from chains that list Cocobella; their local range, stock and prices are unconfirmed. This is a researched shortlist, not an exhaustive stock audit.</p>
-      <section class="stores" id="nearby-stores"></section>
-      <p>Locations checked September 2026. Approximate coordinates from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>; distances are to Henley Square. Some locations use the nearby street segment rather than the shop entrance.</p>
-    </main>
-
-    <script src="./app.js?v=reliability-20260923"></script>
-  </body>
-</html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welcome to Cocobella | Your local price checker</title>
+<link rel="stylesheet" href="./styles.css?v=2">
+</head>
+<body>
+<main class="page">
+<header class="header"><p class="eyebrow">Your local grocery watchlist</p><h1>Welcome to Cocobella</h1><p>Original Straight Up 1L. Your shops, your quantities, verified prices.</p><p class="meta">Shops within 5 miles of Henley Square, plus your Rundle Mall favourites.</p></header>
+<p id="notice" class="notice" role="status">Loading your watchlist…</p>
+<section class="panel"><h2>Your basket</h2><p>Choose quantities to compare what you would actually buy. Your basket and shop choices are saved on this device.</p><div id="basket"></div><p class="meta">Cocobella is the first product. More products can be added without changing the collectors or this page.</p>
+<details><summary>Choose shops</summary><div class="actions"><button id="nearby" type="button">Henley Square area</button><button id="all-stores" type="button">Include Rundle Mall</button></div><div id="store-options" class="choices"></div></details></section>
+<section class="summary" aria-live="polite"><div class="summary-card"><span class="label">Lowest complete basket, among verified prices</span><strong id="best">Loading…</strong><p id="coverage" class="meta"></p></div><div class="summary-card"><span class="label">Two-shop option</span><strong id="split">Loading…</strong><p id="split-detail" class="meta"></p></div></section>
+<p class="meta">Totals exclude travel, delivery and pickup fees. Online and Click &amp; Collect prices may differ from shelf prices. Offers with unverified conditions are not deducted.</p>
+<section aria-labelledby="prices-title"><h2 id="prices-title">Prices at your shops</h2><label for="product-view">Product</label> <select id="product-view"></select><p id="product-detail" class="meta"></p><div id="stores" class="stores"></div></section>
+<section class="panel"><h2>Compare the whole basket</h2><p>Incomplete baskets are shown with missing items. They cannot be the cheapest complete basket.</p><div class="table-wrap"><table><thead><tr><th scope="col">Shop</th><th scope="col">Priced items</th><th scope="col">Basket total</th></tr></thead><tbody id="basket-totals"></tbody></table></div></section>
+<section class="chart-panel"><h2>Price history</h2><svg id="history-chart" viewBox="0 0 680 240" role="img" aria-label="Verified branch price history"></svg><p id="chart-legend" class="meta"></p><p class="meta">Selected product and shops only. Gaps mean missing observations. Older chain-wide records are preserved separately, not plotted as branch prices.</p><details><summary>View observations as a table</summary><div class="table-wrap"><table><thead><tr><th scope="col">Observed (Adelaide)</th><th scope="col">Shop</th><th scope="col">Price</th><th scope="col">Price type</th></tr></thead><tbody id="history-table"></tbody></table></div></details></section>
+<details class="panel"><summary>Source coverage and nearby shops</summary><p>Some nearby shops are still candidates. Listing a shop does not confirm that it stocks this product.</p><div id="directory" class="stores"></div><p class="meta">Distances are approximate straight-line distances, not driving distances. Existing location research: September 2026, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</p></details>
+<footer><p id="published" class="meta"></p><p class="meta">A site update is not a successful price check. Each card shows the actual observation time and the last request, where one was made.</p><a href="https://github.com/mediocreollie/mediocreollie.github.io/blob/main/scripts/cocobella/README.md">How the tracker works</a></footer>
+</main>
+<script src="./core.js?v=2"></script><script src="./app.js?v=2"></script>
+</body></html>

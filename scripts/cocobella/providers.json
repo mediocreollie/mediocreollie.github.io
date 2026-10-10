@@ -1,0 +1,13 @@
+{
+  "schema_version": 2,
+  "providers": {
+    "apify_woolworths": {
+      "actor": "crawlplant~woolworths-au",
+      "approved_stores": {}
+    },
+    "apify_coles": {
+      "actor": "cylindrical_lighthouse~au-grocery-prices",
+      "approved_stores": {}
+    }
+  }
+}

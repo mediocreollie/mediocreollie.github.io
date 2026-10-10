@@ -1,0 +1,289 @@
+{
+  "schema_version": 2,
+  "default_product_id": "cocobella-original-1l",
+  "radius_km": 8.04672,
+  "origin": {
+    "name": "Henley Square",
+    "latitude": -34.919625,
+    "longitude": 138.4938152
+  },
+  "products": [
+    {
+      "id": "cocobella-original-1l",
+      "name": "Cocobella Coconut Water Straight Up 1L",
+      "brand": "Cocobella",
+      "variant": "Straight Up / original",
+      "size_ml": 1000,
+      "pack_count": 1,
+      "price_bounds_cents": [
+        100,
+        2000
+      ],
+      "mappings": {
+        "coles": {
+          "product_id": "1251527",
+          "url": "https://www.coles.com.au/product/cocobella-coconut-water-straight-up-1l-1251527",
+          "names": [
+            "Cocobella Coconut Water Straight Up 1L",
+            "Cocobella Coconut Water Straight Up",
+            "Cocobella Coconut Water Straight Up | 1L"
+          ],
+          "sizes": [
+            "1l",
+            "1000ml"
+          ]
+        },
+        "woolworths": {
+          "product_id": "724514",
+          "url": "https://www.woolworths.com.au/shop/productdetails/724514/cocobella-coconut-water-straight-up",
+          "names": [
+            "Cocobella Coconut Water Straight Up 1L",
+            "Cocobella Coconut Water Straight Up"
+          ],
+          "sizes": [
+            "1l",
+            "1000ml"
+          ]
+        },
+        "drakes": {
+          "product_id": "cocobella-coconut-water-straight-up-1l",
+          "url": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+          "names": [
+            "Cocobella Straight Up Coconut Water 1L"
+          ],
+          "sizes": [
+            "1l",
+            "1000ml"
+          ],
+          "store_ids": [
+            "drakes_findon"
+          ]
+        }
+      }
+    }
+  ],
+  "stores": [
+    {
+      "id": "coles",
+      "name": "Coles Rundle Place",
+      "retailer": "coles",
+      "retailer_store_id": "4964",
+      "nearby": false,
+      "source": "https://www.coles.com.au/find-stores/coles/sa/adelaide-4964",
+      "connector": "apify_coles"
+    },
+    {
+      "id": "woolworths",
+      "name": "Woolworths Rundle Mall",
+      "retailer": "woolworths",
+      "retailer_store_id": "5317",
+      "nearby": false,
+      "source": "https://www.woolworths.com.au/shop/storelocator/sa-adelaide-5317",
+      "connector": "apify_woolworths"
+    },
+    {
+      "id": "foodland",
+      "name": "Foodland Henley Square",
+      "retailer": "foodland",
+      "retailer_store_id": "henley-square",
+      "nearby": true,
+      "distance_km": 0,
+      "address": "348-354 Seaview Road, Henley Beach SA",
+      "source": "https://henleysquarefoodland.com.au/specials/",
+      "connector": "manual"
+    },
+    {
+      "name": "Drakes Grange",
+      "address": "528 Grange Rd, Grange SA 5024",
+      "source": "https://grange.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9073083,
+      "longitude": 138.4947065,
+      "distance_km": 1.4,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/180061231",
+      "id": "drakes_grange",
+      "retailer": "drakes",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Drakes Fulham",
+      "address": "Tapleys Hill Rd & Valetta Rd, Fulham Gardens SA 5024",
+      "source": "https://fulham.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9135293,
+      "longitude": 138.5149334,
+      "distance_km": 2,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/2589756362",
+      "id": "drakes_fulham",
+      "retailer": "drakes",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Woolworths Fulham Gardens",
+      "address": "445-457 Tapleys Hill Rd, Fulham Gardens SA 5024",
+      "source": "https://fulhamgardensshopping.com.au/",
+      "note": "Candidate: chain lists the product; automated price access is currently blocked and branch stock is unverified.",
+      "latitude": -34.9138967,
+      "longitude": 138.5148694,
+      "distance_km": 2,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/9537128520",
+      "id": "woolworths_fulham_gardens",
+      "retailer": "woolworths",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Drakes West Beach",
+      "address": "693 Burbridge Rd, West Beach SA 5024",
+      "source": "https://westbeach.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9368757,
+      "longitude": 138.5057626,
+      "distance_km": 2.2,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/12751118623",
+      "id": "drakes_west_beach",
+      "retailer": "drakes",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Foodland Lockleys",
+      "address": "491 Henley Beach Rd, Lockleys SA 5024",
+      "source": "https://www.foodlandsa.com.au/stores/",
+      "note": "Candidate: no verified store-specific Cocobella price or stock source.",
+      "latitude": -34.9260942,
+      "longitude": 138.5286346,
+      "distance_km": 3.3,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/1230091789",
+      "id": "foodland_lockleys",
+      "retailer": "foodland",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Drakes Findon",
+      "address": "303 Grange Rd, Findon SA 5023",
+      "source": "https://079.drakes.com.au/lines/cocobella-coconut-water-straight-up-1l",
+      "note": "Tracked: exact 1L original listed in the Findon online shop. Shelf stock may differ.",
+      "latitude": -34.9044046,
+      "longitude": 138.5306739,
+      "distance_km": 3.8,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/2391427400",
+      "id": "drakes_findon",
+      "retailer": "drakes",
+      "retailer_store_id": "079",
+      "nearby": true,
+      "connector": "drakes",
+      "shop_identity": "Serviced by Drakes Online Findon"
+    },
+    {
+      "name": "Coles Findon",
+      "address": "303 Grange Rd, Findon SA 5023",
+      "source": "https://www.coles.com.au/find-stores/coles/sa/findon-403",
+      "note": "Exact 1L original confirmed with Findon selected for Click & Collect. Automated checks fail closed if the location cannot be confirmed; shelf price and stock may differ.",
+      "latitude": -34.9048091,
+      "longitude": 138.5318295,
+      "distance_km": 3.8,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/497197520",
+      "id": "coles_findon",
+      "retailer": "coles",
+      "retailer_store_id": "403",
+      "nearby": true,
+      "connector": "apify_coles"
+    },
+    {
+      "name": "Woolworths West Lakes",
+      "address": "111 West Lakes Blvd, West Lakes SA 5021",
+      "source": "https://www.woolworths.com.au/shop/storelocator/sa-west-lakes-5623",
+      "note": "Candidate: chain lists the product; automated price access is currently blocked and branch stock is unverified.",
+      "latitude": -34.8806931,
+      "longitude": 138.4903036,
+      "distance_km": 4.3,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/way/203684560",
+      "id": "woolworths_west_lakes",
+      "retailer": "woolworths",
+      "retailer_store_id": "5623",
+      "nearby": true,
+      "connector": "apify_woolworths"
+    },
+    {
+      "name": "Foodland Royal Park",
+      "address": "53-59 Tapleys Hill Rd, Hendon SA 5014",
+      "source": "https://www.foodlandsa.com.au/stores/",
+      "note": "Candidate: no verified store-specific Cocobella price or stock source.",
+      "latitude": -34.8706716,
+      "longitude": 138.5122429,
+      "distance_km": 5.7,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/23194819",
+      "id": "foodland_royal_park",
+      "retailer": "foodland",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Drakes Torrensville",
+      "address": "159 Henley Beach Rd, Torrensville SA 5031",
+      "source": "https://torrensville.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.9243561,
+      "longitude": 138.5580466,
+      "distance_km": 5.9,
+      "coordinate_precision": "approximate street segment",
+      "location_source": "https://www.openstreetmap.org/way/547407603",
+      "id": "drakes_torrensville",
+      "retailer": "drakes",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Drakes Allenby Gardens",
+      "address": "612 Port Rd, Allenby Gardens SA 5009",
+      "source": "https://allenbygardens.drakes.com.au/catalogues",
+      "note": "Candidate: catalogue available; exact product, local stock and current price need confirmation.",
+      "latitude": -34.8926587,
+      "longitude": 138.5515648,
+      "distance_km": 6.1,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/node/2400274259",
+      "id": "drakes_allenby_gardens",
+      "retailer": "drakes",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    },
+    {
+      "name": "Foodland West Lakes",
+      "address": "Bartley Terrace, West Lakes Shore SA 5020",
+      "source": "https://www.foodlandsa.com.au/stores/",
+      "note": "Candidate: no verified store-specific Cocobella price or stock source.",
+      "latitude": -34.8605036,
+      "longitude": 138.4890313,
+      "distance_km": 6.6,
+      "coordinate_precision": "mapped shop",
+      "location_source": "https://www.openstreetmap.org/way/82591274",
+      "id": "foodland_west_lakes",
+      "retailer": "foodland",
+      "retailer_store_id": null,
+      "nearby": true,
+      "connector": "manual"
+    }
+  ]
+}
