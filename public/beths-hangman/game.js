@@ -131,6 +131,16 @@
   }
 
   function getPuzzleNumber(dateString) {
+    // Adelaide uses calendar days rather than elapsed local-midnight hours,
+    // avoiding the daylight-saving off-by-one. Its puzzle is one day ahead.
+    if (Intl.DateTimeFormat().resolvedOptions().timeZone === "Australia/Adelaide") {
+      const [year, month, day] = dateString.split("-").map(Number);
+      const start = Date.UTC(2026, 5, 9);
+      const current = Date.UTC(year, month - 1, day);
+      return Math.max(1, Math.round((current - start) / 86400000) + 2);
+    }
+
+    // Preserve the existing UK puzzle numbering and local-midnight reset.
     const start = new Date("2026-06-09T00:00:00");
     const current = new Date(`${dateString}T00:00:00`);
     return Math.max(1, Math.floor((current - start) / 86400000) + 1);
