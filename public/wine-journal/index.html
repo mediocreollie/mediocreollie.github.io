@@ -33,7 +33,7 @@ function guard(){return !!user&&members.some(m=>m.user_id===user.id)&&loaded&&!b
 function tagButtons(el,values,active,click){el.innerHTML='';values.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip'+(active.has(t)?' selected':'');b.textContent=t;b.onclick=()=>click(t);el.append(b)})}
 function drawTags(){const suggested=suggest($('wineForm').elements.notesA.value);tagButtons($('suggestedTags'),suggested.filter(t=>!tags.has(t)),tags,t=>{tags.add(t);drawTags()});tagButtons($('editTags'),[...new Set([...Object.keys(BANK),...tags])].sort(),tags,t=>{tags.has(t)?tags.delete(t):tags.add(t);drawTags()});tagButtons($('otherTags'),otherReviewTags,new Set(otherReviewTags),()=>{}) ;$('otherTags').querySelectorAll('button').forEach(b=>b.disabled=true)}
 function ownName(){return user?(members.find(m=>m.user_id===user.id)?.display_name||'You'):'Ollie'}
-function otherName(){return user?(members.find(m=>m.user_id!==user.id)?.display_name||'Beth'):'Beth'}
+function otherName(){return members.find(m=>m.user_id!==user?.id)?.display_name||'Beth'}
 function render(){
 const q=$('search').value.toLowerCase().trim(),grape=$('variety').value,min=Number($('minimum').value);
 const varieties=[...new Set(data.map(w=>w.grape).filter(Boolean))].sort();
