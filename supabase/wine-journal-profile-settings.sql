@@ -36,3 +36,8 @@ create policy "Own or permitted member review update" on public.wine_reviews
 -- Delegate INSERT is intentionally not granted: only the reviewer may create
 -- their first review. Delegate UPDATE applies to existing reviews only.
 -- Delegated deletion is not granted.
+
+-- Prevent delegated editors from changing review ownership or moving reviews.
+revoke update on public.wine_reviews from authenticated;
+grant update (score, notes, tags) on public.wine_reviews to authenticated;
+-- Keep per-user creation and member-only access as defined in wine-journal.sql.
