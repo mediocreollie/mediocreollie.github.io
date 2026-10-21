@@ -4,9 +4,9 @@
 :root{font-family:system-ui,-apple-system,sans-serif;color:#302329;background:#faf7f3}*{box-sizing:border-box}body{margin:0}main{max-width:1080px;margin:auto;padding:28px 18px}header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}h1{font-family:Georgia,serif;font-size:clamp(32px,5vw,54px);margin:8px 0}h2{font-family:Georgia,serif}.muted{color:#776b6e}.panel,.wine{background:white;border:1px solid #e9dedb;border-radius:18px;padding:20px;margin:18px 0;box-shadow:0 4px 20px #3b192208}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;background:#6e263e;color:white;font:inherit}button.secondary{background:#f3e8e9;color:#63213a}button.chip{background:#f5eeee;color:#5e3443;padding:8px 12px;margin:3px;font-size:14px}button.chip.selected{background:#6e263e;color:white}input,select,textarea{width:100%;padding:11px;border:1px solid #d7c9c9;border-radius:9px;font:inherit;background:white}textarea{min-height:90px}label{display:block;font-size:14px;font-weight:650;margin:12px 0 5px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.wine img{width:100%;height:210px;object-fit:cover;border-radius:12px}.scores{display:flex;gap:16px;flex-wrap:wrap}.pill{display:inline-block;background:#f2e8e9;border-radius:20px;padding:5px 10px;margin:3px;font-size:13px}dialog{border:0;border-radius:20px;max-width:740px;width:calc(100% - 20px);max-height:90vh;overflow:auto}dialog::backdrop{background:#27151dbb}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}.empty{text-align:center;padding:36px}.small{font-size:13px}#notice{color:#9a3e36} .review{border-left:3px solid #e8d5da;padding-left:12px}.review-keywords{margin:16px 0 22px;padding:12px 0;border-top:1px solid #eee2e3}.review-keywords button:disabled{opacity:.65;cursor:default}#suggestedTags:not(:empty){margin-bottom:10px}
 </style></head><body><main>
 <header><div><div class="muted">A collection of bottles and opinions</div><h1>Our Wine Journal</h1><div class="muted">Two palates. One shared collection.</div></div><button id="add">+ Add a wine</button></header>
-<section class="panel" id="accountPanel"><div id="authBox"><h2>Sign in to your wine journal</h2><form id="loginForm"><label>Email</label><input id="email" type="email" required autocomplete="email"><label>Password</label><input id="password" type="password" required autocomplete="current-password"><div class="actions"><button type="submit">Sign in</button></div></form></div><div id="signedIn" hidden><span id="identity"></span> <button class="secondary" id="logout">Sign out</button></div></section><p id="notice" class="small">Sign in to load your shared wine collection. Database setup is required before the cloud version works.</p>
+<section class="panel" id="accountPanel"><div id="authBox"><h2>Sign in to your wine journal</h2><form id="loginForm"><label>Email</label><input id="email" type="email" required autocomplete="email"><label>Password</label><input id="password" type="password" required autocomplete="current-password"><div class="actions"><button type="submit">Sign in</button></div></form></div><div id="signedIn" hidden><span id="identity"></span> <button class="secondary" id="logout">Sign out</button></div></section><p id="notice" class="small">Browse our wines below. Only Ollie and Beth can sign in to add reviews.</p>
 <section class="panel"><h2>Explore the collection</h2><div class="grid"><div><label for="search">Search names, notes or keywords</label><input id="search" placeholder="e.g. cherry, smooth, Pinot"></div><div><label for="variety">Grape variety</label><select id="variety"><option value="">All varieties</option></select></div><div><label for="minimum">Minimum average score</label><select id="minimum"><option value="0">Any score</option><option value="6">6+</option><option value="7">7+</option><option value="8">8+</option><option value="9">9+</option></select></div></div><label>Filter by tags</label><div id="filterTags"></div><p class="small muted" id="count"></p></section>
-<div class="actions"><button class="secondary" id="export">Export backup</button><button class="secondary" id="importButton">Import backup</button><input type="file" id="import" accept="application/json" hidden></div>
+<div class="actions"><button class="secondary" id="export">Export backup</button></div>
 <section id="wines" class="grid"></section>
 <dialog id="editor"><form id="wineForm"><h2 id="formTitle">Add a wine</h2><input id="editId" type="hidden"><div class="grid"><div><label>Wine name *</label><input name="name" required maxlength="120"></div><div><label>Producer</label><input name="producer" maxlength="120"></div><div><label>Grape variety *</label><input name="grape" required maxlength="80" list="grapes"><datalist id="grapes"><option>Pinot Noir</option><option>Shiraz</option><option>Chardonnay</option><option>Cabernet Sauvignon</option><option>Sauvignon Blanc</option><option>Riesling</option><option>Merlot</option><option>Grenache</option></datalist></div><div><label>Vintage</label><input name="vintage" type="number" min="1900" max="2100"></div><div><label>Region</label><input name="region" maxlength="120"></div><div><label>Photo</label><input id="photo" type="file" accept="image/*"><small class="muted">Resized before saving. Photos are compressed before private cloud upload.</small></div></div>
 <h3 id="ownHeading">Your review</h3><div class="grid"><div><label>Score out of 10</label><input name="scoreA" type="number" min="0" max="10" step=".5"></div><div><label>Notes</label><textarea name="notesA" maxlength="3000"></textarea></div></div>
@@ -29,11 +29,11 @@ const score=v=>v===''||v===null||v===undefined?null:Number(v);
 const avg=w=>{const a=[score(w.scoreA),score(w.scoreB)].filter(n=>n!==null&&Number.isFinite(n));return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
 const suggest=s=>Object.entries(BANK).filter(([tag,words])=>words.some(word=>s.toLowerCase().split(/[^a-z]+/).includes(word.toLowerCase())||s.toLowerCase().includes(word.toLowerCase()+' '))).map(([tag])=>tag);
 const note=t=>{$('notice').textContent=t};
-function guard(){return !!user&&loaded&&!busy}
+function guard(){return !!user&&members.some(m=>m.user_id===user.id)&&loaded&&!busy}
 function tagButtons(el,values,active,click){el.innerHTML='';values.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip'+(active.has(t)?' selected':'');b.textContent=t;b.onclick=()=>click(t);el.append(b)})}
 function drawTags(){const suggested=suggest($('wineForm').elements.notesA.value);tagButtons($('suggestedTags'),suggested.filter(t=>!tags.has(t)),tags,t=>{tags.add(t);drawTags()});tagButtons($('editTags'),[...new Set([...Object.keys(BANK),...tags])].sort(),tags,t=>{tags.has(t)?tags.delete(t):tags.add(t);drawTags()});tagButtons($('otherTags'),otherReviewTags,new Set(otherReviewTags),()=>{}) ;$('otherTags').querySelectorAll('button').forEach(b=>b.disabled=true)}
-function ownName(){return members.find(m=>m.user_id===user?.id)?.display_name||'You'}
-function otherName(){return members.find(m=>m.user_id!==user?.id)?.display_name||'Other reviewer'}
+function ownName(){return user?(members.find(m=>m.user_id===user.id)?.display_name||'You'):'Ollie'}
+function otherName(){return user?(members.find(m=>m.user_id!==user.id)?.display_name||'Beth'):'Beth'}
 function render(){
 const q=$('search').value.toLowerCase().trim(),grape=$('variety').value,min=Number($('minimum').value);
 const varieties=[...new Set(data.map(w=>w.grape).filter(Boolean))].sort();
@@ -43,11 +43,11 @@ tagButtons($('filterTags'),[...new Set(data.flatMap(w=>w.tags||[]))].sort(),sele
 const matches=data.filter(w=>{const hay=[w.name,w.producer,w.grape,w.region,w.notesA,w.notesB,...(w.tags||[])].join(' ').toLowerCase();const a=avg(w);return hay.includes(q)&&(!grape||w.grape===grape)&&(!min||(a!==null&&a>=min))&&[...selectedFilters].every(t=>(w.tags||[]).includes(t))});
 $('count').textContent=matches.length+' of '+data.length+' wines';
 $('wines').innerHTML=matches.length?matches.map(w=>'<article class="wine">'+(w.photo?'<img src="'+esc(w.photo)+'" alt="Bottle photo">':'')+'<h2>'+esc(w.name)+'</h2><p class="muted">'+esc([w.producer,w.grape,w.vintage,w.region].filter(Boolean).join(' · '))+'</p><div class="scores"><strong>'+esc(ownName())+': '+(score(w.scoreA)??'—')+'/10</strong><strong>'+esc(otherName())+': '+(score(w.scoreB)??'—')+'/10</strong><strong>Average: '+(avg(w)?.toFixed(1)??'—')+'</strong></div><p>'+(w.tags||[]).map(t=>'<span class="pill">'+esc(t)+'</span>').join('')+'</p><div class="review"><b>'+esc(ownName())+'</b><p>'+esc(w.notesA||'No review yet')+'</p></div><div class="review"><b>'+esc(otherName())+'</b><p>'+esc(w.notesB||'No review yet')+'</p></div><div class="actions"><button class="secondary" data-edit="'+esc(w.id)+'">Edit / review</button><button class="secondary" data-delete="'+esc(w.id)+'">Delete</button></div></article>').join(''):'<div class="panel empty">No matching wines. Add a bottle or change filters.</div>';
-document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEditor(data.find(w=>w.id===b.dataset.edit)));
-document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removeWine(b.dataset.delete));
+document.querySelectorAll('[data-edit]').forEach(b=>{b.hidden=!guard();b.onclick=()=>openEditor(data.find(w=>w.id===b.dataset.edit))});
+document.querySelectorAll('[data-delete]').forEach(b=>{b.hidden=!guard();b.onclick=()=>removeWine(b.dataset.delete)});
 }
 async function load(){
-loaded=false;data=[];render();if(!user)return;
+loaded=false;data=[];render();
 note('Loading shared collection…');
 const [m,w,r]=await Promise.all([
  client.from('wine_members').select('user_id,display_name'),
@@ -62,16 +62,16 @@ const {data:link,error}=await client.storage.from('wine-photos').createSignedUrl
 return error?'':link.signedUrl;
 }));
 data=(w.data||[]).map((wine,i)=>{
-const reviews=(r.data||[]).filter(x=>x.wine_id===wine.id),mine=reviews.find(x=>x.reviewer_id===user.id),other=reviews.find(x=>x.reviewer_id!==user.id);
+const reviews=(r.data||[]).filter(x=>x.wine_id===wine.id),mine=reviews.find(x=>x.reviewer_id===(user?.id||'none'))||reviews.find(x=>members.find(m=>m.user_id===x.reviewer_id)?.display_name==='Ollie'),other=reviews.find(x=>x.reviewer_id!==mine?.reviewer_id);
 return {...wine,photo:photos[i],scoreA:mine?.score??'',notesA:mine?.notes||'',scoreB:other?.score??'',notesB:other?.notes||'',tags:[...new Set(reviews.flatMap(x=>x.tags||[]))],myTags:mine?.tags||[],otherTags:other?.tags||[]};
 });
-loaded=true;render();note('Shared wine collection loaded.');
+loaded=true;render();$('add').disabled=!guard();note(user?'Shared wine collection loaded.':'Public wine collection loaded. Sign in to contribute.');
 }
 async function refreshSession(){
 const {data:{user:current},error}=await client.auth.getUser();if(error)throw error;
 user=current;$('authBox').hidden=!!user;$('signedIn').hidden=!user;$('identity').textContent=user?'Signed in as '+user.email:'';
-$('add').disabled=!user;
-if(user)await load();else{loaded=false;data=[];members=[];render();note('Sign in to see the private wine journal.');}
+$('add').disabled=true;
+await load();
 }
 $('loginForm').onsubmit=async e=>{e.preventDefault();note('Signing in…');const {error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){note(error.message);return}$('password').value='';try{await refreshSession()}catch(err){note('Setup needed: '+err.message)}};
 $('logout').onclick=async()=>{await client.auth.signOut({scope:'local'});await refreshSession()};
