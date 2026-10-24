@@ -33,6 +33,8 @@ Depends on task 2. Editable garments, observed fit, compatible references, expli
 
 ## Task 5: Measurement diagrams and release polish
 
+Status: implemented in a separate draft branch. Fifty-one focused checks pass; desktop/mobile visual review and signed-in cloud verification remain outstanding.
+
 Depends on tasks 3 and 4. Upper/lower body measurement guides and simple labelled garment diagrams, responsive and accessibility checks, privacy and migration verification, then preview and release. No photorealistic try-on.
 
 ## Audit findings
@@ -47,6 +49,6 @@ Use a dedicated branch and pull request for each task. Verify locally and record
 
 - **4a, edit and reuse clothing:** merged through PR #12 on 17 September 2026; Pages run 35225273521 succeeded. Edit existing garment records, record observed fit/notes and select a reference. Twenty-seven focused checks pass; browser verification outstanding.
 - **4b, save and reopen comparisons:** merged through PR #13 on 18 September 2026 and confirmed on the live page. Explicit save button, immutable original snapshot view and a separate compare-again action using current measurements. Thirty-three focused checks passed at release.
-- **4c, record purchase outcome:** implemented in a separate draft branch. Mark an item as bought, record actual fit and add it to owned clothes without presenting retailer body-chart values as measured garment dimensions. Forty focused checks pass across the Fit feature.
+- **4c, record purchase outcome:** merged through PR #14 on 18 September 2026 and confirmed on the live page. Mark an item as bought, record actual fit and add it to owned clothes without presenting retailer body-chart values as measured garment dimensions. Forty focused checks passed at release.
 
-Keep these slices separate for review. Tasks 3, 4a and 4b are now on main; Task 4c remains isolated until reviewed.
+Keep these slices separate for review. Tasks 3, 4a, 4b and 4c are now on main. Task 5 handles the remaining visual guides and release checks.
