@@ -75,13 +75,33 @@ return {...wine,photo:photos[i],reviews,scoreA:first?.score??'',notesA:first?.no
 });
 loaded=true;render();$('add').disabled=!guard();note(user?'Shared wine collection loaded.':'Public wine collection loaded. Sign in to contribute.');
 }
+let sessionRefresh=0;
 async function refreshSession(){
-const {data:{user:current},error}=await client.auth.getUser();if(error)throw error;
-user=current;$('authBox').hidden=!!user;$('signedIn').hidden=!user;$('identity').textContent=user?'Signed in as '+user.email:'';
+const seq=++sessionRefresh;
+const {data:sessionData,error:sessionError}=await client.auth.getSession();
+if(seq!==sessionRefresh)return;
+let current=sessionError?null:sessionData?.session?.user||null;
+if(current){
+ const {data:verified,error}=await client.auth.getUser();
+ if(seq!==sessionRefresh)return;
+ if(error){current=null;await client.auth.signOut({scope:'local'}).catch(()=>{});}
+ else current=verified?.user||null;
+}
+if(seq!==sessionRefresh)return;
+user=current;
+$('authBox').hidden=!!user;
+$('signedIn').hidden=!user;
+$('identity').textContent=user?'Signed in as '+user.email:'';
 $('add').disabled=true;
 await load();
 }
-$('loginForm').onsubmit=async e=>{e.preventDefault();note('Signing in…');const {error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){note(error.message);return}$('password').value='';try{await refreshSession()}catch(err){note('Setup needed: '+err.message)}};
+$('loginForm').onsubmit=async e=>{
+e.preventDefault();note('Signing in…');
+const {error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+if(error){note(error.message);return}
+$('password').value='';
+try{await refreshSession()}catch(err){note('Unable to load journal: '+err.message)}
+};
 $('logout').onclick=async()=>{await client.auth.signOut({scope:'local'});await refreshSession()};
 $('settingsButton').onclick=()=>{const me=members.find(m=>m.user_id===user?.id);if(!me)return;$('displayName').value=me.display_name||'';$('allowEdits').checked=!!me.allow_member_edits;$('settingsDialog').showModal()};
 $('closeSettings').onclick=()=>$('settingsDialog').close();
@@ -153,6 +173,6 @@ $('export').onclick=()=>{const rows=data.map(({photo,...rest})=>rest),blob=new B
 
 $('add').disabled=true;render();
 try{await refreshSession()}catch(err){note('Connection or setup error: '+err.message)}
-client.auth.onAuthStateChange(()=>{setTimeout(()=>refreshSession().catch(err=>note('Account error: '+err.message)),0)});
+client.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='TOKEN_REFRESHED'){setTimeout(()=>refreshSession().catch(err=>note('Connection error: '+err.message)),0)}});
 
 </script></body></html>
