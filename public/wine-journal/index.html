@@ -22,7 +22,7 @@ const SUPABASE_URL='https://fxsfiybuzvwjpqqmazdv.supabase.co';
 const SUPABASE_KEY='sb_publishable_z4ZRsKP5JWaGxEFPihqDzQ_ayiaNXIb';
 const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
 const client=createClient(SUPABASE_URL,SUPABASE_KEY);
-let user=null,members=[],data=[],tags=new Set(),otherReviewTags=[],selectedFilters=new Set(),photoFile=null,busy=false,loaded=false,activeReviewerId=null,editingReviewId=null;
+let user=null,members=[],profilePermissionsReady=false,data=[],tags=new Set(),otherReviewTags=[],selectedFilters=new Set(),photoFile=null,busy=false,loaded=false,activeReviewerId=null,editingReviewId=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const score=v=>v===''||v===null||v===undefined?null:Number(v);
@@ -54,12 +54,17 @@ document.querySelectorAll('[data-delete]').forEach(b=>{b.hidden=!guard();b.oncli
 async function load(){
 loaded=false;data=[];render();
 note('Loading shared collection…');
-const [m,w,r]=await Promise.all([
+let [m,w,r]=await Promise.all([
  client.from('wine_members').select('user_id,display_name,allow_member_edits'),
  client.from('wines').select('*').order('created_at',{ascending:false}),
  client.from('wine_reviews').select('*')]);
+if(m.error&&/allow_member_edits/i.test(m.error.message||'')){
+ profilePermissionsReady=false;
+ m=await client.from('wine_members').select('user_id,display_name');
+}else profilePermissionsReady=!m.error;
 for(const result of [m,w,r])if(result.error)throw result.error;
-members=m.data||[];
+members=(m.data||[]).map(x=>({...x,allow_member_edits:!!x.allow_member_edits}));
+$('settingsButton').title=profilePermissionsReady?'Profile settings':'Run the profile settings SQL to enable editing permissions';
 if(user&&!members.some(x=>x.user_id===user.id))note('Your account is not approved to contribute.');
 const photos=await Promise.all((w.data||[]).map(async wine=>{
 if(!wine.photo_path)return '';
@@ -73,7 +78,7 @@ const second=reviews.find(x=>x.reviewer_id===ordered[1]?.user_id);
 return {...wine,photo:photos[i],reviews,scoreA:first?.score??'',notesA:first?.notes||'',scoreB:second?.score??'',notesB:second?.notes||'',tags:[...new Set(reviews.flatMap(x=>x.tags||[]))]};
 
 });
-loaded=true;render();$('add').disabled=!guard();note(user?'Shared wine collection loaded.':'Public wine collection loaded. Sign in to contribute.');
+loaded=true;render();$('add').disabled=!guard();note(profilePermissionsReady?(user?'Shared wine collection loaded.':'Public wine collection loaded. Sign in to contribute.'):'Collection loaded. Review-editing permissions require the Supabase profile settings update.');
 }
 let sessionRefresh=0;
 async function refreshSession(){
@@ -103,9 +108,9 @@ $('password').value='';
 try{await refreshSession()}catch(err){note('Unable to load journal: '+err.message)}
 };
 $('logout').onclick=async()=>{await client.auth.signOut({scope:'local'});await refreshSession()};
-$('settingsButton').onclick=()=>{const me=members.find(m=>m.user_id===user?.id);if(!me)return;$('displayName').value=me.display_name||'';$('allowEdits').checked=!!me.allow_member_edits;$('settingsDialog').showModal()};
+$('settingsButton').onclick=()=>{const me=members.find(m=>m.user_id===user?.id);if(!me)return;$('displayName').value=me.display_name||'';$('allowEdits').checked=!!me.allow_member_edits;$('allowEdits').disabled=!profilePermissionsReady;$('settingsDialog').showModal()};
 $('closeSettings').onclick=()=>$('settingsDialog').close();
-$('settingsForm').onsubmit=async e=>{e.preventDefault();const name=$('displayName').value.trim();if(!name)return;const result=await client.from('wine_members').update({display_name:name,allow_member_edits:$('allowEdits').checked}).eq('user_id',user.id);if(result.error){note('Settings not saved: '+result.error.message);return}$('settingsDialog').close();await load();note('Profile settings saved.')};
+$('settingsForm').onsubmit=async e=>{e.preventDefault();const name=$('displayName').value.trim();if(!name)return;const changes=profilePermissionsReady?{display_name:name,allow_member_edits:$('allowEdits').checked}:{display_name:name};const result=await client.from('wine_members').update(changes).eq('user_id',user.id);if(result.error){note('Settings not saved: '+result.error.message);return}$('settingsDialog').close();await load();note('Profile settings saved.')};
 function openEditor(w){
 if(!guard())return;
 const f=$('wineForm');f.reset();$('editId').value=w?.id||'';
