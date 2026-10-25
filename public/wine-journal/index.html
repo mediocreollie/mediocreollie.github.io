@@ -27,7 +27,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const score=v=>v===''||v===null||v===undefined?null:Number(v);
 const avg=w=>{const a=(w.reviews||[]).map(r=>score(r.score)).filter(n=>n!==null&&Number.isFinite(n));return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
-const suggest=s=>Object.entries(BANK).filter(([tag,words])=>words.some(word=>s.toLowerCase().split(/[^a-z]+/).includes(word.toLowerCase())||s.toLowerCase().includes(word.toLowerCase()+' '))).map(([tag])=>tag);
+const suggest=s=>Object.entries(BANK).filter(([tag,words])=>words.some(word=>s.toLowerCase().includes(word.toLowerCase()))).map(([tag])=>tag);
 const note=t=>{$('notice').textContent=t};
 function guard(){return !!user&&members.some(m=>m.user_id===user.id)&&loaded&&!busy}
 function tagButtons(el,values,active,click){el.innerHTML='';values.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip'+(active.has(t)?' selected':'');b.textContent=t;b.onclick=()=>click(t);el.append(b)})}
@@ -41,7 +41,7 @@ const varieties=[...new Set(data.map(w=>w.grape).filter(Boolean))].sort();
 $('variety').innerHTML='<option value="">All varieties</option>'+varieties.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');
 $('variety').value=varieties.includes(grape)?grape:'';
 tagButtons($('filterTags'),[...new Set(data.flatMap(w=>w.tags||[]))].sort(),selectedFilters,t=>{selectedFilters.has(t)?selectedFilters.delete(t):selectedFilters.add(t);render()});
-const matches=data.filter(w=>{const hay=[w.name,w.producer,w.grape,w.region,w.notesA,w.notesB,...(w.tags||[])].join(' ').toLowerCase();const a=avg(w);return hay.includes(q)&&(!grape||w.grape===grape)&&(!min||(a!==null&&a>=min))&&[...selectedFilters].every(t=>(w.tags||[]).includes(t))});
+const matches=data.filter(w=>{const hay=[w.name,w.producer,w.grape,w.region,...(w.reviews||[]).map(r=>r.notes),...(w.tags||[])].join(' ').toLowerCase();const a=avg(w);return hay.includes(q)&&(!grape||w.grape===grape)&&(!min||(a!==null&&a>=min))&&[...selectedFilters].every(t=>(w.tags||[]).includes(t))});
 $('count').textContent=matches.length+' of '+data.length+' wines';
 $('wines').innerHTML=matches.length?matches.map(w=>{
 const reviewHtml=members.map(m=>{const r=w.reviews.find(x=>x.reviewer_id===m.user_id);return '<div class="review"><b>'+esc(memberName(m.user_id))+'</b> <strong>'+(r?.score??'—')+'/100</strong><p>'+esc(r?.notes||'No review yet')+'</p><div>'+(r?.tags||[]).map(t=>'<span class="pill">'+esc(t)+'</span>').join('')+'</div></div>'}).join('');
@@ -72,10 +72,7 @@ return client.storage.from('wine-photos').getPublicUrl(wine.photo_path).data.pub
 }));
 data=(w.data||[]).map((wine,i)=>{
 const reviews=(r.data||[]).filter(x=>x.wine_id===wine.id);
-const ordered=[...members].sort((a,b)=>a.user_id.localeCompare(b.user_id));
-const first=reviews.find(x=>x.reviewer_id===ordered[0]?.user_id);
-const second=reviews.find(x=>x.reviewer_id===ordered[1]?.user_id);
-return {...wine,photo:photos[i],reviews,scoreA:first?.score??'',notesA:first?.notes||'',scoreB:second?.score??'',notesB:second?.notes||'',tags:[...new Set(reviews.flatMap(x=>x.tags||[]))]};
+return {...wine,photo:photos[i],reviews,tags:[...new Set(reviews.flatMap(x=>x.tags||[]))]};
 
 });
 loaded=true;render();$('add').disabled=!guard();note(profilePermissionsReady?(user?'Shared wine collection loaded.':'Public wine collection loaded. Sign in to contribute.'):'Collection loaded. Review-editing permissions require the Supabase profile settings update.');
@@ -115,7 +112,7 @@ function openEditor(w){
 if(!guard())return;
 const f=$('wineForm');f.reset();$('editId').value=w?.id||'';
 for(const k of ['name','producer','grape','vintage','region'])f.elements[k].value=w?.[k]??'';
-const choices=[members.find(m=>m.user_id===user.id),...members.filter(m=>m.user_id!==user.id&&m.allow_member_edits)].filter(Boolean);
+const choices=[members.find(m=>m.user_id===user.id),...members.filter(m=>m.user_id!==user.id&&m.allow_member_edits&&w?.reviews?.some(r=>r.reviewer_id===m.user_id))].filter(Boolean);
 $('reviewerChoice').innerHTML=choices.map(m=>'<option value="'+esc(m.user_id)+'">'+esc(memberName(m.user_id))+'</option>').join('');
 $('reviewerChoice').value=user.id;
 photoFile=null;activeReviewerId=user.id;
@@ -151,6 +148,10 @@ $('wineForm').onsubmit=async e=>{
 e.preventDefault();if(!guard())return;busy=true;const f=e.currentTarget;const saveButton=f.querySelector('[type=submit]');saveButton.disabled=true;
 try{
 const id=$('editId').value||crypto.randomUUID(),old=data.find(w=>w.id===id);
+const enteredScore=f.elements.scoreA.value===''?null:Number(f.elements.scoreA.value);
+if(enteredScore!==null&&(!Number.isInteger(enteredScore)||enteredScore<1||enteredScore>100))throw Error('Enter a whole-number score from 1 to 100.');
+const existingReview=old?.reviews?.find(r=>r.reviewer_id===activeReviewerId);
+if(activeReviewerId!==user.id&&!existingReview)throw Error('Only the reviewer can create their first review.');
 let photoPath=old?.photo_path||null,uploaded=null;
 if(photoFile){
 uploaded=id+'/'+crypto.randomUUID()+'.jpg';
@@ -161,9 +162,7 @@ let result;
 if(old)result=await client.from('wines').update(wine).eq('id',id);
 else result=await client.from('wines').insert({...wine,created_by:user.id});
 if(result.error){if(uploaded)await client.storage.from('wine-photos').remove([uploaded]);throw result.error}
-const enteredScore=f.elements.scoreA.value===''?null:Number(f.elements.scoreA.value);if(enteredScore!==null&&(!Number.isInteger(enteredScore)||enteredScore<1||enteredScore>100))throw Error('Enter a whole-number score from 1 to 100.');
 const review={wine_id:id,reviewer_id:activeReviewerId,score:enteredScore,notes:f.elements.notesA.value.trim(),tags:[...tags]};
-const existingReview=old?.reviews?.find(r=>r.reviewer_id===activeReviewerId);if(activeReviewerId!==user.id&&!existingReview)throw Error('Only the reviewer can create their first review.');
 const rev=existingReview?await client.from('wine_reviews').update({score:review.score,notes:review.notes,tags:review.tags}).eq('wine_id',id).eq('reviewer_id',activeReviewerId):await client.from('wine_reviews').insert(review);if(rev.error)throw rev.error;
 $('editor').close();await load();note('Saved to the shared collection.');
 }catch(err){note('Save failed: '+err.message)}finally{busy=false;saveButton.disabled=false}
