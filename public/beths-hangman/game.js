@@ -131,19 +131,19 @@
   }
 
   function getPuzzleNumber(dateString) {
-    // Adelaide uses calendar days rather than elapsed local-midnight hours,
-    // avoiding the daylight-saving off-by-one. Its puzzle is one day ahead.
-    if (Intl.DateTimeFormat().resolvedOptions().timeZone === "Australia/Adelaide") {
-      const [year, month, day] = dateString.split("-").map(Number);
-      const start = Date.UTC(2026, 5, 9);
-      const current = Date.UTC(year, month - 1, day);
-      return Math.max(1, Math.round((current - start) / 86400000) + 2);
+    // During the changeover, retain Adelaide's existing 30 October puzzle.
+    // From 31 October onward, every calendar date maps to the same puzzle
+    // number worldwide, with #145 anchored to 2026-10-31.
+    if (dateString === "2026-10-30" &&
+        Intl.DateTimeFormat().resolvedOptions().timeZone === "Australia/Adelaide") {
+      return 145;
     }
 
-    // Preserve the existing UK puzzle numbering and local-midnight reset.
-    const start = new Date("2026-06-09T00:00:00");
-    const current = new Date(`${dateString}T00:00:00`);
-    return Math.max(1, Math.floor((current - start) / 86400000) + 1);
+    const [year, month, day] = dateString.split("-").map(Number);
+    const anchor = Date.UTC(2026, 9, 31);
+    const current = Date.UTC(year, month - 1, day);
+    const calendarDays = Math.round((current - anchor) / 86400000);
+    return Math.max(1, 145 + calendarDays);
   }
 
   function getTodayKey() {
