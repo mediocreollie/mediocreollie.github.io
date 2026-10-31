@@ -137,8 +137,31 @@ Task 4c: mark a checked item as bought, record its observed fit and add it to My
 
 `node --test tests/fit-*.test.mjs`: 40 checks pass. Seven new checks cover measurement eligibility plus purchase creation, snapshot preservation, duplicate prevention, retained physical measurements, deleted-link recovery, trouser mapping and atomic rejection of invalid outcomes.
 
-JavaScript syntax, unique IDs, static DOM references and whitespace checks pass. The live Task 4b deployment was checked in a browser before this task began. Task 4c browser interaction, responsive layout and live-account saving remain review items.
+JavaScript syntax, unique IDs, static DOM references and whitespace checks pass. Task 4c was merged through PR #14 on 18 September 2026. The live page was opened after deployment and confirmed to contain the purchase script, dialog and action. Signed-in purchase saving remains unverified.
 
 ### Next
 
 Task 5: replace the limited schematic with clear upper-body and trouser measurement diagrams, then complete responsive, accessibility, privacy and migration checks before the broader release review.
+
+## 18 September 2026: Task 5
+
+### Changed
+
+- Replaced the old T-shirt-only overlay with paired body and flat-garment diagrams for both T-shirts and trousers.
+- T-shirt guides label chest, shoulder, length and sleeve. Trouser guides label waist, hip and inseam. Flat chest, waist and hip lines explicitly show that the width is doubled.
+- Each SVG has an accessible title and description. The supporting text explains that diagrams show measurement direction only and do not predict stretch, drape or appearance.
+- Changing category switches the guide and its written instructions. Comparison results retain the relevant diagram while replacing the notes with the measured differences.
+- Added a keyboard skip link, accessible dialog names, a labelled add-profile control, polite result announcements and responsive single-column diagrams on small screens.
+- Added an expandable privacy explanation covering guest storage, private account storage, locally processed images and the limited reviewed text saved with an explicit comparison.
+- Moved account-payload validation into a tested helper. Legacy payloads without snapshots or purchase fields remain valid; the new fields are additive.
+- Verified the Supabase setup keeps row-level security enabled and limits the table policy to the authenticated row owner. No SQL or payload migration is required.
+
+### Verification
+
+`node --test tests/fit-*.test.mjs`: 51 checks pass. New coverage includes T-shirt and trouser guide copy, copied guide state, labelled SVGs, privacy disclosure, unique IDs, script references, labels, dialog names, keyboard/live-region hooks, legacy/evolved payload compatibility and the owner-only database policy.
+
+JavaScript syntax and whitespace checks pass. Task 4c was confirmed on the live site before Task 5 began. The Task 5 diagrams still require visual review at desktop and mobile widths, and signed-in cloud behaviour still requires an account-based browser check.
+
+### Release boundary
+
+Task 5 remains a separate draft pull request until visual and interaction review. It does not add women-specific categories, retailer scraping, product-code lookup or photorealistic try-on.
