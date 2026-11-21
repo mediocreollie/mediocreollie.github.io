@@ -114,7 +114,7 @@ for each row execute function public.wj_immutable_wine_identity();
 -- may view. Implement as a definer helper because direct queries against
 -- journal_members from an anonymous profile SELECT need extra table grants.
 create function public.wj_can_see_profile(p_user uuid)
-returns boolean language sql stable security definer set search_path='' as $
+returns boolean language sql stable security definer set search_path='' as $$
   select p_user=(select auth.uid()) or exists(
     select 1 from public.journal_members m
     join public.journals j on j.id=m.journal_id
@@ -125,7 +125,7 @@ returns boolean language sql stable security definer set search_path='' as $
       )
     )
   );
-$;
+$$;
 revoke all on function public.wj_can_see_profile(uuid) from public;
 grant execute on function public.wj_can_see_profile(uuid) to anon,authenticated;
 
