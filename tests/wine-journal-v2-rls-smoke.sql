@@ -53,6 +53,16 @@ begin
  if (select count(*) from public.journals where id in (current_setting('wj.test_journal_a')::uuid,current_setting('wj.test_journal_b')::uuid))<>2 then
    raise exception 'Joining removed a previous journal'; end if;
 end $checks$;
+-- A joined member without the admin role cannot issue invitation links.
+do $checks$
+begin
+ begin
+  perform public.wj_create_invitation(current_setting('wj.test_journal_a')::uuid);
+  raise exception 'Non-admin invitation unexpectedly worked';
+ exception when others then
+  if SQLERRM <> 'Only journal owners or admins can invite' then raise; end if;
+ end;
+end $checks$;
 insert into public.wine_reviews(wine_id,reviewer_id,score,notes)
 values(current_setting('wj.test_wine')::uuid,current_setting('wj.test_bob')::uuid,99,'second opinion');
 do $checks$
@@ -93,7 +103,7 @@ begin
   perform public.wj_redeem_invitation(current_setting('wj.test_code'));
   raise exception 'Reused invitation unexpectedly worked';
  exception when others then
-  if SQLERRM='Reused invitation unexpectedly worked' then raise; end if;
+  if SQLERRM <> 'Invitation already used' then raise; end if;
  end;
  if exists(select 1 from public.wines where journal_id=current_setting('wj.test_journal_a')::uuid) then
   raise exception 'Uninvited account can read private journal A'; end if;
@@ -113,7 +123,7 @@ begin
   perform public.wj_redeem_invitation(current_setting('wj.test_revoked_invite')::json->>'invitation_code');
   raise exception 'Revoked invitation unexpectedly worked';
  exception when others then
-  if SQLERRM='Revoked invitation unexpectedly worked' then raise; end if;
+  if SQLERRM <> 'Invitation revoked' then raise; end if;
  end;
 end $checks$;
 
