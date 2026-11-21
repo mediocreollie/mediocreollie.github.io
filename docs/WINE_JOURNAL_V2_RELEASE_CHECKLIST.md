@@ -12,11 +12,28 @@
 | Separate V2 beta interface | `public/wine-journal/beta.html` | Written, not live-tested |
 | Current production UI | `public/wine-journal/index.html` | Untouched |
 
+## Production read-only findings (21 November 2026)
+
+The matching live Supabase project was accessed after Supabase was connected. **No SQL mutations were made.**
+
+- Latest read-only counts: 1 confirmed Auth account, 1 approved legacy member, 2 wines, 2 reviews and 2 photo objects. Counts changed during investigation, so re-check immediately before migration.
+- All existing wines and reviews belong to the single approved user. Orphan or missing Auth creator/reviewer count: zero.
+- The existing review scores are 83 and 89, and the live database uses a 1–100 score check. No evidence of fractional scores in current records.
+- The `wine_members` table has `display_name` but **not** `allow_member_edits`; profile-settings migration is not applied.
+- There are no `journals`, `journal_members`, `profiles`, or `journal_invitations` tables yet.
+- `pgcrypto` is installed in the `extensions` schema, consistent with the new invitation RPCs.
+- Existing wines, reviews and photos are publicly readable. Private data isolation must be installed before public self-service registration.
+- Supabase's migration history tool returned no entries even though earlier SQL scripts have clearly run. Treat historical migration status as manually applied and reconcile instead of assuming a clean database.
+- Security advisor flagged leaked-password protection disabled. Review [Supabase password security](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection) before public signups.
+- A public signup UI has **not** been deployed. Existing approved accounts can use the old page.
+
+**Owner migration:** The foundation SQL now chooses the sole approved legacy member automatically only if exactly one remains. With multiple approved users, an explicit `v_owner` selection is required. Counts must be rechecked at execution.
+
 ## Required before touching the database
 
 1. Run `wine-journal-v2-preflight.sql` read-only and save the output privately.
 2. Verify the exact production columns, policies, grants, score constraint and `pgcrypto` extension schema. The V2 invitation functions currently use `extensions.gen_random_bytes` and `extensions.digest`. Adjust if production has pgcrypto in a different schema.
-3. Identify the **correct existing wine-journal owner UUID** from `wine_members`; set `v_owner` in the foundation migration. The migration deliberately aborts until this is done.
+3. Reconfirm the existing sole approved member is the intended owner. If there are now two or more approved users, explicitly set `v_owner` and verify ownership. The foundation refuses an ambiguous owner.
 4. Create and verify recoverable backups of **Postgres and both wine photo storage metadata/files**. Record the restoration process.
 5. Confirm old profile-settings and 1–100 scoring migrations are applied or reconciled. Check actual legacy photo bucket access.
 6. Run all new migrations first on a **staging clone** with realistic anonymized test accounts, wines, reviews and photos.
@@ -44,7 +61,7 @@
 
 - The V2 beta is a first integration surface, **not a replacement** for the existing journal. Public signup must remain closed until backend migration, app testing and release signoff.
 - The beta can create or join journals, switch the active journal, add bottles, score wines, see independent reviews, create one-use invitations, and save names/editing permissions when its RPCs exist.
-- It does not yet include invite revocation UI, delegated editing UI, advanced keyword suggestions, full export, owner removal flows or automated tests.
+- Invitation history and revocation UI are included; delegated review-editing UI, advanced keyword suggestions, full export and owner removal flows remain to build. Source-level smoke tests exist, but full database integration and RLS tests are still required.
 - Creating a wine and creating its review/photo currently involve separate calls. The UI reports partial errors, but staging must confirm recovery and cleanup.
 - The current legacy front end still assumes a single journal. The migration assigns it a legacy default `journal_id` so old additions remain in the existing collection.
 - Production schema has **not** been inspected by this branch. SQL assumptions must be validated against preflight results before any execution.
