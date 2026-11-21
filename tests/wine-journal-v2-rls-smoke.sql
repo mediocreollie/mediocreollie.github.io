@@ -102,15 +102,15 @@ end $checks$;
 reset role;
 select set_config('request.jwt.claim.sub',current_setting('wj.test_owner'),true);
 set local role authenticated;
-select set_config('wj.test_code_revoked',(select invitation_code from public.wj_create_invitation(current_setting('wj.test_journal_a')::uuid)),true);
-select public.wj_revoke_invitation((select id from public.journal_invitations where code_hash=encode(extensions.digest(current_setting('wj.test_code_revoked'),'sha256'),'hex')));
+select set_config('wj.test_revoked_invite',(select row_to_json(i)::text from public.wj_create_invitation(current_setting('wj.test_journal_a')::uuid) i),true);
+select public.wj_revoke_invitation((current_setting('wj.test_revoked_invite')::json->>'invitation_id')::uuid);
 reset role;
 select set_config('request.jwt.claim.sub',current_setting('wj.test_eve'),true);
 set local role authenticated;
 do $checks$
 begin
  begin
-  perform public.wj_redeem_invitation(current_setting('wj.test_code_revoked'));
+  perform public.wj_redeem_invitation(current_setting('wj.test_revoked_invite')::json->>'invitation_code');
   raise exception 'Revoked invitation unexpectedly worked';
  exception when others then
   if SQLERRM='Revoked invitation unexpectedly worked' then raise; end if;
