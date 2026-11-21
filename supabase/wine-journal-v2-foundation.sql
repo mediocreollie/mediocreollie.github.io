@@ -186,6 +186,8 @@ create policy "Members update own settings" on public.wine_members
  with check(user_id=(select auth.uid()));
 grant update(display_name,allow_member_edits) on public.wine_members to authenticated;
 grant select(user_id,display_name,allow_member_edits) on public.wine_members to anon,authenticated;
+-- RLS does not restrict TRUNCATE. Remove legacy excess privileges.
+revoke truncate,trigger,references on public.wines,public.wine_reviews,public.wine_members from anon,authenticated;
 grant select on public.wines,public.wine_reviews to anon,authenticated;
 grant insert,update,delete on public.wines,public.wine_reviews to authenticated;
 
