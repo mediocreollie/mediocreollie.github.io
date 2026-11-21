@@ -7,13 +7,17 @@
 select 'wines' as entity, count(*)::bigint as rows from public.wines
 union all select 'reviews', count(*) from public.wine_reviews
 union all select 'approved_members', count(*) from public.wine_members;
-select m.user_id, m.display_name, m.allow_member_edits,
+select m.user_id, to_jsonb(m)->>'display_name' as display_name,
+       to_jsonb(m)->>'allow_member_edits' as allow_member_edits,
        (select count(*) from public.wines w where w.created_by=m.user_id) as wines_created,
        (select count(*) from public.wine_reviews r where r.reviewer_id=m.user_id) as reviews_written
 from public.wine_members m
-order by display_name nulls last;
+order by m.user_id;
 
--- 2. Current table columns and score constraints.
+-- 2. Current table columns, pgcrypto location and score constraints.
+select e.extname,n.nspname as extension_schema
+from pg_extension e join pg_namespace n on n.oid=e.extnamespace
+where e.extname='pgcrypto';
 select table_name,column_name,data_type,is_nullable,column_default
 from information_schema.columns
 where table_schema='public' and table_name in
