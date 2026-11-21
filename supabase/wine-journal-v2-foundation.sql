@@ -146,6 +146,23 @@ grant execute on function public.wj_is_member(uuid),public.wj_is_manager(uuid),
  public.wj_can_edit_review(uuid,uuid) to authenticated;
 grant execute on function public.wj_can_read(uuid) to anon,authenticated;
 
+-- Supabase may assign default PUBLIC-schema table privileges to API roles.
+-- Explicitly revoke them before granting only what the v2 UI needs.
+revoke all on public.profiles,public.journals,public.journal_members,
+ public.journal_invitations from anon,authenticated;
+
+-- Guarantee legacy member settings still work if the optional settings
+-- migration was skipped on production.
+drop policy if exists "Members update own settings" on public.wine_members;
+create policy "Members update own settings" on public.wine_members
+ for update to authenticated
+ using(user_id=(select auth.uid()))
+ with check(user_id=(select auth.uid()));
+grant update(display_name,allow_member_edits) on public.wine_members to authenticated;
+grant select(user_id,display_name,allow_member_edits) on public.wine_members to anon,authenticated;
+grant select on public.wines,public.wine_reviews to anon,authenticated;
+grant insert,update,delete on public.wines,public.wine_reviews to authenticated;
+
 alter table public.profiles enable row level security;
 alter table public.journals enable row level security;
 alter table public.journal_members enable row level security;
