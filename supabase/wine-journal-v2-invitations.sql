@@ -66,9 +66,9 @@ begin
     raise exception 'Only journal owners or admins can invite';
   end if;
   v_code:=encode(extensions.gen_random_bytes(16),'hex');
-  insert into public.journal_invitations(journal_id,code_hash,created_by)
+  insert into public.journal_invitations as invite(journal_id,code_hash,created_by)
   values(p_journal,encode(extensions.digest(v_code,'sha256'),'hex'),(select auth.uid()))
-  returning id,public.journal_invitations.expires_at
+  returning invite.id,invite.expires_at
   into v_invitation_id,v_expiry;
   return query select v_invitation_id,v_code,v_expiry;
 end $$;
