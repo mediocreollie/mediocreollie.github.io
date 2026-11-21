@@ -12,9 +12,10 @@ The last requirements-only working session was **30 October 2026**; the last ear
 
 - **New code (development branch):** `supabase/wine-journal-v2-preflight.sql` (read-only audit), `supabase/wine-journal-v2-foundation.sql` (journal-scoped DB structure, compatibility migration and private photos), `supabase/wine-journal-v2-invitations.sql` (create/join/profile/invitation functions), `public/wine-journal/beta.html` (separate test UI), and static smoke tests.
 - **Untouched:** existing `public/wine-journal/index.html` and its live database. The existing website still permits sign-in by approved members, not self-service signup.
-- **Current gate:** production schema and migration history have **not** been inspected live. Foundation SQL deliberately has an unset owner UUID and aborts until selected from the preflight result. Actual staging database, email verification, RLS and mobile tests remain outstanding.
+- **Live Supabase audit (21 Nov):** Read-only checks confirmed 1 approved account (which created/reviewed all existing records), 2 wines, 2 reviews and 2 photo objects; no orphaned creator/reviewer links. Score range 1–100 is deployed; delegated-editing column is not. No historical migrations were returned by the migration tool. `pgcrypto` lives in `extensions`. Counts are live and must be rechecked at deployment.
+- **Current gate:** staging integration/RLS tests, verified database and photo backups, email verification and mobile tests remain outstanding. The foundation SQL selects the sole approved legacy member as owner only if the live database still has exactly one; otherwise it aborts until ownership is explicitly specified.
 - **Release checklist:** see [WINE_JOURNAL_V2_RELEASE_CHECKLIST.md](WINE_JOURNAL_V2_RELEASE_CHECKLIST.md). Do not open public signups before those gates pass.
-- **Feature scope so far:** create an account and join/create a journal in the isolated beta interface (once the RPCs are deployed); invite more than one friend with separate one-use codes, choose the active journal, save wines and independent reviews, and set display name and scoped editing preference.
+- **Feature scope so far:** create an account and join/create a journal in the isolated beta interface (once the RPCs are deployed); invite more than one friend with separate one-use codes, see/revoke active invitations, choose the active journal, save wines and independent reviews, and set display name and scoped editing preference.
 - **Still outstanding:** live database verification, applying migrations, integration and isolation tests, invite revocation UI, owner/member management and deciding shared-wine deletion. Following/discovery and multi-journal posting stay later-phase.
 
 ## Product aim
@@ -200,5 +201,5 @@ Inspected: `public/wine-journal/index.html`, `supabase/wine-journal.sql`, `supab
 This is the living product specification. Update decisions, acceptance criteria and milestone status **before** implementing features. Treat “code committed”, “migration deployed” and “feature tested” as different statuses. Document changes and related PRs in this file.
 
 ### Change log
-- **v1.1, 21 Nov 2026:** Development branch: staged schema and invite RPCs, separate onboarding/review beta, security preflight, tests and release gates. No production deploy.
+- **v1.1, 21 Nov 2026:** Development branch: staged schema and invite RPCs, separate onboarding/review beta, security preflight, tests and release gates. Live Supabase read-only audit completed; no production deploy.
 - **v1.0, 30 Oct 2026:** Baseline and target requirements; configurable member count; secure journal invite codes; one active journal by default; later explicit cross-journal additions; future following/discovery.
