@@ -117,8 +117,8 @@ const tagsFrom=s=>[...new Set(String(s||'').split(',').map(v=>v.trim()).filter(B
 let currentUser=null,memberships=[],activeId=null,memberRows=[],profiles=new Map(),wines=[],reviews=[],isSigningUp=false,pendingInvite=null,editingWineId=null;
 let loading=false;
 function show(id,yes){$(id).hidden=!yes}
-function getInviteFromUrl(){const p=new URLSearchParams(location.hash.slice(1));return p.get('invite')}
-function eraseInviteUrl(){const u=new URL(location.href);u.hash='';history.replaceState(null,'',u)}
+function getInviteFromUrl(){const p=new URLSearchParams(location.hash.slice(1));const code=p.get('invite');if(code&&/^[0-9a-f]{32}$/i.test(code))localStorage.setItem('winePendingInvite',code);return code||localStorage.getItem('winePendingInvite')}
+function eraseInviteUrl(){localStorage.removeItem('winePendingInvite');const u=new URL(location.href);u.hash='';history.replaceState(null,'',u)}
 async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data}
 async function checkBackend(){
  const {error}=await db.rpc('wj_preview_invitation',{p_code:'not-a-valid-code'});
