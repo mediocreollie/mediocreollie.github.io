@@ -69,6 +69,7 @@ input[type=checkbox]{width:auto}textarea{min-height:100px}label{display:block;fo
 <div id="generatedInvite" hidden><label for="inviteLink">Share this link</label><input id="inviteLink" readonly>
 <div class="actions"><button id="copyInvite" class="secondary">Copy link</button></div>
 <label for="inviteCode">Or share the code</label><input id="inviteCode" readonly></div>
+<h3>Invitation history</h3><div id="inviteHistory" class="small muted"></div>
 </section>
 
 <section id="settingsPanel" class="panel" hidden><h2>Profile settings</h2>
@@ -230,7 +231,10 @@ async function loadJournal(){
   if(p.error)throw p.error;
   (p.data||[]).forEach(x=>profiles.set(x.user_id,x.display_name));
  }
- show('journal',true);renderWines();
+ show('journal',true);
+ const me=memberships.find(m=>m.journal_id===activeId);
+ show('showInvite',!!me&&['owner','admin'].includes(me.role));
+ renderWines();
 }
 function displayName(id){return profiles.get(id)||'Reviewer'}
 function renderWines(){
@@ -266,7 +270,34 @@ async function attachPhoto(card,w){
 $('search').oninput=renderWines;
 $('showAdd').onclick=()=>{show('addPanel',true);$('addPanel').scrollIntoView({behavior:'smooth'})};
 $('hideAdd').onclick=()=>show('addPanel',false);
-$('showInvite').onclick=()=>{show('inviteManager',true);show('generatedInvite',false)};
+async function refreshInvites(){
+ const list=$('inviteHistory');list.innerHTML='';
+ const rows=await rpc('wj_list_invitations',{p_journal:activeId});
+ if(!rows?.length){list.textContent='No invitations generated yet.';return}
+ for(const invitation of rows){
+  const item=document.createElement('div');item.className='card';
+  const expired=new Date(invitation.expires_at)<=new Date();
+  const state=invitation.revoked_at?'Revoked':invitation.redeemed_at?'Used':expired?'Expired':'Active';
+  const stamp=new Date(invitation.created_at).toLocaleDateString();
+  const label=document.createElement('span');label.textContent=stamp+' · '+state;item.append(label);
+  if(state==='Active'){
+   const revoke=document.createElement('button');revoke.className='secondary';revoke.textContent='Revoke';
+   revoke.style.marginLeft='12px';
+   revoke.onclick=async()=>{
+    revoke.disabled=true;
+    try{await rpc('wj_revoke_invitation',{p_invitation:invitation.invitation_id});
+      await refreshInvites();alertUser('Invitation revoked.');}
+    catch(err){alertUser('Could not revoke invitation: '+err.message);revoke.disabled=false;}
+   };
+   item.append(revoke);
+  }
+  list.append(item);
+ }
+}
+$('showInvite').onclick=async()=>{
+ show('inviteManager',true);show('generatedInvite',false);
+ try{await refreshInvites()}catch(err){alertUser('Could not load invitations: '+err.message)}
+};
 $('hideInvite').onclick=()=>show('inviteManager',false);
 $('makeInvite').onclick=async()=>{
  try{
@@ -274,7 +305,7 @@ $('makeInvite').onclick=async()=>{
   const inv=rows?.[0];if(!inv)throw Error('No invitation was generated.');
   const link=location.origin+location.pathname+'#invite='+encodeURIComponent(inv.invitation_code);
   $('inviteLink').value=link;$('inviteCode').value=inv.invitation_code;show('generatedInvite',true);
-  alertUser('Invitation created. Send it to one person only.');
+  await refreshInvites();alertUser('Invitation created. Send it to one person only.');
  }catch(err){alertUser('Could not generate invitation: '+err.message)}
 };
 $('copyInvite').onclick=async()=>{try{await navigator.clipboard.writeText($('inviteLink').value);alertUser('Invitation link copied.')}catch{ $('inviteLink').select();alertUser('Select and copy the invitation link.')}};
