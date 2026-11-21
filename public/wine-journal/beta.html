@@ -145,7 +145,7 @@ async function verify(){
   show('onboarding',true);
   if(activeId)await loadJournal();
   alertUser(activeId?'Your journal is ready.':'Create a private journal or join using an invitation.');
- }catch(err){alertUser(err.message||String(err));show('auth',!currentUser)}
+ }catch(err){alertUser(err.message||String(err));show('auth',false);show('journal',false);show('onboarding',false)}
  finally{loading=false}
 }
 async function listMemberships(preferred){
@@ -210,15 +210,19 @@ $('journalPicker').onchange=async()=>{
 };
 async function loadJournal(){
  if(!activeId)return;
- const [mr,wr,rr]=await Promise.all([
+ const [mr,wr]=await Promise.all([
   db.from('journal_members').select('user_id,role,allow_member_edits').eq('journal_id',activeId),
-  db.from('wines').select('*').eq('journal_id',activeId).order('created_at',{ascending:false}),
-  db.from('wine_reviews').select('*').order('wine_id')
+  db.from('wines').select('*').eq('journal_id',activeId).order('created_at',{ascending:false})
  ]);
- for(const r of [mr,wr,rr])if(r.error)throw r.error;
+ for(const r of [mr,wr])if(r.error)throw r.error;
  memberRows=mr.data||[];wines=wr.data||[];
- const wineIds=new Set(wines.map(w=>w.id));
- reviews=(rr.data||[]).filter(r=>wineIds.has(r.wine_id));
+ const wineIds=wines.map(w=>w.id);
+ reviews=[];
+ if(wineIds.length){
+  const rr=await db.from('wine_reviews').select('*').in('wine_id',wineIds);
+  if(rr.error)throw rr.error;
+  reviews=rr.data||[];
+ }
  const ids=memberRows.map(m=>m.user_id);
  profiles=new Map();
  if(ids.length){
