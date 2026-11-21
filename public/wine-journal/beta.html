@@ -134,7 +134,7 @@ async function verify(){
   show('auth',!currentUser);show('signOut',!!currentUser);
   show('onboarding',false);show('journal',false);show('reviewPanel',false);
   if(!currentUser){if(getInviteFromUrl())await previewInvite(getInviteFromUrl());else show('invitePanel',false);
-   alertUser('Sign in or create an account to begin.');return;}
+   await loadPublicJournals();alertUser('Browse public journals below. Sign in or create an account to add a wine.');return;}
   $('accountLabel').textContent=currentUser.email||'Signed in';
   const existingProfile=await db.from('profiles').select('user_id').eq('user_id',currentUser.id).maybeSingle();
   if(existingProfile.error)throw existingProfile.error;
@@ -205,16 +205,26 @@ $('acceptInvite').onclick=async()=>{
 };
 $('clearInvite').onclick=()=>{eraseInviteUrl();pendingInvite=null;show('invitePanel',false)};
 $('journalPicker').onchange=async()=>{
- activeId=$('journalPicker').value;localStorage.setItem('wineJournalActiveId',activeId);
+ activeId=$('journalPicker').value;if(currentUser)localStorage.setItem('wineJournalActiveId',activeId);
  show('addPanel',false);show('inviteManager',false);show('settingsPanel',false);show('reviewPanel',false);
  await loadJournal();
 };
+async function loadPublicJournals(){
+ const result=await db.from('journals').select('id,name,visibility').eq('visibility','public').order('created_at',{ascending:true});
+ if(result.error)throw result.error;
+ memberships=[];const publicJournals=result.data||[];
+ const picker=$('journalPicker');picker.innerHTML='';
+ publicJournals.forEach(j=>{const option=document.createElement('option');option.value=j.id;option.textContent=j.name;picker.append(option)});
+ activeId=publicJournals[0]?.id||null;
+ $('accountLabel').textContent='Public read-only';
+ for(const button of ['showAdd','showInvite','showSettings'])show(button,false);
+ if(activeId)await loadJournal();
+}
 async function loadJournal(){
+
  if(!activeId)return;
- const [mr,wr]=await Promise.all([
-  db.from('journal_members').select('user_id,role,allow_member_edits').eq('journal_id',activeId),
-  db.from('wines').select('*').eq('journal_id',activeId).order('created_at',{ascending:false})
- ]);
+ const mr=currentUser?await db.from('journal_members').select('user_id,role,allow_member_edits').eq('journal_id',activeId):{data:[],error:null};
+ const wr=await db.from('wines').select('*').eq('journal_id',activeId).order('created_at',{ascending:false});
  for(const r of [mr,wr])if(r.error)throw r.error;
  memberRows=mr.data||[];wines=wr.data||[];
  const wineIds=wines.map(w=>w.id);
@@ -224,7 +234,7 @@ async function loadJournal(){
   if(rr.error)throw rr.error;
   reviews=rr.data||[];
  }
- const ids=memberRows.map(m=>m.user_id);
+ const ids=[...new Set([...memberRows.map(m=>m.user_id),...reviews.map(r=>r.reviewer_id)])];
  profiles=new Map();
  if(ids.length){
   const p=await db.from('profiles').select('user_id,display_name').in('user_id',ids);
@@ -233,7 +243,9 @@ async function loadJournal(){
  }
  show('journal',true);
  const me=memberships.find(m=>m.journal_id===activeId);
- show('showInvite',!!me&&['owner','admin'].includes(me.role));
+ show('showAdd',!!currentUser);
+ show('showSettings',!!currentUser);
+ show('showInvite',!!currentUser&&!!me&&['owner','admin'].includes(me.role));
  renderWines();
 }
 function displayName(id){return profiles.get(id)||'Reviewer'}
@@ -252,9 +264,9 @@ function renderWines(){
   if(w.photo_path)attachPhoto(card,w);
   for(const r of wineReviews){const block=document.createElement('div');block.className='review';
     block.innerHTML='<strong>'+esc(displayName(r.reviewer_id))+' · '+esc(r.score??'—')+'/100</strong><p>'+esc(r.notes||'')+'</p><span class="small muted">'+esc((r.tags||[]).join(', '))+'</span>';card.append(block);}
-  const btn=document.createElement('button');btn.className='secondary';
+  if(currentUser){const btn=document.createElement('button');btn.className='secondary';
   btn.textContent=wineReviews.some(r=>r.reviewer_id===currentUser.id)?'Update my review':'Rate this wine';
-  btn.onclick=()=>openReview(w);card.append(btn);out.append(card);
+  btn.onclick=()=>openReview(w);card.append(btn)}out.append(card);
  }
 }
 async function attachPhoto(card,w){
