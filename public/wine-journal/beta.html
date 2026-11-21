@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wine Journal V2 Beta</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#302329;background:#faf7f3}*{box-sizing:border-box}
+body{margin:0}main{max-width:880px;margin:auto;padding:20px 15px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+h1,h2,h3{font-family:Georgia,serif}h1{font-size:clamp(30px,6vw,48px);margin:8px 0}h2{margin-top:0}
+.muted{color:#776b6e}.small{font-size:13px}.panel,.wine{background:white;border:1px solid #e9dedb;border-radius:16px;padding:18px;margin:15px 0}
+button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#6e263e;color:white;font:inherit;min-height:43px}
+button.secondary{background:#f3e8e9;color:#63213a}button:disabled{opacity:.55;cursor:wait}
+input,select,textarea{font:inherit;width:100%;padding:11px;border:1px solid #d7c9c9;border-radius:9px;background:white}
+input[type=checkbox]{width:auto}textarea{min-height:100px}label{display:block;font-weight:650;font-size:14px;margin:12px 0 5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+.card{border-top:1px solid #f0e5e7;padding:13px 0} .card:first-child{border-top:0}
+.photo{width:100%;max-width:175px;max-height:200px;object-fit:cover;border-radius:10px}
+.review{padding:10px;margin:10px 0;background:#faf7f5;border-radius:8px;white-space:pre-wrap}
+#message{padding:12px;border-radius:9px;background:#f6e9ec;min-height:2.5em}
+.hidden,[hidden]{display:none!important}a{color:#742d46}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c59ba9}
+@media(max-width:480px){.panel,.wine{padding:14px}header .actions{width:100%}.actions button{flex:1}}
+</style>
+</head>
+<body><main>
+<header><div><span class="muted small">A collection of bottles and opinions</span><h1>Wine Journal</h1><p class="muted">Test version of shared journals, accounts and invitations.</p></div><div class="actions">
+<a href="/wine-journal/">Existing journal</a>
+<button id="signOut" class="secondary" hidden>Sign out</button>
+</div></header>
+<p id="message" role="status" aria-live="polite">Checking your session…</p>
+
+<section id="auth" class="panel" hidden>
+<h2 id="authHeading">Sign in</h2>
+<p class="muted small">Create an account to start a journal or accept an invitation. Existing users can sign in.</p>
+<form id="authForm">
+<div id="nameRow" hidden><label for="signupName">Display name</label><input id="signupName" maxlength="60" autocomplete="name"></div>
+<label for="email">Email</label><input id="email" type="email" required autocomplete="email">
+<label for="password">Password</label><input id="password" type="password" minlength="8" required autocomplete="current-password">
+<div class="actions"><button type="submit" id="authSubmit">Sign in</button><button type="button" class="secondary" id="toggleAuth">Create an account</button></div>
+</form>
+</section>
+
+<section id="invitePanel" class="panel" hidden>
+<h2>You've been invited</h2><p id="inviteInfo"></p>
+<div class="actions"><button id="acceptInvite" hidden>Join this journal</button><button id="clearInvite" class="secondary">Dismiss invitation</button></div>
+</section>
+
+<section id="onboarding" class="panel" hidden>
+<h2>Get started</h2><p class="muted">Create your own private journal or join someone else's using a code.</p>
+<form id="createForm"><label for="newJournalName">Journal name</label>
+<input id="newJournalName" maxlength="100" placeholder="Our Wine Journal" required>
+<div class="actions"><button type="submit">Create a private journal</button></div></form>
+<form id="joinForm"><label for="joinCode">Or enter a 32-character invitation code</label>
+<input id="joinCode" maxlength="32" minlength="32" pattern="[0-9a-fA-F]{32}" autocomplete="off">
+<div class="actions"><button type="submit" class="secondary">Preview invitation</button></div>
+</form>
+</section>
+
+<section id="journal" hidden>
+<section class="panel"><div class="grid">
+<div><label for="journalPicker">Active journal</label><select id="journalPicker"></select></div>
+<div><label>Account</label><p id="accountLabel"></p></div></div>
+<div class="actions"><button id="showAdd">+ Add a wine</button><button class="secondary" id="showInvite">Invite someone</button><button class="secondary" id="showSettings">Settings</button></div>
+</section>
+
+<section id="inviteManager" class="panel" hidden><h2>Invite another member</h2>
+<p class="muted small">Each invite works once, expires in 7 days, and only grants access to this journal. Generate a separate link for each person.</p>
+<div class="actions"><button id="makeInvite">Generate invitation</button><button id="hideInvite" class="secondary">Close</button></div>
+<div id="generatedInvite" hidden><label for="inviteLink">Share this link</label><input id="inviteLink" readonly>
+<div class="actions"><button id="copyInvite" class="secondary">Copy link</button></div>
+<label for="inviteCode">Or share the code</label><input id="inviteCode" readonly></div>
+<h3>Invitation history</h3><div id="inviteHistory" class="small muted"></div>
+</section>
+
+<section id="settingsPanel" class="panel" hidden><h2>Profile settings</h2>
+<form id="settingsForm"><label for="profileName">Your display name</label><input id="profileName" maxlength="60" required>
+<label><input type="checkbox" id="allowEdits"> Allow other members of this journal to edit my existing reviews</label>
+<p class="small muted">Off by default. Other people cannot create a review in your name.</p>
+<div class="actions"><button>Save settings</button><button type="button" class="secondary" id="hideSettings">Cancel</button></div></form>
+</section>
+
+<section id="addPanel" class="panel" hidden><h2>Add a wine to this journal</h2>
+<form id="addForm"><div class="grid">
+<div><label for="wineName">Wine name *</label><input id="wineName" required maxlength="120"></div>
+<div><label for="wineGrape">Grape variety *</label><input id="wineGrape" required maxlength="80" list="grapes">
+<datalist id="grapes"><option>Pinot Noir</option><option>Shiraz</option><option>Chardonnay</option><option>Cabernet Sauvignon</option><option>Sauvignon Blanc</option><option>Riesling</option></datalist></div>
+<div><label for="wineProducer">Producer</label><input id="wineProducer" maxlength="120"></div>
+<div><label for="wineVintage">Vintage</label><input id="wineVintage" type="number" min="1900" max="2100"></div>
+<div><label for="wineRegion">Region</label><input id="wineRegion" maxlength="120"></div>
+<div><label for="winePhoto">Bottle photo</label><input id="winePhoto" type="file" accept="image/*"></div>
+</div>
+<label for="newScore">Your score (optional, 1–100)</label><input id="newScore" type="number" min="1" max="100" step="1">
+<label for="newNotes">Your tasting notes</label><textarea id="newNotes" maxlength="3000"></textarea>
+<label for="newTags">Keywords (comma-separated)</label><input id="newTags" maxlength="500" placeholder="Cherry, Smooth, Earthy">
+<div class="actions"><button type="submit">Save wine</button><button id="hideAdd" type="button" class="secondary">Cancel</button></div></form>
+</section>
+
+<section class="panel"><h2>Wines in this journal</h2><input id="search" placeholder="Search wines, grapes and notes" aria-label="Search wines">
+<p id="wineCount" class="small muted"></p><div id="wineList"></div></section>
+</section>
+
+<section id="reviewPanel" class="panel" hidden><h2 id="reviewTitle">Your review</h2>
+<form id="reviewForm"><label for="reviewScore">Score (1–100)</label><input id="reviewScore" type="number" min="1" max="100" step="1">
+<label for="reviewNotes">Notes</label><textarea id="reviewNotes" maxlength="3000"></textarea>
+<label for="reviewTags">Keywords (comma-separated)</label><input id="reviewTags" maxlength="500">
+<div class="actions"><button type="submit">Save review</button><button type="button" id="hideReview" class="secondary">Cancel</button></div>
+</form></section>
+</main>
+<script type="module">
+const URL_BASE='https://fxsfiybuzvwjpqqmazdv.supabase.co';
+const KEY='sb_publishable_z4ZRsKP5JWaGxEFPihqDzQ_ayiaNXIb';
+const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+const db=createClient(URL_BASE,KEY);
+const $=id=>document.getElementById(id);
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const alertUser=t=>{$('message').textContent=t};
+const tagsFrom=s=>[...new Set(String(s||'').split(',').map(v=>v.trim()).filter(Boolean))].slice(0,25);
+let currentUser=null,memberships=[],activeId=null,memberRows=[],profiles=new Map(),wines=[],reviews=[],isSigningUp=false,pendingInvite=null,editingWineId=null;
+let loading=false;
+function show(id,yes){$(id).hidden=!yes}
+function getInviteFromUrl(){const p=new URLSearchParams(location.hash.slice(1));const code=p.get('invite');if(code&&/^[0-9a-f]{32}$/i.test(code))localStorage.setItem('winePendingInvite',code);return code||localStorage.getItem('winePendingInvite')}
+function eraseInviteUrl(){localStorage.removeItem('winePendingInvite');const u=new URL(location.href);u.hash='';history.replaceState(null,'',u)}
+async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data}
+async function checkBackend(){
+ const {error}=await db.rpc('wj_preview_invitation',{p_code:'not-a-valid-code'});
+ if(error)throw Error('This test page needs the journal v2 database setup. The existing journal is still available.');
+}
+async function verify(){
+ if(loading)return;loading=true;
+ try{
+  await checkBackend();
+  const {data,error}=await db.auth.getUser();
+  currentUser=error?null:data?.user||null;
+  show('auth',!currentUser);show('signOut',!!currentUser);
+  show('onboarding',false);show('journal',false);show('reviewPanel',false);
+  if(!currentUser){if(getInviteFromUrl())await previewInvite(getInviteFromUrl());else show('invitePanel',false);
+   await loadPublicJournals();alertUser('Browse public journals below. Sign in or create an account to add a wine.');return;}
+  $('accountLabel').textContent=currentUser.email||'Signed in';
+  const existingProfile=await db.from('profiles').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(existingProfile.error)throw existingProfile.error;
+  if(!existingProfile.data)await rpc('wj_save_profile',{p_display_name:currentUser.user_metadata?.display_name||'Wine lover'});
+  await listMemberships();
+  const code=getInviteFromUrl();
+  if(code)await previewInvite(code);
+  else show('invitePanel',false);
+  show('onboarding',true);
+  if(activeId)await loadJournal();
+  alertUser(activeId?'Your journal is ready.':'Create a private journal or join using an invitation.');
+ }catch(err){alertUser(err.message||String(err));show('auth',false);show('journal',false);show('onboarding',false)}
+ finally{loading=false}
+}
+async function listMemberships(preferred){
+ const {data,error}=await db.from('journal_members').select('journal_id,role,journals(id,name,visibility)').eq('user_id',currentUser.id);
+ if(error)throw error;
+ memberships=data||[];
+ const allowed=memberships.map(x=>x.journal_id);
+ const saved=localStorage.getItem('wineJournalActiveId');
+ activeId=allowed.includes(preferred)?preferred:allowed.includes(saved)?saved:allowed[0]||null;
+ const selector=$('journalPicker');selector.innerHTML='';
+ memberships.forEach(m=>{const o=document.createElement('option');o.value=m.journal_id;o.textContent=m.journals?.name||'Journal';selector.append(o)});
+ if(activeId){selector.value=activeId;localStorage.setItem('wineJournalActiveId',activeId)}
+}
+async function previewInvite(code){
+ pendingInvite=null;
+ try{
+  const rows=await rpc('wj_preview_invitation',{p_code:code});
+  const invite=rows?.[0];if(!invite)throw Error('This invitation is invalid, expired or already used.');
+  pendingInvite=code;
+  $('inviteInfo').textContent=invite.journal_name+' (invited by '+invite.owner_name+'). Expires '+new Date(invite.expires_at).toLocaleDateString()+'.';
+  show('invitePanel',true);show('acceptInvite',!!currentUser);
+ }catch(err){show('invitePanel',true);show('acceptInvite',false);$('inviteInfo').textContent=err.message;}
+}
+$('toggleAuth').onclick=()=>{isSigningUp=!isSigningUp;show('nameRow',isSigningUp);$('authHeading').textContent=isSigningUp?'Create your account':'Sign in';$('authSubmit').textContent=isSigningUp?'Create account':'Sign in';$('toggleAuth').textContent=isSigningUp?'Already have an account? Sign in':'Create an account';$('password').autocomplete=isSigningUp?'new-password':'current-password'};
+$('authForm').onsubmit=async e=>{
+ e.preventDefault();const btn=$('authSubmit');btn.disabled=true;
+ try{
+  const email=$('email').value.trim(),password=$('password').value;
+  if(isSigningUp){
+   const name=$('signupName').value.trim();if(!name)throw Error('Choose a display name.');
+   const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:name},emailRedirectTo:location.origin+location.pathname}});
+   if(error)throw error;
+   if(data.session){await rpc('wj_save_profile',{p_display_name:name});await verify();}
+   else alertUser('Check your email to confirm your account, then return here to sign in.');
+  }else{
+   const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await verify();
+  }
+  $('password').value='';
+ }catch(err){alertUser(err.message)}finally{btn.disabled=false}
+};
+$('signOut').onclick=async()=>{await db.auth.signOut({scope:'local'});currentUser=null;await verify()};
+$('createForm').onsubmit=async e=>{
+ e.preventDefault();try{
+  const id=await rpc('wj_create_journal',{p_name:$('newJournalName').value.trim()});
+  await listMemberships(id);await loadJournal();alertUser('Private journal created. You can invite Beth or anyone else.');
+  $('newJournalName').value='';
+ }catch(err){alertUser('Could not create journal: '+err.message)}
+};
+$('joinForm').onsubmit=async e=>{e.preventDefault();const code=$('joinCode').value.trim();history.replaceState(null,'','#invite='+encodeURIComponent(code));await previewInvite(code)};
+$('acceptInvite').onclick=async()=>{
+ if(!currentUser||!pendingInvite)return;const btn=$('acceptInvite');btn.disabled=true;
+ try{const id=await rpc('wj_redeem_invitation',{p_code:pendingInvite});
+  eraseInviteUrl();pendingInvite=null;show('invitePanel',false);await listMemberships(id);await loadJournal();alertUser('You joined the journal.');
+ }catch(err){alertUser('Unable to join: '+err.message)}
+ finally{btn.disabled=false}
+};
+$('clearInvite').onclick=()=>{eraseInviteUrl();pendingInvite=null;show('invitePanel',false)};
+$('journalPicker').onchange=async()=>{
+ activeId=$('journalPicker').value;if(currentUser)localStorage.setItem('wineJournalActiveId',activeId);
+ show('addPanel',false);show('inviteManager',false);show('settingsPanel',false);show('reviewPanel',false);
+ await loadJournal();
+};
+async function loadPublicJournals(){
+ const result=await db.from('journals').select('id,name,visibility').eq('visibility','public').order('created_at',{ascending:true});
+ if(result.error)throw result.error;
+ memberships=[];const publicJournals=result.data||[];
+ const picker=$('journalPicker');picker.innerHTML='';
+ publicJournals.forEach(j=>{const option=document.createElement('option');option.value=j.id;option.textContent=j.name;picker.append(option)});
+ activeId=publicJournals[0]?.id||null;
+ $('accountLabel').textContent='Public read-only';
+ for(const button of ['showAdd','showInvite','showSettings'])show(button,false);
+ if(activeId)await loadJournal();
+}
+async function loadJournal(){
+
+ if(!activeId)return;
+ const mr=currentUser?await db.from('journal_members').select('user_id,role,allow_member_edits').eq('journal_id',activeId):{data:[],error:null};
+ const wr=await db.from('wines').select('*').eq('journal_id',activeId).order('created_at',{ascending:false});
+ for(const r of [mr,wr])if(r.error)throw r.error;
+ memberRows=mr.data||[];wines=wr.data||[];
+ const wineIds=wines.map(w=>w.id);
+ reviews=[];
+ if(wineIds.length){
+  const rr=await db.from('wine_reviews').select('*').in('wine_id',wineIds);
+  if(rr.error)throw rr.error;
+  reviews=rr.data||[];
+ }
+ const ids=[...new Set([...memberRows.map(m=>m.user_id),...reviews.map(r=>r.reviewer_id)])];
+ profiles=new Map();
+ if(ids.length){
+  const p=await db.from('profiles').select('user_id,display_name').in('user_id',ids);
+  if(p.error)throw p.error;
+  (p.data||[]).forEach(x=>profiles.set(x.user_id,x.display_name));
+ }
+ show('journal',true);
+ const me=memberships.find(m=>m.journal_id===activeId);
+ show('showAdd',!!currentUser);
+ show('showSettings',!!currentUser);
+ show('showInvite',!!currentUser&&!!me&&['owner','admin'].includes(me.role));
+ renderWines();
+}
+function displayName(id){return profiles.get(id)||'Reviewer'}
+function renderWines(){
+ const q=$('search').value.trim().toLowerCase();
+ const result=wines.filter(w=>([w.name,w.producer,w.grape,w.region,...reviews.filter(r=>r.wine_id===w.id).map(r=>r.notes)].join(' ').toLowerCase().includes(q)));
+ $('wineCount').textContent=result.length+' of '+wines.length+' wines';
+ const out=$('wineList');out.innerHTML='';
+ if(!result.length){out.innerHTML='<p class="muted">No wines yet. Add a bottle or try another search.</p>';return}
+ for(const w of result){
+  const card=document.createElement('article');card.className='card';
+  const wineReviews=reviews.filter(r=>r.wine_id===w.id);
+  const scores=wineReviews.map(r=>r.score==null?null:Number(r.score)).filter(n=>n!==null&&Number.isFinite(n));
+  const average=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'—';
+  card.innerHTML='<h3>'+esc(w.name)+'</h3><p class="muted">'+esc([w.producer,w.grape,w.vintage,w.region].filter(Boolean).join(' · '))+'</p><strong>Average: '+esc(average)+'/100</strong>';
+  if(w.photo_path)attachPhoto(card,w);
+  for(const r of wineReviews){const block=document.createElement('div');block.className='review';
+    block.innerHTML='<strong>'+esc(displayName(r.reviewer_id))+' · '+esc(r.score??'—')+'/100</strong><p>'+esc(r.notes||'')+'</p><span class="small muted">'+esc((r.tags||[]).join(', '))+'</span>';card.append(block);}
+  if(currentUser){const btn=document.createElement('button');btn.className='secondary';
+  btn.textContent=wineReviews.some(r=>r.reviewer_id===currentUser.id)?'Update my review':'Rate this wine';
+  btn.onclick=()=>openReview(w);card.append(btn)}out.append(card);
+ }
+}
+async function attachPhoto(card,w){
+ const img=document.createElement('img');img.className='photo';img.alt='Wine bottle';img.loading='lazy';
+ try{
+  if(w.photo_path.startsWith(activeId+'/')){
+   const r=await db.storage.from('wine-private-photos').createSignedUrl(w.photo_path,3600);
+   if(r.error)throw r.error;img.src=r.data.signedUrl;
+  }else img.src=db.storage.from('wine-photos').getPublicUrl(w.photo_path).data.publicUrl;
+  card.insertBefore(img,card.children[1]);
+ }catch(err){/* Leave wine and reviews visible if one photo is unavailable. */}
+}
+$('search').oninput=renderWines;
+$('showAdd').onclick=()=>{show('addPanel',true);$('addPanel').scrollIntoView({behavior:'smooth'})};
+$('hideAdd').onclick=()=>show('addPanel',false);
+async function refreshInvites(){
+ const list=$('inviteHistory');list.innerHTML='';
+ const rows=await rpc('wj_list_invitations',{p_journal:activeId});
+ if(!rows?.length){list.textContent='No invitations generated yet.';return}
+ for(const invitation of rows){
+  const item=document.createElement('div');item.className='card';
+  const expired=new Date(invitation.expires_at)<=new Date();
+  const state=invitation.revoked_at?'Revoked':invitation.redeemed_at?'Used':expired?'Expired':'Active';
+  const stamp=new Date(invitation.created_at).toLocaleDateString();
+  const label=document.createElement('span');label.textContent=stamp+' · '+state;item.append(label);
+  if(state==='Active'){
+   const revoke=document.createElement('button');revoke.className='secondary';revoke.textContent='Revoke';
+   revoke.style.marginLeft='12px';
+   revoke.onclick=async()=>{
+    revoke.disabled=true;
+    try{await rpc('wj_revoke_invitation',{p_invitation:invitation.invitation_id});
+      await refreshInvites();alertUser('Invitation revoked.');}
+    catch(err){alertUser('Could not revoke invitation: '+err.message);revoke.disabled=false;}
+   };
+   item.append(revoke);
+  }
+  list.append(item);
+ }
+}
+$('showInvite').onclick=async()=>{
+ show('inviteManager',true);show('generatedInvite',false);
+ try{await refreshInvites()}catch(err){alertUser('Could not load invitations: '+err.message)}
+};
+$('hideInvite').onclick=()=>show('inviteManager',false);
+$('makeInvite').onclick=async()=>{
+ try{
+  const rows=await rpc('wj_create_invitation',{p_journal:activeId});
+  const inv=rows?.[0];if(!inv)throw Error('No invitation was generated.');
+  const link=location.origin+location.pathname+'#invite='+encodeURIComponent(inv.invitation_code);
+  $('inviteLink').value=link;$('inviteCode').value=inv.invitation_code;show('generatedInvite',true);
+  await refreshInvites();alertUser('Invitation created. Send it to one person only.');
+ }catch(err){alertUser('Could not generate invitation: '+err.message)}
+};
+$('copyInvite').onclick=async()=>{try{await navigator.clipboard.writeText($('inviteLink').value);alertUser('Invitation link copied.')}catch{ $('inviteLink').select();alertUser('Select and copy the invitation link.')}};
+$('showSettings').onclick=()=>{const me=memberRows.find(m=>m.user_id===currentUser.id);
+ $('profileName').value=displayName(currentUser.id)==='Reviewer'?'':displayName(currentUser.id);
+ $('allowEdits').checked=!!me?.allow_member_edits;show('settingsPanel',true)};
+$('hideSettings').onclick=()=>show('settingsPanel',false);
+$('settingsForm').onsubmit=async e=>{
+ e.preventDefault();try{
+  await rpc('wj_save_profile',{p_display_name:$('profileName').value.trim()});
+  const r=await db.from('journal_members').update({allow_member_edits:$('allowEdits').checked})
+    .eq('journal_id',activeId).eq('user_id',currentUser.id);
+  if(r.error)throw r.error;
+  show('settingsPanel',false);await loadJournal();alertUser('Settings saved.');
+ }catch(err){alertUser('Settings not saved: '+err.message)}
+};
+function openReview(w){
+ editingWineId=w.id;const r=reviews.find(r=>r.wine_id===w.id&&r.reviewer_id===currentUser.id);
+ $('reviewTitle').textContent='Your review: '+w.name;
+ $('reviewScore').value=r?.score??'';$('reviewNotes').value=r?.notes||'';
+ $('reviewTags').value=(r?.tags||[]).join(', ');show('reviewPanel',true);
+ $('reviewPanel').scrollIntoView({behavior:'smooth'});
+}
+$('hideReview').onclick=()=>{editingWineId=null;show('reviewPanel',false)};
+function parseScore(raw){
+ if(raw==='')return null;
+ const n=Number(raw);if(!Number.isInteger(n)||n<1||n>100)throw Error('Score must be a whole number from 1 to 100.');
+ return n;
+}
+$('reviewForm').onsubmit=async e=>{
+ e.preventDefault();if(!editingWineId)return;
+ const submit=e.currentTarget.querySelector('button[type=submit]');submit.disabled=true;
+ try{
+  const review={wine_id:editingWineId,reviewer_id:currentUser.id,score:parseScore($('reviewScore').value),
+    notes:$('reviewNotes').value.trim(),tags:tagsFrom($('reviewTags').value)};
+  const old=reviews.some(r=>r.wine_id===editingWineId&&r.reviewer_id===currentUser.id);
+  const result=old?
+    await db.from('wine_reviews').update({score:review.score,notes:review.notes,tags:review.tags}).eq('wine_id',editingWineId).eq('reviewer_id',currentUser.id):
+    await db.from('wine_reviews').insert(review);
+  if(result.error)throw result.error;
+  editingWineId=null;show('reviewPanel',false);await loadJournal();alertUser('Your review was saved.');
+ }catch(err){alertUser('Review not saved: '+err.message)}finally{submit.disabled=false}
+};
+async function compress(file){
+ if(file.size>12e6)throw Error('Choose a photo smaller than 12 MB.');
+ const img=new Image(),url=URL.createObjectURL(file);
+ try{
+  await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad;img.src=url});
+  const canvas=document.createElement('canvas'),scale=Math.min(1,1200/Math.max(img.width,img.height));
+  canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+  canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+  const jpg=await new Promise(ok=>canvas.toBlob(ok,'image/jpeg',.75));
+  if(!jpg)throw Error('Photo processing failed.');return jpg;
+ }finally{URL.revokeObjectURL(url)}
+}
+$('addForm').onsubmit=async e=>{
+ e.preventDefault();const submit=e.currentTarget.querySelector('button[type=submit]');submit.disabled=true;
+ try{
+  const score=parseScore($('newScore').value);
+  const id=crypto.randomUUID();
+  const wine={id,journal_id:activeId,name:$('wineName').value.trim(),grape:$('wineGrape').value.trim(),
+    producer:$('wineProducer').value.trim(),vintage:$('wineVintage').value?Number($('wineVintage').value):null,
+    region:$('wineRegion').value.trim(),created_by:currentUser.id};
+  if(!wine.name||!wine.grape)throw Error('Enter a wine name and grape variety.');
+  const wr=await db.from('wines').insert(wine);if(wr.error)throw wr.error;
+  let partial=[];
+  const review={wine_id:id,reviewer_id:currentUser.id,score,notes:$('newNotes').value.trim(),
+    tags:tagsFrom($('newTags').value)};
+  const rr=await db.from('wine_reviews').insert(review);
+  if(rr.error)partial.push('your review ('+rr.error.message+')');
+  const photo=$('winePhoto').files[0];
+  if(photo){
+   try{
+    const blob=await compress(photo);
+    const path=activeId+'/'+id+'/'+crypto.randomUUID()+'.jpg';
+    const up=await db.storage.from('wine-private-photos').upload(path,blob,{contentType:'image/jpeg',upsert:false});
+    if(up.error)throw up.error;
+    const r=await db.from('wines').update({photo_path:path}).eq('id',id);
+    if(r.error){await db.storage.from('wine-private-photos').remove([path]);throw r.error;}
+   }catch(err){partial.push('photo ('+err.message+')')}
+  }
+  $('addForm').reset();show('addPanel',false);await loadJournal();
+  alertUser(partial.length?'Wine saved, but some parts need attention: '+partial.join(', '):'Wine and your review saved.');
+ }catch(err){alertUser('Wine not saved: '+err.message)}
+ finally{submit.disabled=false}
+};
+await verify();
+db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='TOKEN_REFRESHED'){setTimeout(()=>verify(),0)}});
+</script>
+</body></html>

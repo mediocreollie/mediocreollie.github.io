@@ -1,0 +1,39 @@
+name: Wine Journal V2 Checks
+on:
+  pull_request:
+    paths:
+      - 'public/wine-journal/**'
+      - 'supabase/wine-journal-v2-*.sql'
+      - 'tests/wine-journal-v2.*'
+      - 'docs/WINE_JOURNAL*'
+      - '.github/workflows/wine-journal-v2.yml'
+  workflow_dispatch:
+
+jobs:
+  v2-source-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate V2 code and RLS guardrails
+        run: node --test tests/wine-journal-v2.test.mjs
+
+  astro-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Build TinaCMS admin (as in production workflow)
+        run: npx tinacms build --skip-cloud-checks || echo "Tina build skipped"
+      - name: Verify Astro site builds with new V2 beta
+        run: npm run build
+      - name: Confirm both journal routes are emitted
+        run: |
+          test -f dist/wine-journal/index.html
+          test -f dist/wine-journal/beta.html
