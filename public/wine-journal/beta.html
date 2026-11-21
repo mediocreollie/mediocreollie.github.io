@@ -135,6 +135,9 @@ async function verify(){
   if(!currentUser){if(getInviteFromUrl())await previewInvite(getInviteFromUrl());else show('invitePanel',false);
    alertUser('Sign in or create an account to begin.');return;}
   $('accountLabel').textContent=currentUser.email||'Signed in';
+  const existingProfile=await db.from('profiles').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(existingProfile.error)throw existingProfile.error;
+  if(!existingProfile.data)await rpc('wj_save_profile',{p_display_name:currentUser.user_metadata?.display_name||'Wine lover'});
   await listMemberships();
   const code=getInviteFromUrl();
   if(code)await previewInvite(code);
@@ -235,7 +238,7 @@ function renderWines(){
  for(const w of result){
   const card=document.createElement('article');card.className='card';
   const wineReviews=reviews.filter(r=>r.wine_id===w.id);
-  const scores=wineReviews.map(r=>Number(r.score)).filter(Number.isFinite);
+  const scores=wineReviews.map(r=>r.score==null?null:Number(r.score)).filter(n=>n!==null&&Number.isFinite(n));
   const average=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'—';
   card.innerHTML='<h3>'+esc(w.name)+'</h3><p class="muted">'+esc([w.producer,w.grape,w.vintage,w.region].filter(Boolean).join(' · '))+'</p><strong>Average: '+esc(average)+'/100</strong>';
   if(w.photo_path)attachPhoto(card,w);
