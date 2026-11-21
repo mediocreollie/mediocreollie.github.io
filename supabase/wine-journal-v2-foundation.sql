@@ -51,13 +51,20 @@ create index journal_invitations_by_journal on public.journal_invitations(journa
 -- based on which account created the first wine.
 do $migration$
 declare
-  v_owner uuid := null; -- REPLACE null with 'EXISTING_OWNER_UUID'::uuid
+  v_owner uuid := null; -- Optional manual override: 'EXISTING_OWNER_UUID'::uuid
   v_legacy uuid;
 begin
+  -- The inspected production project currently has exactly ONE approved
+  -- member, and that member created/reviewed every existing wine. If this
+  -- remains true at deployment, it is safe to adopt them as legacy owner.
+  -- With 2+ approved members, choose an owner manually before migrating.
+  if v_owner is null and (select count(*) from public.wine_members)=1 then
+    select m.user_id into v_owner from public.wine_members m;
+  end if;
   if v_owner is null or not exists (
     select 1 from public.wine_members where user_id=v_owner
   ) then
-    raise exception 'Set v_owner to an existing, approved wine_members user UUID. Nothing was migrated.';
+    raise exception 'Specify v_owner: there must be one identifiable legacy owner. Nothing was migrated.';
   end if;
   if exists(select 1 from public.wines w
        where not exists(select 1 from public.wine_members m where m.user_id=w.created_by))
@@ -102,6 +109,25 @@ begin
 end $$;
 create trigger wj_immutable_wine_identity before update on public.wines
 for each row execute function public.wj_immutable_wine_identity();
+
+-- A profile is visible if the person has a journal that the caller
+-- may view. Implement as a definer helper because direct queries against
+-- journal_members from an anonymous profile SELECT need extra table grants.
+create function public.wj_can_see_profile(p_user uuid)
+returns boolean language sql stable security definer set search_path='' as $
+  select p_user=(select auth.uid()) or exists(
+    select 1 from public.journal_members m
+    join public.journals j on j.id=m.journal_id
+    where m.user_id=p_user and (
+      j.visibility='public' or exists(
+        select 1 from public.journal_members viewer
+        where viewer.journal_id=m.journal_id and viewer.user_id=(select auth.uid())
+      )
+    )
+  );
+$;
+revoke all on function public.wj_can_see_profile(uuid) from public;
+grant execute on function public.wj_can_see_profile(uuid) to anon,authenticated;
 
 -- Helpers are security-definer to avoid recursive journal membership RLS.
 -- They return booleans only and never reveal membership tables as raw data.
@@ -170,9 +196,7 @@ alter table public.journal_invitations enable row level security;
 
 -- Anyone may see member names in a PUBLIC journal, otherwise co-members only.
 create policy "Visible profiles" on public.profiles for select to anon,authenticated
-using (user_id=(select auth.uid()) or exists(
-  select 1 from public.journal_members m where m.user_id=profiles.user_id
-    and public.wj_can_read(m.journal_id)));
+using (public.wj_can_see_profile(user_id));
 create policy "Visible journals" on public.journals for select to anon,authenticated
 using (public.wj_can_read(id));
 create policy "Members see their journal membership" on public.journal_members for select to authenticated
@@ -188,6 +212,14 @@ grant select on public.profiles,public.journals to anon,authenticated;
 grant select on public.journal_members to authenticated;
 grant update(allow_member_edits) on public.journal_members to authenticated;
 grant update(name,visibility) on public.journals to authenticated;
+
+-- New reviews require integer scores from 1 to 100. Existing values
+-- are 83 and 89 as of the production read-only audit (21 Nov 2026).
+-- Fail atomically if unexpected fractional/invalid scores appear before deploy.
+alter table public.wine_reviews
+  add constraint wj_score_whole_number check(
+    score is null or (score between 1 and 100 and score=trunc(score))
+  );
 
 -- Replace single-global-collection RLS: no old permissive policy may remain.
 drop policy if exists "Members read wines" on public.wines;
