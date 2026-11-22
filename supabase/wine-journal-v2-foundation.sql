@@ -280,6 +280,8 @@ begin
 end $$;
 create trigger wj_sync_legacy_settings after update of display_name,allow_member_edits
 on public.wine_members for each row execute function public.wj_sync_legacy_settings();
+-- Trigger-only internal function must not be invokable through PostgREST.
+revoke all on function public.wj_sync_legacy_settings() from public,anon,authenticated;
 
 -- A separate PRIVATE bucket is mandatory for any new private journal.
 -- Never put private-journal photos in the legacy publicly readable wine-photos bucket.
