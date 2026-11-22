@@ -7,12 +7,14 @@ import { execFileSync } from 'node:child_process';
 
 const read = file => readFileSync(new URL('../' + file, import.meta.url), 'utf8');
 const beta = read('public/wine-journal/beta.html');
-const legacy = read('public/wine-journal/index.html');
+const legacy = read('public/wine-journal/classic.html');
+const live = read('public/wine-journal/index.html');
 const foundation = read('supabase/wine-journal-v2-foundation.sql');
 const invite = read('supabase/wine-journal-v2-invitations.sql');
 
 test('V2 beta module parses as modern JavaScript', () => {
-  const match = beta.match(/<script type="module">([\s\S]*?)<\/script>/);
+  for(const [label,source] of [['beta',beta],['live',live]]){
+  const match = source.match(/<script type="module">([\s\S]*?)<\/script>/);
   assert.ok(match, 'expected a V2 module script');
   const dir = mkdtempSync(join(tmpdir(), 'wine-journal-v2-'));
   try {
@@ -22,12 +24,16 @@ test('V2 beta module parses as modern JavaScript', () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+  }
 });
 
 test('V2 does not reuse any service-role credentials', () => {
   assert.doesNotMatch(beta, /sb_secret_|service_role/i);
   assert.match(beta, /sb_publishable_/);
   assert.match(legacy, /Sign in to your wine journal/);
+  assert.match(live, /wj_create_invitation/);
+  assert.match(live, /Classic journal/);
+  assert.doesNotMatch(live, /sb_secret_|service_role/i);
 });
 
 test('New journals default private and old wines have a safe migration path', () => {
